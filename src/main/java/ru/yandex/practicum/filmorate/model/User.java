@@ -12,11 +12,11 @@ public class User {
 
     private Integer id;
     @Email
-    private final String email;
+    private String email;
     @NotBlank
-    private final String login;
+    private String login;
     private String name;
     @Past
-    private final LocalDate birthday;
+    private LocalDate birthday;
 
 }

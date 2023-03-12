@@ -46,9 +46,6 @@ public class FilmController {
     }
 
     private boolean filmValuesIsValid(Film film) {
-        if(film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
-            throw new ValidationException("Release date must be after 28.12.1895.");
-        }
         if(films.containsKey(film.getId())) {
             throw new ValidationException("Film with " + film.getId() + " already exists.");
         }

@@ -1,22 +1,23 @@
 package ru.yandex.practicum.filmorate.model;
 
 import lombok.Data;
-import lombok.Setter;
+import ru.yandex.practicum.filmorate.validation.constraints.FilmReleaseDateConstraint;
 
 import javax.validation.constraints.*;
-import java.time.Duration;
 import java.time.LocalDate;
 
 @Data
 public class Film {
     private Integer id;
     @NotBlank
-    private final String name;
+    private String name;
     @Size(max = 200, message = "Description length must be not more 200 characters")
-    private final String description;
-    private final LocalDate releaseDate;
+    private String description;
+    @FilmReleaseDateConstraint
+    private LocalDate releaseDate;
     @Positive
-    private final Integer duration;
+    private Integer duration;
+    @Positive
     private Integer rate;
 
 }
