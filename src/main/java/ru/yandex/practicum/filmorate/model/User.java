@@ -18,6 +18,7 @@ public class User {
     @Pattern(regexp = "^[a-zA-Z0-9_]*$")
     private String login;
     private String name;
+
     @Past
     private LocalDate birthday;
 
