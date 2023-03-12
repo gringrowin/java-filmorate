@@ -20,34 +20,27 @@ public class UserRepository {
         }
 
         public void add(User user) {
-                if(user.getName() == null) {
-                        user.setName(user.getLogin());
-                }
+                setName(user);
                 if (user.getId() == null || user.getId() <= 0) {
                         user.setId(getIdGenerator());
                 }
-                if(userValuesIsValid(user)) {
-                        users.put(user.getId(), user);
-                }
+                users.put(user.getId(), user);
+
         }
 
         public void update(User user) {
                 if (!users.containsKey(user.getId())) {
-                        throw new ValidationException("User not found.");
+                        throw new ValidationException("User with id " + user.getId() + " not found.");
                 }
+                setName(user);
+                users.put(user.getId(), user);
+
+        }
+
+        private void setName(User user) {
                 if(user.getName() == null) {
                         user.setName(user.getLogin());
                 }
-                if(userValuesIsValid(user)) {
-                        users.put(user.getId(), user);
-                }
-        }
-
-        private boolean userValuesIsValid(User user) {
-                if(user.getLogin().contains(" ")) {
-                        throw new ValidationException("The login must not contain whitespaces.");
-                }
-                return true;
         }
 
         private Integer getIdGenerator() {
