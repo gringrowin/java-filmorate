@@ -21,17 +21,20 @@ public class FilmController {
 
     @GetMapping
     public Collection<Film> findAll() {
+        log.info("findAll: {}", filmRepository.size());
         return filmRepository.getAll();
     }
 
     @PostMapping
     public Film create(@Valid @RequestBody Film film) {
+        log.info("create: {}", film);
         filmRepository.add(film);
         return film;
     }
 
     @PutMapping
     public Film put(@Valid @RequestBody Film film) {
+        log.info("put: {}", film);
         filmRepository.update(film);
         return film;
     }

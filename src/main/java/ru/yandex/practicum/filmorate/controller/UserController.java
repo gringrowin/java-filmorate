@@ -21,19 +21,21 @@ public class UserController {
 
     @GetMapping
     public Collection<User> findAll() {
+        log.info("findAll: {}", userRepository.size());
         return userRepository.getAll();
     }
 
     @PostMapping
     public User create(@Valid @RequestBody User user) {
+        log.info("create: {}", user);
         userRepository.add(user);
         return user;
     }
 
     @PutMapping
     public User put(@Valid @RequestBody User user) {
+        log.info("put: {}", user);
         userRepository.update(user);
-
         return user;
     }
 
