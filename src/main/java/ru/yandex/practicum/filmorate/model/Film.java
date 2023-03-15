@@ -11,13 +11,10 @@ public class Film {
     private Integer id;
     @NotBlank
     private String name;
-    @Size(max = 200, message = "Description length must be not more 200 characters")
+    @Size(min = 1, max = 200, message = "Description length must be not more 200 characters")
     private String description;
     @FilmReleaseDateConstraint
     private LocalDate releaseDate;
     @Positive
     private Integer duration;
-    @Positive
-    private Integer rate;
-
 }

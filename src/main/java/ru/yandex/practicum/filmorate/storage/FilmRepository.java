@@ -21,13 +21,13 @@ public class FilmRepository {
     }
 
     public void add(Film film) {
-        if (film.getId() == null || film.getId() <= 0) {
-            film.setId(getIdGenerator());
-            log.info("add: {} - setId", film);
-        }
         if(films.containsValue(film)) {
             log.warn("film already exists: {}", film);
             throw new ValidationException("Film with " + film.getName() + " already exists.");
+        }
+        if (film.getId() == null || film.getId() <= 0) {
+            film.setId(getIdGenerator());
+            log.info("add: {} - setId", film);
         }
         films.put(film.getId(), film);
     }

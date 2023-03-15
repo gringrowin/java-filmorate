@@ -2,15 +2,11 @@ package ru.yandex.practicum.filmorate.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.FilmRepository;
 
 import javax.validation.Valid;
-import java.time.LocalDate;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
 @Slf4j
 @RestController
@@ -27,15 +23,17 @@ public class FilmController {
 
     @PostMapping
     public Film create(@Valid @RequestBody Film film) {
-        log.info("create: {}", film);
+        log.info("create: {} - Started", film);
         filmRepository.add(film);
+        log.info("create: {} - Finished", film);
         return film;
     }
 
     @PutMapping
     public Film put(@Valid @RequestBody Film film) {
-        log.info("put: {}", film);
+        log.info("put: {} - Started", film);
         filmRepository.update(film);
+        log.info("put: {} - Finished", film);
         return film;
     }
 }

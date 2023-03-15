@@ -21,7 +21,6 @@ class FilmTest {
         film.setDescription("Cool");
         film.setReleaseDate(LocalDate.of(1985, 12, 29));
         film.setDuration(120);
-        film.setRate(1);
         return film;
     }
 
@@ -59,14 +58,5 @@ class FilmTest {
 
         Set<ConstraintViolation<Film>> violations = validator.validate(film);
         assertEquals(1, violations.size(), "duration is negative");
-    }
-
-    @Test
-    void validateRate() {
-        Film film = createFilm();
-        film.setRate(-1);
-
-        Set<ConstraintViolation<Film>> violations = validator.validate(film);
-        assertEquals(1, violations.size(), "rate is negative");
     }
 }
