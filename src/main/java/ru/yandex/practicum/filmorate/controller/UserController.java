@@ -25,7 +25,7 @@ public class UserController {
     @PostMapping
     public User create(@Valid @RequestBody User user) {
         log.info("create: {} - Started", user);
-        userRepository.add(user);
+        user = userRepository.add(user);
         log.info("create: {} - Finished", user);
         return user;
     }
@@ -33,7 +33,7 @@ public class UserController {
     @PutMapping
     public User put(@Valid @RequestBody User user) {
         log.info("put: {} - Started", user);
-        userRepository.update(user);
+        user = userRepository.update(user);
         log.info("put: {} - Finished", user);
         return user;
     }

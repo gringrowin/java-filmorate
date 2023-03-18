@@ -20,7 +20,7 @@ public class FilmRepository {
         return films.values();
     }
 
-    public void add(Film film) {
+    public Film add(Film film) {
         if(films.containsValue(film)) {
             log.warn("film already exists: {}", film);
             throw new ValidationException("Film with " + film.getName() + " already exists.");
@@ -30,14 +30,16 @@ public class FilmRepository {
             log.info("add: {} - setId", film);
         }
         films.put(film.getId(), film);
+        return film;
     }
 
-    public void update(Film film) {
+    public Film update(Film film) {
         if (!films.containsKey(film.getId())) {
             log.warn("film not found: {}", film);
             throw new ValidationException("Film not found.");
         }
         films.put(film.getId(), film);
+        return film;
     }
 
     private Integer getIdGenerator() {

@@ -24,7 +24,7 @@ public class FilmController {
     @PostMapping
     public Film create(@Valid @RequestBody Film film) {
         log.info("create: {} - Started", film);
-        filmRepository.add(film);
+        film = filmRepository.add(film);
         log.info("create: {} - Finished", film);
         return film;
     }
@@ -32,7 +32,7 @@ public class FilmController {
     @PutMapping
     public Film put(@Valid @RequestBody Film film) {
         log.info("put: {} - Started", film);
-        filmRepository.update(film);
+        film = filmRepository.update(film);
         log.info("put: {} - Finished", film);
         return film;
     }

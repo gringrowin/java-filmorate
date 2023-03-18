@@ -20,7 +20,7 @@ public class UserRepository {
                 return users.values();
         }
 
-        public void add(User user) {
+        public User add(User user) {
                 if (users.containsValue(user)) {
                         log.warn("user already exists: {}", user);
                         throw new ValidationException("User with " + user.getName() + " already exists.");
@@ -28,16 +28,17 @@ public class UserRepository {
                 setName(user);
                 user.setId(getIdGenerator());
                 users.put(user.getId(), user);
+                return user;
         }
 
-        public void update(User user) {
+        public User update(User user) {
                 setName(user);
                 if (!users.containsKey(user.getId())) {
                         log.warn("user not found: {}", user);
                         throw new ValidationException("User with id " + user.getId() + " not found.");
                 }
                 users.put(user.getId(), user);
-
+                return user;
         }
 
         private void setName(User user) {
