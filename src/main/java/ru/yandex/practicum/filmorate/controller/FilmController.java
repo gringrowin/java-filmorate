@@ -3,7 +3,7 @@ package ru.yandex.practicum.filmorate.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.storage.FilmRepository;
+import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
 
 import javax.validation.Valid;
 import java.util.Collection;
@@ -13,18 +13,18 @@ import java.util.Collection;
 @RequestMapping("/films")
 public class FilmController {
 
-    private final FilmRepository filmRepository = new FilmRepository();
+    private final InMemoryFilmStorage inMemoryFilmStorage = new InMemoryFilmStorage();
 
     @GetMapping
     public Collection<Film> findAll() {
-        log.info("findAll: {}", filmRepository.size());
-        return filmRepository.getAll();
+        log.info("findAll: {}", inMemoryFilmStorage.size());
+        return inMemoryFilmStorage.getAll();
     }
 
     @PostMapping
     public Film create(@Valid @RequestBody Film film) {
         log.info("create: {} - Started", film);
-        film = filmRepository.add(film);
+        film = inMemoryFilmStorage.add(film);
         log.info("create: {} - Finished", film);
         return film;
     }
@@ -32,7 +32,7 @@ public class FilmController {
     @PutMapping
     public Film put(@Valid @RequestBody Film film) {
         log.info("put: {} - Started", film);
-        film = filmRepository.update(film);
+        film = inMemoryFilmStorage.update(film);
         log.info("put: {} - Finished", film);
         return film;
     }

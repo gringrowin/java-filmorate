@@ -11,7 +11,7 @@ import java.util.Map;
 
 @Component
 @Slf4j
-public class FilmRepository {
+public class InMemoryFilmStorage implements FilmStorage {
 
     private int idGenerator;
     private final Map<Integer, Film> films = new HashMap<>();
