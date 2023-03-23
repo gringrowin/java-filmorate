@@ -1,33 +1,28 @@
-package ru.yandex.practicum.filmorate.controller;
+package ru.yandex.practicum.filmorate.service;
 
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.service.UserService;
 import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
 
 import javax.validation.Valid;
 import java.util.Collection;
 
+@Service
+public class UserService {
 
-@Slf4j
-@RestController
-@RequestMapping("/users")
-public class UserController {
+    private final InMemoryUserStorage inMemoryUserStorage = new InMemoryUserStorage();
 
-    private final UserService userService;
 
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
-
-    @GetMapping
     public Collection<User> findAll() {
         log.info("findAll: {}", inMemoryUserStorage.size());
         return inMemoryUserStorage.getAll();
     }
 
-    @PostMapping
+
     public User create(@Valid @RequestBody User user) {
         log.info("create: {} - Started", user);
         user = inMemoryUserStorage.add(user);
@@ -35,12 +30,10 @@ public class UserController {
         return user;
     }
 
-    @PutMapping
     public User put(@Valid @RequestBody User user) {
         log.info("put: {} - Started", user);
         user = inMemoryUserStorage.update(user);
         log.info("put: {} - Finished", user);
         return user;
     }
-
 }
