@@ -24,23 +24,28 @@ public class FilmController {
 
     @GetMapping
     public Collection<Film> findAll() {
-        log.info("findAll: {}", inMemoryFilmStorage.size());
-        return inMemoryFilmStorage.getAll();
+        // log.info("findAll: {}", filmService.findAll());
+        return filmService.findAll();
     }
 
     @PostMapping
     public Film create(@Valid @RequestBody Film film) {
-        log.info("create: {} - Started", film);
-        film = inMemoryFilmStorage.add(film);
-        log.info("create: {} - Finished", film);
+       // log.info("create: {} - Started", film);
+        film = filmService.create(film);
+       // log.info("create: {} - Finished", film);
         return film;
     }
 
     @PutMapping
     public Film put(@Valid @RequestBody Film film) {
-        log.info("put: {} - Started", film);
-        film = inMemoryFilmStorage.update(film);
-        log.info("put: {} - Finished", film);
+       // log.info("put: {} - Started", film);
+        film = filmService.put(film);
+       // log.info("put: {} - Finished", film);
         return film;
+    }
+
+    @GetMapping("/{filmId}")
+    public Film getFilm(@PathVariable("filmId") Integer filmId) {
+        return filmService.getFilm(filmId);
     }
 }

@@ -23,24 +23,29 @@ public class UserController {
 
     @GetMapping
     public Collection<User> findAll() {
-        log.info("findAll: {}", inMemoryUserStorage.size());
-        return inMemoryUserStorage.getAll();
+       // log.info("findAll: {}", userService.findAll());
+        return userService.findAll();
     }
 
     @PostMapping
     public User create(@Valid @RequestBody User user) {
-        log.info("create: {} - Started", user);
-        user = inMemoryUserStorage.add(user);
-        log.info("create: {} - Finished", user);
+       // log.info("create: {} - Started", user);
+        user = userService.create(user);
+      //  log.info("create: {} - Finished", user);
         return user;
     }
 
     @PutMapping
     public User put(@Valid @RequestBody User user) {
-        log.info("put: {} - Started", user);
-        user = inMemoryUserStorage.update(user);
-        log.info("put: {} - Finished", user);
+       // log.info("put: {} - Started", user);
+        user = userService.put(user);
+       // log.info("put: {} - Finished", user);
         return user;
+    }
+
+    @GetMapping("/{userId}")
+    public User getUser(@PathVariable("userId") Integer id) {
+        return userService.getUser(id);
     }
 
 }

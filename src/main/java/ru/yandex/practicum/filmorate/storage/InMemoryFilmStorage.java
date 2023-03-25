@@ -42,6 +42,10 @@ public class InMemoryFilmStorage implements FilmStorage {
         return film;
     }
 
+    public Film getFilm(Integer id) {
+        return films.get(id);
+    }
+
     private Integer getIdGenerator() {
         return ++idGenerator;
     }

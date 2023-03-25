@@ -55,4 +55,9 @@ public class InMemoryUserStorage implements UserStorage {
         public int size() {
                 return users.size();
         }
+
+
+    public User getUser(Integer id) {
+        return users.get(id);
+    }
 }
