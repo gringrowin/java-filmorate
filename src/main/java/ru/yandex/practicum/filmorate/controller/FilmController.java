@@ -9,6 +9,7 @@ import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
 
 import javax.validation.Valid;
 import java.util.Collection;
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -47,5 +48,22 @@ public class FilmController {
     @GetMapping("/{filmId}")
     public Film getFilm(@PathVariable("filmId") Integer filmId) {
         return filmService.getFilm(filmId);
+    }
+
+    @PutMapping("/{id}/like/{userId}")
+    public Film addLike(@PathVariable("id") Integer filmId,
+                        @PathVariable("userId") Integer userId) {
+        return filmService.addLike(filmId, userId);
+    }
+
+    @DeleteMapping("/{id}/like/{userId}")
+    public Film deleteLike(@PathVariable("id") Integer filmId,
+                           @PathVariable("userId") Integer userId) {
+        return filmService.deleteLike(filmId, userId);
+    }
+
+    @GetMapping("/popular")
+    public List<Film> getPopularFilms(@RequestParam(defaultValue = "10", required = false) Integer count) {
+        return filmService.getPopularFilms(count);
     }
 }

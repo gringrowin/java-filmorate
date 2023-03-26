@@ -42,7 +42,7 @@ public class InMemoryUserStorage implements UserStorage {
         }
 
         private void setName(User user) {
-                if(user.getName() == null) {
+                if(user.getName() == null || user.getName().isBlank()) {
                         user.setName(user.getLogin());
                         log.info("setNameAndId: {} - setName", user);
                 }
