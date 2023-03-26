@@ -3,14 +3,11 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
+import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
-import javax.validation.Valid;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -46,35 +43,47 @@ public class UserService {
     }
 
     public User getUser(Integer id) {
+        User user = userStorage.getUser(id);
+        if (user == null) {
+            throw new UserNotFoundException(String.format(
+                    "Пользователя с ID %s не найден.", id));
+        }
         return userStorage.getUser(id);
     }
 
     public User addFriend(Integer userId, Integer friendId) {
-        userStorage.getUser(userId).getFriends().add(friendId);
-        userStorage.getUser(friendId).getFriends().add(userId);
-        return userStorage.getUser(userId);
+        User user = getUser(userId);
+        User friend = getUser(friendId);
+        user.getFriends().add(friendId);
+        friend.getFriends().add(userId);
+        return getUser(userId);
     }
 
     public User deleteFriend(Integer userId, Integer friendId) {
-        userStorage.getUser(userId).getFriends().remove(friendId);
-        userStorage.getUser(friendId).getFriends().remove(userId);
-        return userStorage.getUser(userId);
+        User user = getUser(userId);
+        User friend = getUser(friendId);
+        user.getFriends().remove(friendId);
+        friend.getFriends().remove(userId);
+        return getUser(userId);
     }
 
     public List<User> getFriends(Integer userId) {
-        return userStorage
-                .getUser(userId)
+        return getUser(userId)
                 .getFriends()
                 .stream()
-                .map(userStorage::getUser)
+                .map(this::getUser)
                 .collect(Collectors.toList());
     }
 
-    public List<User> getCommonFriends(Integer userId, Integer otherId) {
-        Set<Integer> userFriends = userStorage.getUser(userId).getFriends();
-        Set<Integer> otherFriends = userStorage.getUser(userId).getFriends();
-        userFriends.retainAll(otherFriends);
-        return userFriends.stream()
+    public List getCommonFriends(Integer userId, Integer otherId) {
+        Set<Integer> userFriends = getUser(userId).getFriends();
+        Set<Integer> otherFriends = getUser(otherId).getFriends();
+        if (userFriends == null || otherFriends == null) {
+            return Collections.EMPTY_LIST;
+        }
+        Set<Integer> commonFriends = new HashSet<>(userFriends);
+        commonFriends.retainAll(otherFriends);
+        return commonFriends.stream()
                 .map(userStorage::getUser)
                 .collect(Collectors.toList());
     }
