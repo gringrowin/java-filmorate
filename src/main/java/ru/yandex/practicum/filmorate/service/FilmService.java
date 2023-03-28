@@ -94,8 +94,7 @@ public class FilmService {
                     = new RestTemplate().getForEntity(
                     "http://localhost:8080/users/{userId}",
                     User.class, params);
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             throw new UserNotFoundException(String.format(
                     "Пользователя с ID %s не найден.", userId));
         }
