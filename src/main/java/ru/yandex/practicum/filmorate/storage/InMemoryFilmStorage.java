@@ -21,7 +21,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     public Film add(Film film) {
-        if(films.containsValue(film)) {
+        if (films.containsValue(film)) {
             log.warn("film already exists: {}", film);
             throw new ValidationException("Film with " + film.getName() + " already exists.");
         }
