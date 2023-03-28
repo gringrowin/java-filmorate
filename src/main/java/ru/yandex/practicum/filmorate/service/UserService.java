@@ -44,7 +44,9 @@ public class UserService {
 
     public User getUser(Integer id) {
         User user = userStorage.getUser(id);
+        log.info("getUser: {} - ", user);
         if (user == null) {
+            log.warn("user id not found: {}", id);
             throw new UserNotFoundException(String.format(
                     "Пользователя с ID %s не найден.", id));
         }
@@ -52,22 +54,27 @@ public class UserService {
     }
 
     public User addFriend(Integer userId, Integer friendId) {
+        log.info("addFriend: {} - Started", friendId);
         User user = getUser(userId);
         User friend = getUser(friendId);
         user.getFriends().add(friendId);
         friend.getFriends().add(userId);
-        return getUser(userId);
+        log.info("addFriend: {} - Finished", user);
+        return user;
     }
 
     public User deleteFriend(Integer userId, Integer friendId) {
+        log.info("deleteFriend: {} - Started", friendId);
         User user = getUser(userId);
         User friend = getUser(friendId);
         user.getFriends().remove(friendId);
         friend.getFriends().remove(userId);
-        return getUser(userId);
+        log.info("deleteFriend: {} - Finished", user);
+        return user;
     }
 
     public List<User> getFriends(Integer userId) {
+        log.info("getFriends: {} - ", getUser(userId));
         return getUser(userId)
                 .getFriends()
                 .stream()
@@ -76,13 +83,17 @@ public class UserService {
     }
 
     public List getCommonFriends(Integer userId, Integer otherId) {
+
         Set<Integer> userFriends = getUser(userId).getFriends();
+        log.info("getCommonFriends: {} - Started", userFriends);
         Set<Integer> otherFriends = getUser(otherId).getFriends();
+        log.info("getCommonFriends: {} - Started", otherFriends);
         if (userFriends == null || otherFriends == null) {
             return Collections.EMPTY_LIST;
         }
         Set<Integer> commonFriends = new HashSet<>(userFriends);
         commonFriends.retainAll(otherFriends);
+        log.info("getCommonFriends: {} - Finished", commonFriends);
         return commonFriends.stream()
                 .map(userStorage::getUser)
                 .collect(Collectors.toList());

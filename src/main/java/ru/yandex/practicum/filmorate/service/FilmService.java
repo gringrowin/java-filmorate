@@ -1,20 +1,16 @@
 package ru.yandex.practicum.filmorate.service;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.logging.log4j.util.PropertySource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.client.RestTemplate;
 import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
-import ru.yandex.practicum.filmorate.storage.UserStorage;
 
-import javax.validation.Valid;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -23,12 +19,11 @@ import java.util.stream.Collectors;
 public class FilmService {
 
     private final FilmStorage filmStorage;
-    private final UserStorage userStorage;
+
 
     @Autowired
-    public FilmService(FilmStorage filmStorage, UserStorage userStorage) {
+    public FilmService(FilmStorage filmStorage) {
         this.filmStorage = filmStorage;
-        this.userStorage = userStorage;
     }
 
 
@@ -55,7 +50,9 @@ public class FilmService {
 
     public Film getFilm(Integer id) {
         Film film = filmStorage.getFilm(id);
+        log.info("getFilm: {} - ", film);
         if (film == null) {
+            log.warn("film id not found: {}", id);
             throw new FilmNotFoundException(String.format(
                     "Фильм с ID %s не найден.", id));
         }
@@ -65,18 +62,23 @@ public class FilmService {
     public Film addLike(Integer filmId, Integer userId) {
         checkUserId(userId);
         Film film = getFilm(filmId);
+        log.info("addLike: {} - Started", film);
         film.getLikes().add(userId);
+        log.info("addLike: {} - Finished", film);
         return film;
     }
 
     public Film deleteLike(Integer filmId, Integer userId) {
         checkUserId(userId);
         Film film = getFilm(filmId);
+        log.info("deleteLike: {} - Started", film);
         film.getLikes().remove(userId);
+        log.info("deleteLike: {} - Finished", film);
         return film;
     }
 
     public List<Film> getPopularFilms(Integer count) {
+        log.info("getPopularFilms: {} - TOP - ", count);
         return findAll().stream()
                 .sorted(Comparator.comparing(Film::getLikesCount).reversed())
                 .limit(Objects.requireNonNullElse(count, 10))
@@ -84,6 +86,7 @@ public class FilmService {
     }
 
     private void checkUserId(Integer userId) {
+        log.info("checkUserId: {} - ", userId);
         HashMap<String, Integer> params = new HashMap<>();
         params.put("userId", userId);
         try {
