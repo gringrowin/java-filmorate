@@ -11,7 +11,5 @@ public interface FilmStorage {
 
     Film update(Film film);
 
-    int size();
-
     Film getFilm(Integer id);
 }

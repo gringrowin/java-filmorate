@@ -24,40 +24,59 @@ public class FilmController {
 
     @GetMapping
     public Collection<Film> findAll() {
-        return filmService.findAll();
+        log.info("findAll - Started");
+        Collection<Film> allFilms = filmService.findAll();
+        log.info("findAll: {} - Finished", allFilms);
+        return allFilms;
     }
 
     @PostMapping
     public Film create(@Valid @RequestBody Film film) {
+        log.info("create: {} - Started", film);
         film = filmService.create(film);
+        log.info("create: {} - Finished", film);
         return film;
     }
 
     @PutMapping
     public Film put(@Valid @RequestBody Film film) {
+        log.info("put: {} - Started", film);
         film = filmService.put(film);
+        log.info("put: {} - Finished", film);
         return film;
     }
 
     @GetMapping("/{filmId}")
     public Film getFilm(@PathVariable("filmId") Integer filmId) {
-        return filmService.getFilm(filmId);
+        log.info("getFilm: {} - Started", filmId);
+        Film film = filmService.getFilm(filmId);
+        log.info("getFilm: {} - Finished", film);
+        return film;
     }
 
     @PutMapping("/{id}/like/{userId}")
     public Film addLike(@PathVariable("id") Integer filmId,
                         @PathVariable("userId") Integer userId) {
-        return filmService.addLike(filmId, userId);
+        log.info("addLike: {} - filmId, {} - userId", filmId, userId);
+        Film film = filmService.addLike(filmId, userId);
+        log.info("addLike: {} - Finished", film);
+        return film;
     }
 
     @DeleteMapping("/{id}/like/{userId}")
     public Film deleteLike(@PathVariable("id") Integer filmId,
                            @PathVariable("userId") Integer userId) {
-        return filmService.deleteLike(filmId, userId);
+        log.info("deleteLike: {} - filmId, {} - userId", filmId, userId);
+        Film film = filmService.deleteLike(filmId, userId);
+        log.info("deleteLike: {} - Finished", film);
+        return film;
     }
 
     @GetMapping("/popular")
     public List<Film> getPopularFilms(@RequestParam(defaultValue = "10", required = false) Integer count) {
-        return filmService.getPopularFilms(count);
+        log.info("getPopularFilms: {} - count", count);
+        List<Film> popularFilms = filmService.getPopularFilms(count);
+        log.info("getPopularFilms: {} - Finished", popularFilms);
+        return popularFilms;
     }
 }

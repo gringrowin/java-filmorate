@@ -2,9 +2,7 @@ package ru.yandex.practicum.filmorate.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
@@ -19,16 +17,18 @@ import java.util.stream.Collectors;
 public class FilmService {
 
     private final FilmStorage filmStorage;
+    private final UserService userService;
 
 
     @Autowired
-    public FilmService(FilmStorage filmStorage) {
+    public FilmService(FilmStorage filmStorage, UserService userService) {
         this.filmStorage = filmStorage;
+        this.userService = userService;
     }
 
 
     public Collection<Film> findAll() {
-        log.info("findAll: {}", filmStorage.size());
+        log.info("findAll: {}", filmStorage.getAll());
         return filmStorage.getAll();
     }
 
@@ -52,7 +52,7 @@ public class FilmService {
         Film film = filmStorage.getFilm(id);
         log.info("getFilm: {} - ", film);
         if (film == null) {
-            log.warn("film id not found: {}", id);
+            log.error("film id not found: {}", id);
             throw new FilmNotFoundException(String.format(
                     "Фильм с ID %s не найден.", id));
         }
@@ -87,14 +87,8 @@ public class FilmService {
 
     private void checkUserId(Integer userId) {
         log.info("checkUserId: {} - ", userId);
-        HashMap<String, Integer> params = new HashMap<>();
-        params.put("userId", userId);
-        try {
-            ResponseEntity<User> response
-                    = new RestTemplate().getForEntity(
-                    "http://localhost:8080/users/{userId}",
-                    User.class, params);
-        } catch (Exception ex) {
+        User user = userService.getUser(userId);
+        if (user == null) {
             throw new UserNotFoundException(String.format(
                     "Пользователя с ID %s не найден.", userId));
         }

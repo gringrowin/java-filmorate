@@ -23,7 +23,7 @@ public class UserService {
 
 
     public Collection<User> findAll() {
-        log.info("findAll: {}", userStorage.size());
+        log.info("findAll: {}", userStorage.getAll());
         return userStorage.getAll();
     }
 
@@ -46,7 +46,7 @@ public class UserService {
         User user = userStorage.getUser(id);
         log.info("getUser: {} - ", user);
         if (user == null) {
-            log.warn("user id not found: {}", id);
+            log.error("user id not found: {}", id);
             throw new UserNotFoundException(String.format(
                     "Пользователя с ID %s не найден.", id));
         }
