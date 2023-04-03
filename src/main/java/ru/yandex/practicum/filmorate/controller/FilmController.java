@@ -39,10 +39,10 @@ public class FilmController {
     }
 
     @PutMapping
-    public Film put(@Valid @RequestBody Film film) {
-        log.info("put: {} - Started", film);
-        film = filmService.put(film);
-        log.info("put: {} - Finished", film);
+    public Film update(@Valid @RequestBody Film film) {
+        log.info("update: {} - Started", film);
+        film = filmService.update(film);
+        log.info("update: {} - Finished", film);
         return film;
     }
 

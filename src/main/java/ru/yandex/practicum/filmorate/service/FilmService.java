@@ -41,10 +41,10 @@ public class FilmService {
     }
 
 
-    public Film put(Film film) {
-        log.info("put: {} - Started", film);
+    public Film update(Film film) {
+        log.info("update: {} - Started", film);
         film = filmStorage.update(film);
-        log.info("put: {} - Finished", film);
+        log.info("update: {} - Finished", film);
         return film;
     }
 

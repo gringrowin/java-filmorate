@@ -35,10 +35,10 @@ public class UserService {
         return user;
     }
 
-    public User put(User user) {
-        log.info("put: {} - Started", user);
+    public User update(User user) {
+        log.info("update: {} - Started", user);
         user = userStorage.update(user);
-        log.info("put: {} - Finished", user);
+        log.info("update: {} - Finished", user);
         return user;
     }
 

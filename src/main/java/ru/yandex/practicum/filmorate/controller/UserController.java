@@ -38,10 +38,10 @@ public class UserController {
     }
 
     @PutMapping
-    public User put(@Valid @RequestBody User user) {
-        log.info("put: {} - Started", user);
-        user = userService.put(user);
-        log.info("put: {} - Finished", user);
+    public User update(@Valid @RequestBody User user) {
+        log.info("update: {} - Started", user);
+        user = userService.update(user);
+        log.info("update: {} - Finished", user);
         return user;
     }
 
