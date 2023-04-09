@@ -2,12 +2,14 @@ package ru.yandex.practicum.filmorate.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
@@ -15,6 +17,7 @@ import ru.yandex.practicum.filmorate.service.FilmService;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -33,6 +36,17 @@ class FilmControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
+
+    private final Film testFilm = new Film();
+
+    @BeforeEach
+    void initializationTestFilm() {
+        testFilm.setId(1);
+        testFilm.setDuration(120);
+        testFilm.setReleaseDate(LocalDate.of(2015, 1, 1));
+        testFilm.setName("Friends");
+        testFilm.setDescription("film");
+    }
 
     @SneakyThrows
     @Test
@@ -53,11 +67,7 @@ class FilmControllerTest {
     @SneakyThrows
     @Test
     void createWhenInvokedWithValidFilmThenReturnedOkWithCreatedFilm() {
-        Film filmToCreate = new Film();
-        filmToCreate.setDuration(120);
-        filmToCreate.setReleaseDate(LocalDate.of(2015, 1, 1));
-        filmToCreate.setName("Friends");
-        filmToCreate.setDescription("film");
+        Film filmToCreate = testFilm;
 
         when(filmService.create(filmToCreate)).thenReturn(filmToCreate);
 
@@ -78,6 +88,8 @@ class FilmControllerTest {
     void createWhenInvokedWithInvalidFilmThenReturned5xxServerError() {
         Film filmToCreate = new Film();
 
+        when(filmService.create(filmToCreate)).thenThrow(ValidationException.class);
+
         mockMvc.perform(post("/films")
                         .contentType("application/json")
                         .content(objectMapper.writeValueAsString(filmToCreate)))
@@ -89,13 +101,7 @@ class FilmControllerTest {
     @SneakyThrows
     @Test
     void updateWhenInvokedWithValidFilmThenReturnedOkWithUpdatedFilm() {
-        filmService.create(new Film());
-        Film filmToUpdate = new Film();
-        filmToUpdate.setId(1);
-        filmToUpdate.setDuration(120);
-        filmToUpdate.setReleaseDate(LocalDate.of(2015, 1, 1));
-        filmToUpdate.setName("Friends");
-        filmToUpdate.setDescription("film");
+        Film filmToUpdate = testFilm;
 
         when(filmService.update(filmToUpdate)).thenReturn(filmToUpdate);
 
@@ -114,13 +120,8 @@ class FilmControllerTest {
     @SneakyThrows
     @Test
     void updateWhenInvokedWithInvalidIdFilmThenReturned404NotFound() {
-        filmService.create(new Film());
-        Film filmToUpdate = new Film();
+        Film filmToUpdate = testFilm;
         filmToUpdate.setId(4);
-        filmToUpdate.setDuration(120);
-        filmToUpdate.setReleaseDate(LocalDate.of(2015, 1, 1));
-        filmToUpdate.setName("Friends");
-        filmToUpdate.setDescription("film");
 
         when(filmService.update(filmToUpdate)).thenThrow(FilmNotFoundException.class);
 
@@ -134,101 +135,83 @@ class FilmControllerTest {
 
     @SneakyThrows
     @Test
-    void getFilm() {
-        filmService.create(new Film());
-        Film filmToUpdate = new Film();
-        filmToUpdate.setId(1);
-        filmToUpdate.setDuration(120);
-        filmToUpdate.setReleaseDate(LocalDate.of(2015, 1, 1));
-        filmToUpdate.setName("Friends");
-        filmToUpdate.setDescription("film");
+    void getFilmWhenInvokedWithInvalidIdFilmThenReturned404NotFound() {
+        int id = 1;
+        when(filmService.getFilm(id)).thenThrow(FilmNotFoundException.class);
 
-        when(filmService.update(filmToUpdate)).thenReturn(filmToUpdate);
+        mockMvc.perform(get("/films/{id}", id))
+                .andExpect(status().isNotFound());
 
-        String response = mockMvc.perform(put("/films")
-                        .contentType("application/json")
-                        .content(objectMapper.writeValueAsString(filmToUpdate)))
-                .andExpect(status().isOk())
-                .andReturn()
-                .getResponse()
-                .getContentAsString();
-
-        verify(filmService).update(filmToUpdate);
-        assertEquals(objectMapper.writeValueAsString(filmToUpdate), response);
+        verify(filmService).getFilm(id);
     }
 
     @SneakyThrows
     @Test
-    void addLike() {
-        filmService.create(new Film());
-        Film filmToUpdate = new Film();
-        filmToUpdate.setId(1);
-        filmToUpdate.setDuration(120);
-        filmToUpdate.setReleaseDate(LocalDate.of(2015, 1, 1));
-        filmToUpdate.setName("Friends");
-        filmToUpdate.setDescription("film");
+    void getFilmWhenInvokedWithValidIdFilmThenReturnedWithFilm() {
+        Film filmToGet = testFilm;
+        int id = 1;
+        when(filmService.getFilm(id)).thenReturn(filmToGet);
 
-        when(filmService.update(filmToUpdate)).thenReturn(filmToUpdate);
-
-        String response = mockMvc.perform(put("/films")
-                        .contentType("application/json")
-                        .content(objectMapper.writeValueAsString(filmToUpdate)))
+        String response = mockMvc.perform(get("/films/{id}", id))
                 .andExpect(status().isOk())
                 .andReturn()
                 .getResponse()
                 .getContentAsString();
 
-        verify(filmService).update(filmToUpdate);
-        assertEquals(objectMapper.writeValueAsString(filmToUpdate), response);
+        verify(filmService).getFilm(id);
+        assertEquals(objectMapper.writeValueAsString(filmToGet), response);
     }
 
     @SneakyThrows
     @Test
-    void deleteLike() {
-        filmService.create(new Film());
-        Film filmToUpdate = new Film();
-        filmToUpdate.setId(1);
-        filmToUpdate.setDuration(120);
-        filmToUpdate.setReleaseDate(LocalDate.of(2015, 1, 1));
-        filmToUpdate.setName("Friends");
-        filmToUpdate.setDescription("film");
+    void addLikeWhenInvokedWithValidParamsThenReturnedWithFilm() {
+        Film filmToAddLike = testFilm;
+        int filmId = 1;
+        int userId = 1;
+        when(filmService.addLike(filmId, userId)).thenReturn(filmToAddLike);
 
-        when(filmService.update(filmToUpdate)).thenReturn(filmToUpdate);
-
-        String response = mockMvc.perform(put("/films")
-                        .contentType("application/json")
-                        .content(objectMapper.writeValueAsString(filmToUpdate)))
+        String response = mockMvc.perform(put("/films/{id}/like/{userId}", filmId, userId))
                 .andExpect(status().isOk())
                 .andReturn()
                 .getResponse()
                 .getContentAsString();
 
-        verify(filmService).update(filmToUpdate);
-        assertEquals(objectMapper.writeValueAsString(filmToUpdate), response);
+        verify(filmService).addLike(filmId, userId);
+        assertEquals(objectMapper.writeValueAsString(filmToAddLike), response);
     }
 
     @SneakyThrows
     @Test
-    void getPopularFilms() {
-        filmService.create(new Film());
-        Film filmToUpdate = new Film();
-        filmToUpdate.setId(1);
-        filmToUpdate.setDuration(120);
-        filmToUpdate.setReleaseDate(LocalDate.of(2015, 1, 1));
-        filmToUpdate.setName("Friends");
-        filmToUpdate.setDescription("film");
+    void deleteLikeWhenInvokedWithValidParamsThenReturnedWithFilm() {
+        Film filmToDeleteLike = testFilm;
+        int filmId = 1;
+        int userId = 1;
+        when(filmService.deleteLike(filmId, userId)).thenReturn(filmToDeleteLike);
 
-        when(filmService.update(filmToUpdate)).thenReturn(filmToUpdate);
-
-        String response = mockMvc.perform(put("/films")
-                        .contentType("application/json")
-                        .content(objectMapper.writeValueAsString(filmToUpdate)))
+        String response = mockMvc.perform(delete("/films/{id}/like/{userId}", filmId, userId))
                 .andExpect(status().isOk())
                 .andReturn()
                 .getResponse()
                 .getContentAsString();
 
-        verify(filmService).update(filmToUpdate);
-        assertEquals(objectMapper.writeValueAsString(filmToUpdate), response);
+        verify(filmService).deleteLike(filmId, userId);
+        assertEquals(objectMapper.writeValueAsString(filmToDeleteLike), response);
+    }
+
+    @SneakyThrows
+    @Test
+    void getPopularFilmsWhenInvokedWithValidParamsThenReturnedWithFilms() {
+        List<Film> popularFilms = List.of(testFilm);
+        int count = 1;
+        when(filmService.getPopularFilms(count)).thenReturn(popularFilms);
+
+        String response = mockMvc.perform(get("/films/popular?count={count}", count))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        verify(filmService).getPopularFilms(count);
+        assertEquals(objectMapper.writeValueAsString(popularFilms), response);
     }
 }
