@@ -27,7 +27,6 @@ public class UserService {
         return userStorage.getAll();
     }
 
-
     public User create(User user) {
         log.info("create: {} - Started", user);
         user = userStorage.add(user);

@@ -28,8 +28,9 @@ public class FilmService {
 
 
     public Collection<Film> findAll() {
-        log.info("findAll: {}", filmStorage.getAll());
-        return filmStorage.getAll();
+        Collection<Film> films = filmStorage.getAll();
+        log.info("findAll: {}", films);
+        return films;
     }
 
 
