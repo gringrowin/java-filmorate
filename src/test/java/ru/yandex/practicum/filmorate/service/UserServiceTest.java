@@ -103,8 +103,8 @@ class UserServiceTest {
 
         userService.addFriend(idUser, idFriend);
 
-        verify(userStorage, atLeast(2)).getUser(idUser);
-        verify(userStorage, atLeast(2)).getUser(idFriend);
+        verify(userStorage).getUser(idUser);
+        verify(userStorage).getUser(idFriend);
 
         assertEquals(1, user.getFriends().size());
         assertEquals(1, friend.getFriends().size());
@@ -128,8 +128,8 @@ class UserServiceTest {
 
         userService.deleteFriend(idUser, idFriend);
 
-        verify(userStorage, atLeast(2)).getUser(idUser);
-        verify(userStorage, atLeast(2)).getUser(idFriend);
+        verify(userStorage).getUser(idUser);
+        verify(userStorage).getUser(idFriend);
 
         assertEquals(0, user.getFriends().size());
         assertEquals(0, friend.getFriends().size());

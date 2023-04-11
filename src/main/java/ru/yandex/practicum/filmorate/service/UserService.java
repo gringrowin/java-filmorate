@@ -23,8 +23,9 @@ public class UserService {
 
 
     public Collection<User> findAll() {
-        log.info("findAll: {}", userStorage.getAll());
-        return userStorage.getAll();
+        Collection<User> users = userStorage.getAll();
+        log.info("findAll: {}", users);
+        return users;
     }
 
     public User create(User user) {
@@ -49,7 +50,7 @@ public class UserService {
             throw new UserNotFoundException(String.format(
                     "Пользователя с ID %s не найден.", id));
         }
-        return userStorage.getUser(id);
+        return user;
     }
 
     public User addFriend(Integer userId, Integer friendId) {
