@@ -1,39 +1,82 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.storage.FilmRepository;
+import ru.yandex.practicum.filmorate.service.FilmService;
 
 import javax.validation.Valid;
 import java.util.Collection;
+import java.util.List;
 
 @Slf4j
 @RestController
 @RequestMapping("/films")
 public class FilmController {
 
-    private final FilmRepository filmRepository = new FilmRepository();
+    private final FilmService filmService;
+
+    @Autowired
+    public FilmController(FilmService filmService) {
+        this.filmService = filmService;
+    }
 
     @GetMapping
     public Collection<Film> findAll() {
-        log.info("findAll: {}", filmRepository.size());
-        return filmRepository.getAll();
+        log.info("findAll - Started");
+        Collection<Film> allFilms = filmService.findAll();
+        log.info("findAll: {} - Finished", allFilms);
+        return allFilms;
     }
 
     @PostMapping
     public Film create(@Valid @RequestBody Film film) {
         log.info("create: {} - Started", film);
-        film = filmRepository.add(film);
+        film = filmService.create(film);
         log.info("create: {} - Finished", film);
         return film;
     }
 
     @PutMapping
-    public Film put(@Valid @RequestBody Film film) {
-        log.info("put: {} - Started", film);
-        film = filmRepository.update(film);
-        log.info("put: {} - Finished", film);
+    public Film update(@Valid @RequestBody Film film) {
+        log.info("update: {} - Started", film);
+        film = filmService.update(film);
+        log.info("update: {} - Finished", film);
         return film;
+    }
+
+    @GetMapping("/{filmId}")
+    public Film getFilm(@PathVariable("filmId") Integer filmId) {
+        log.info("getFilm: {} - Started", filmId);
+        Film film = filmService.getFilm(filmId);
+        log.info("getFilm: {} - Finished", film);
+        return film;
+    }
+
+    @PutMapping("/{id}/like/{userId}")
+    public Film addLike(@PathVariable("id") Integer filmId,
+                        @PathVariable("userId") Integer userId) {
+        log.info("addLike: {} - filmId, {} - userId", filmId, userId);
+        Film film = filmService.addLike(filmId, userId);
+        log.info("addLike: {} - Finished", film);
+        return film;
+    }
+
+    @DeleteMapping("/{id}/like/{userId}")
+    public Film deleteLike(@PathVariable("id") Integer filmId,
+                           @PathVariable("userId") Integer userId) {
+        log.info("deleteLike: {} - filmId, {} - userId", filmId, userId);
+        Film film = filmService.deleteLike(filmId, userId);
+        log.info("deleteLike: {} - Finished", film);
+        return film;
+    }
+
+    @GetMapping("/popular")
+    public List<Film> getPopularFilms(@RequestParam(defaultValue = "10", required = false) Integer count) {
+        log.info("getPopularFilms: {} - count", count);
+        List<Film> popularFilms = filmService.getPopularFilms(count);
+        log.info("getPopularFilms: {} - Finished", popularFilms);
+        return popularFilms;
     }
 }
