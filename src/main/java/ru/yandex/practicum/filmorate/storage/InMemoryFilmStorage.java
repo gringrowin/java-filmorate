@@ -50,8 +50,4 @@ public class InMemoryFilmStorage implements FilmStorage {
     private Integer getIdGenerator() {
         return ++idGenerator;
     }
-
-    public int size() {
-        return films.size();
-    }
 }

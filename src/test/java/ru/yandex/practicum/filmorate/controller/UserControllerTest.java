@@ -52,7 +52,7 @@ class UserControllerTest {
     @SneakyThrows
     @Test
     void findAllWhenEmptyStorageThenReturnedOkWithEmptyList() {
-        Collection<User> allUsers = Collections.EMPTY_LIST;
+        Collection<User> allUsers = Collections.emptyList();
         when(userService.findAll()).thenReturn(allUsers);
 
         String response = mockMvc.perform(get("/users"))
@@ -220,9 +220,13 @@ class UserControllerTest {
     @SneakyThrows
     @Test
     void getCommonFriendsWhenInvokedWithValidParamsThenReturnedWithListOfFriends() {
-        int userId = 1;
+        User user = testUser;
+        int userId = user.getId();
+        User otherUser = new User();
         int otherId = 2;
-        List<Integer> commonFriends = List.of(userId, otherId);
+        otherUser.setId(otherId);
+
+        List<User> commonFriends = List.of(user, otherUser);
 
         when(userService.getCommonFriends(userId, otherId)).thenReturn(commonFriends);
 

@@ -82,14 +82,14 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
-    public List getCommonFriends(Integer userId, Integer otherId) {
+    public List<User> getCommonFriends(Integer userId, Integer otherId) {
 
         Set<Integer> userFriends = getUser(userId).getFriends();
         log.info("getCommonFriends: {} - Started", userFriends);
         Set<Integer> otherFriends = getUser(otherId).getFriends();
         log.info("getCommonFriends: {} - Started", otherFriends);
         if (userFriends == null || otherFriends == null) {
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         }
         Set<Integer> commonFriends = new HashSet<>(userFriends);
         commonFriends.retainAll(otherFriends);
