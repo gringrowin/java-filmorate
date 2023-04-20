@@ -1,9 +1,13 @@
 package ru.yandex.practicum.filmorate.storage;
 
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.util.Collection;
 
+@Component
+@Qualifier("dbStorage")
 public class UserDbStorage implements UserStorage {
     @Override
     public Collection<User> getAll() {

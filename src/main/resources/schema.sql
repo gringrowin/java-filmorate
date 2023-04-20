@@ -1,4 +1,4 @@
-CREATE TABLE "Films" (
+CREATE TABLE IF NOT EXISTS "Films" (
     "film_id" int   NOT NULL,
     "name" varchar(40)   NOT NULL,
     "description" varchar(200),
@@ -10,7 +10,7 @@ CREATE TABLE "Films" (
      )
 );
 
-CREATE TABLE "Users" (
+CREATE TABLE IF NOT EXISTS "Users" (
     "user_id" int   NOT NULL,
     "email" varchar(40)   NOT NULL,
     "login" varchar(40)   NOT NULL,
@@ -27,7 +27,7 @@ CREATE TABLE "Users" (
     )
 );
 
-CREATE TABLE "Genres" (
+CREATE TABLE IF NOT EXISTS "Genres" (
     "genre_id" int   NOT NULL,
     "name_id" varchar(40)   NOT NULL,
     CONSTRAINT "pk_Genres" PRIMARY KEY (
@@ -38,12 +38,12 @@ CREATE TABLE "Genres" (
     )
 );
 
-CREATE TABLE "FilmGenres" (
+CREATE TABLE IF NOT EXISTS "FilmGenres" (
     "film_id" int   NOT NULL,
     "genre_id" int   NOT NULL
 );
 
-CREATE TABLE "Mpa" (
+CREATE TABLE IF NOT EXISTS "Mpa" (
     "rate_id" int   NOT NULL,
     "name" varchar(10)   NOT NULL,
     CONSTRAINT "pk_Mpa" PRIMARY KEY (
@@ -54,22 +54,18 @@ CREATE TABLE "Mpa" (
     )
 );
 
-CREATE TABLE "Friends" (
+CREATE TABLE IF NOT EXISTS "Friends" (
     "user_id" int   NOT NULL,
     "friends_id" int   NOT NULL
 );
 
-CREATE TABLE "FriendReqestsTo" (
+CREATE TABLE IF NOT EXISTS "FriendReqests" (
     "user_id" int   NOT NULL,
-    "friends_id" int   NOT NULL
+    "friends_id" int   NOT NULL,
+    "is_accepted" boolean   NOT NULL
 );
 
-CREATE TABLE "FriendReqestsFrom" (
-    "user_id" int   NOT NULL,
-    "friends_id" int   NOT NULL
-);
-
-CREATE TABLE "Likes" (
+CREATE TABLE IF NOT EXISTS "Likes" (
     "films_id" int   NOT NULL,
     "user_id" int   NOT NULL
 );
@@ -89,16 +85,10 @@ REFERENCES "Users" ("user_id");
 ALTER TABLE "Friends" ADD CONSTRAINT "fk_Friends_friends_id" FOREIGN KEY("friends_id")
 REFERENCES "Users" ("user_id");
 
-ALTER TABLE "FriendReqestsTo" ADD CONSTRAINT "fk_FriendReqestsTo_user_id" FOREIGN KEY("user_id")
+ALTER TABLE "FriendReqests" ADD CONSTRAINT "fk_FriendReqests_user_id" FOREIGN KEY("user_id")
 REFERENCES "Users" ("user_id");
 
-ALTER TABLE "FriendReqestsTo" ADD CONSTRAINT "fk_FriendReqestsTo_friends_id" FOREIGN KEY("friends_id")
-REFERENCES "Users" ("user_id");
-
-ALTER TABLE "FriendReqestsFrom" ADD CONSTRAINT "fk_FriendReqestsFrom_user_id" FOREIGN KEY("user_id")
-REFERENCES "Users" ("user_id");
-
-ALTER TABLE "FriendReqestsFrom" ADD CONSTRAINT "fk_FriendReqestsFrom_friends_id" FOREIGN KEY("friends_id")
+ALTER TABLE "FriendReqests" ADD CONSTRAINT "fk_FriendReqests_friends_id" FOREIGN KEY("friends_id")
 REFERENCES "Users" ("user_id");
 
 ALTER TABLE "Likes" ADD CONSTRAINT "fk_Likes_films_id" FOREIGN KEY("films_id")
