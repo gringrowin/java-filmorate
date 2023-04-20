@@ -59,12 +59,6 @@ CREATE TABLE IF NOT EXISTS "Friends" (
     "friends_id" int   NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS "FriendReqests" (
-    "user_id" int   NOT NULL,
-    "friends_id" int   NOT NULL,
-    "is_accepted" boolean   NOT NULL
-);
-
 CREATE TABLE IF NOT EXISTS "Likes" (
     "films_id" int   NOT NULL,
     "user_id" int   NOT NULL
@@ -83,12 +77,6 @@ ALTER TABLE "Friends" ADD CONSTRAINT "fk_Friends_user_id" FOREIGN KEY("user_id")
 REFERENCES "Users" ("user_id");
 
 ALTER TABLE "Friends" ADD CONSTRAINT "fk_Friends_friends_id" FOREIGN KEY("friends_id")
-REFERENCES "Users" ("user_id");
-
-ALTER TABLE "FriendReqests" ADD CONSTRAINT "fk_FriendReqests_user_id" FOREIGN KEY("user_id")
-REFERENCES "Users" ("user_id");
-
-ALTER TABLE "FriendReqests" ADD CONSTRAINT "fk_FriendReqests_friends_id" FOREIGN KEY("friends_id")
 REFERENCES "Users" ("user_id");
 
 ALTER TABLE "Likes" ADD CONSTRAINT "fk_Likes_films_id" FOREIGN KEY("films_id")
