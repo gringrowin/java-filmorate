@@ -1,14 +1,20 @@
-package ru.yandex.practicum.filmorate.storage;
+package ru.yandex.practicum.filmorate.storage.dao;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
 import java.util.Collection;
 
-@Component
-@Qualifier("dbStorage")
+@Component("dbFilmStorage")
+@RequiredArgsConstructor
 public class FilmDbStorage implements FilmStorage {
+
+    private final JdbcTemplate jdbcTemplate;
+
     @Override
     public Collection<Film> getAll() {
         return null;
@@ -16,6 +22,9 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public Film add(Film film) {
+        String sql = "INSERT INTO users (EMAIL, LOGIN, USER_NAME, BIRTHDAY) " +
+                "(VALUES (?, ?, ?, ?)";
+
         return null;
     }
 

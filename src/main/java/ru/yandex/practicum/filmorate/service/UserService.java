@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
@@ -17,7 +18,7 @@ public class UserService {
     private final UserStorage userStorage;
 
     @Autowired
-    public UserService(UserStorage userStorage) {
+    public UserService(@Qualifier("dbUserStorage") UserStorage userStorage) {
         this.userStorage = userStorage;
     }
 
@@ -48,27 +49,21 @@ public class UserService {
         if (user == null) {
             log.error("user id not found: {}", id);
             throw new UserNotFoundException(String.format(
-                    "Пользователя с ID %s не найден.", id));
+                    "Пользователь с ID %s не найден.", id));
         }
         return user;
     }
 
     public User addFriend(Integer userId, Integer friendId) {
         log.info("addFriend: {} - Started", friendId);
-        User user = getUser(userId);
-        User friend = getUser(friendId);
-        user.getFriends().add(friendId);
-        friend.getFriends().add(userId);
+        User user = userStorage.addFriend(userId, friendId);
         log.info("addFriend: {} - Finished", user);
         return user;
     }
 
     public User deleteFriend(Integer userId, Integer friendId) {
         log.info("deleteFriend: {} - Started", friendId);
-        User user = getUser(userId);
-        User friend = getUser(friendId);
-        user.getFriends().remove(friendId);
-        friend.getFriends().remove(userId);
+        User user = userStorage.deleteFriend(userId, friendId);
         log.info("deleteFriend: {} - Finished", user);
         return user;
     }
@@ -83,7 +78,6 @@ public class UserService {
     }
 
     public List<User> getCommonFriends(Integer userId, Integer otherId) {
-
         Set<Integer> userFriends = getUser(userId).getFriends();
         log.info("getCommonFriends: {} - Started", userFriends);
         Set<Integer> otherFriends = getUser(otherId).getFriends();

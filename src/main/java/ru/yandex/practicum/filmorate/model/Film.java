@@ -5,6 +5,7 @@ import ru.yandex.practicum.filmorate.validation.constraints.FilmReleaseDateConst
 
 import javax.validation.constraints.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -20,6 +21,8 @@ public class Film {
     @Positive
     private Integer duration;
     private Set<Integer> likes = new HashSet<>();
+    private String rating;
+    private ArrayList<String> genres;
 
     public Integer getLikesCount() {
         return getLikes().size();
