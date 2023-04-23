@@ -19,6 +19,7 @@ public class Film {
     @Positive
     private Integer duration;
     private Mpa mpa;
+    private Integer rate;
     private Set<Integer> likes = new HashSet<>();
     private Set<Genre> genres = new HashSet<>();
 

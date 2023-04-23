@@ -40,7 +40,10 @@ CREATE TABLE IF NOT EXISTS Genres (
 
 CREATE TABLE IF NOT EXISTS FilmGenres (
     film_id int   NOT NULL,
-    genre_id int   NOT NULL
+    genre_id int   NOT NULL,
+    CONSTRAINT unique_pair UNIQUE (
+    film_id, genre_id
+    )
 );
 
 CREATE TABLE IF NOT EXISTS Mpa (

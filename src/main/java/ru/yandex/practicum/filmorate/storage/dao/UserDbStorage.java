@@ -54,7 +54,7 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public User update(User user) {
-
+        checkIdUser(user.getId());
         String sql = "UPDATE USERS SET EMAIL = ?, LOGIN = ?, USER_NAME = ?, BIRTHDAY = ? "
                 + "WHERE USER_ID = ?";
 
@@ -70,24 +70,19 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public User getUser(Integer id) {
-        try {
-            String sql = "SELECT U.USER_ID, U.EMAIL, U.LOGIN, U.USER_NAME, U.BIRTHDAY, " +
-                    "GROUP_CONCAT(DISTINCT F.FRIEND_ID)  FROM USERS AS U " +
-                    "JOIN FRIENDS F on U.USER_ID = F.FRIEND_ID " +
-                    "WHERE U.USER_ID = ? " +
-                    "GROUP BY U.USER_ID";
+        checkIdUser(id);
+        String sql = "SELECT U.USER_ID, U.EMAIL, U.LOGIN, U.USER_NAME, U.BIRTHDAY " +
+                "FROM USERS AS U " +
+                "WHERE U.USER_ID = ? " +
+                "GROUP BY U.USER_ID";
 
-            return jdbcTemplate.queryForObject(sql, this::mapRowToUser, id);
-
-        } catch (EmptyResultDataAccessException e) {
-            throw new UserNotFoundException("Пользователь с идентификатором " + id + " не найден.");
-        }
+        return jdbcTemplate.queryForObject(sql, this::mapRowToUser, id);
     }
 
     @Override
     public User addFriend(Integer userId, Integer friendId) {
-        getUser(userId);
-        getUser(friendId);
+        checkIdUser(userId);
+        checkIdUser(friendId);
 
         String sql = "INSERT INTO FRIENDS(USER_ID, FRIEND_ID) " +
                 "VALUES (?, ?)";
@@ -111,8 +106,18 @@ public class UserDbStorage implements UserStorage {
             user.setLogin(resultSet.getString("LOGIN"));
             user.setName(resultSet.getString("USER_NAME"));
             user.setBirthday(Objects.requireNonNull(resultSet.getDate("BIRTHDAY")).toLocalDate());
-            user.setFriends(Set.of(resultSet.getInt("FRIEND_ID")));
+            user.setFriends(getFriends(user.getId()));
             return user;
+    }
+
+    private void checkIdUser(Integer id) {
+        try {
+            String sql = "SELECT * FROM USERS " +
+                    "WHERE USER_ID = ?";
+            jdbcTemplate.queryForObject(sql, this::mapRowToUser, id);
+        } catch (EmptyResultDataAccessException e) {
+            throw new UserNotFoundException("Пользователь с ID: " + id + " не найден!");
+        }
     }
 
     private Set<Integer> getFriends(Integer userId) {
