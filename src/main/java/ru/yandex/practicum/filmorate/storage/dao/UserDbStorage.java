@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.storage.dao;
 
-import com.fasterxml.jackson.databind.introspect.TypeResolutionContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -26,14 +25,14 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public Collection<User> getAll() {
-        String sql = "SELECT * FROM USERS;";
+        String sql = "SELECT * FROM USERS " +
+                "GROUP BY USER_ID";
 
         return jdbcTemplate.query(sql, this::mapRowToUser);
     }
 
     @Override
     public User add(User user) {
-        setName(user);
         String sql = "INSERT INTO USERS (EMAIL, LOGIN, USER_NAME, BIRTHDAY) " +
                 "VALUES (?, ?, ?, ?)";
 
@@ -55,11 +54,9 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public User update(User user) {
-        setName(user);
-        getUser(user.getId());
 
-        String sql = "UPDATE USERS SET " + "EMAIL = ?, LOGIN = ?, USER_NAME = ?, BIRTHDAY = ? "
-                + "WHERE  USER_ID = ?";
+        String sql = "UPDATE USERS SET EMAIL = ?, LOGIN = ?, USER_NAME = ?, BIRTHDAY = ? "
+                + "WHERE USER_ID = ?";
 
         jdbcTemplate.update(sql,
                 user.getEmail(),
@@ -74,10 +71,13 @@ public class UserDbStorage implements UserStorage {
     @Override
     public User getUser(Integer id) {
         try {
-            String sql = "SELECT * FROM USERS WHERE USER_ID = ?";
-            User user = jdbcTemplate.queryForObject(sql, this::mapRowToUser, id);
-            user.setFriends(getFriends(user.getId()));
-            return user;
+            String sql = "SELECT U.USER_ID, U.EMAIL, U.LOGIN, U.USER_NAME, U.BIRTHDAY, " +
+                    "GROUP_CONCAT(DISTINCT F.FRIEND_ID)  FROM USERS AS U " +
+                    "JOIN FRIENDS F on U.USER_ID = F.FRIEND_ID " +
+                    "WHERE U.USER_ID = ? " +
+                    "GROUP BY U.USER_ID";
+
+            return jdbcTemplate.queryForObject(sql, this::mapRowToUser, id);
 
         } catch (EmptyResultDataAccessException e) {
             throw new UserNotFoundException("Пользователь с идентификатором " + id + " не найден.");
@@ -89,7 +89,7 @@ public class UserDbStorage implements UserStorage {
         getUser(userId);
         getUser(friendId);
 
-        String sql = "INSERT INTO FRIENDS(USER_ID, FRIENDS_ID) " +
+        String sql = "INSERT INTO FRIENDS(USER_ID, FRIEND_ID) " +
                 "VALUES (?, ?)";
         jdbcTemplate.update(sql, userId, friendId);
 
@@ -98,7 +98,7 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public User deleteFriend(Integer userId, Integer friendId) {
-        String sql = "DELETE FROM FRIENDS WHERE USER_ID = ? AND FRIENDS_ID = ?";
+        String sql = "DELETE FROM FRIENDS WHERE USER_ID = ? AND FRIEND_ID = ?";
         jdbcTemplate.update(sql, userId, friendId);
 
         return getUser(userId);
@@ -111,22 +111,17 @@ public class UserDbStorage implements UserStorage {
             user.setLogin(resultSet.getString("LOGIN"));
             user.setName(resultSet.getString("USER_NAME"));
             user.setBirthday(Objects.requireNonNull(resultSet.getDate("BIRTHDAY")).toLocalDate());
+            user.setFriends(Set.of(resultSet.getInt("FRIEND_ID")));
             return user;
-    }
-
-    private void setName(User user) {
-        if (user.getName() == null || user.getName().isBlank()) {
-            user.setName(user.getLogin());
-        }
     }
 
     private Set<Integer> getFriends(Integer userId) {
         Set<Integer> friends = new HashSet<>();
         try {
-            String sql = "SELECT FRIENDS_ID FROM FRIENDS WHERE USER_ID = ?";
+            String sql = "SELECT FRIEND_ID FROM FRIENDS WHERE USER_ID = ?";
             SqlRowSet friendsRows = jdbcTemplate.queryForRowSet(sql, userId);
             while (friendsRows.next()) {
-                friends.add(friendsRows.getInt("FRIENDS_ID"));
+                friends.add(friendsRows.getInt("FRIEND_ID"));
             }
             return friends;
 

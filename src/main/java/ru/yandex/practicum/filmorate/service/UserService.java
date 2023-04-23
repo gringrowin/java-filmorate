@@ -30,6 +30,7 @@ public class UserService {
     }
 
     public User create(User user) {
+        checkNameUser(user);
         log.info("create: {} - Started", user);
         user = userStorage.add(user);
         log.info("create: {} - Finished", user);
@@ -37,6 +38,7 @@ public class UserService {
     }
 
     public User update(User user) {
+        checkNameUser(user);
         log.info("update: {} - Started", user);
         user = userStorage.update(user);
         log.info("update: {} - Finished", user);
@@ -91,5 +93,11 @@ public class UserService {
         return commonFriends.stream()
                 .map(userStorage::getUser)
                 .collect(Collectors.toList());
+    }
+
+    private void checkNameUser(User user) {
+        if (user.getName() == null || user.getName().isBlank()) {
+            user.setName(user.getLogin());
+        }
     }
 }

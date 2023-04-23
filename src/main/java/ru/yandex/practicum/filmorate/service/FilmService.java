@@ -63,28 +63,23 @@ public class FilmService {
 
     public Film addLike(Integer filmId, Integer userId) {
         checkUserId(userId);
-        Film film = getFilm(filmId);
-        log.info("addLike: {} - Started", film);
-        film.getLikes().add(userId);
+        log.info("addLike: {} - Started add like to film ID: ", filmId);
+        Film film = filmStorage.addLike(filmId, userId);
         log.info("addLike: {} - Finished", film);
         return film;
     }
 
     public Film deleteLike(Integer filmId, Integer userId) {
         checkUserId(userId);
-        Film film = getFilm(filmId);
-        log.info("deleteLike: {} - Started", film);
-        film.getLikes().remove(userId);
+        log.info("deleteLike: {} - Started delete like to film ID:", filmId);
+        Film film = filmStorage.deleteLike(filmId, userId);
         log.info("deleteLike: {} - Finished", film);
         return film;
     }
 
     public List<Film> getPopularFilms(Integer count) {
         log.info("getPopularFilms: {} - TOP - ", count);
-        return findAll().stream()
-                .sorted(Comparator.comparing(Film::getLikesCount).reversed())
-                .limit(Objects.requireNonNullElse(count, 10))
-                .collect(Collectors.toList());
+        return filmStorage.getPopularFilms(count);
     }
 
     private void checkUserId(Integer userId) {

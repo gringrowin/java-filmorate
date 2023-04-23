@@ -9,6 +9,7 @@ import ru.yandex.practicum.filmorate.model.Film;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Component
@@ -47,6 +48,21 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     public Film getFilm(Integer id) {
         return films.get(id);
+    }
+
+    @Override
+    public Film addLike(Integer filmId, Integer userId) {
+        return null;
+    }
+
+    @Override
+    public Film deleteLike(Integer filmId, Integer userId) {
+        return null;
+    }
+
+    @Override
+    public List<Film> getPopularFilms(Integer count) {
+        return null;
     }
 
     private Integer getIdGenerator() {
