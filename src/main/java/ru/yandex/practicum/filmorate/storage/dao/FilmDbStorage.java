@@ -18,6 +18,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Component("dbFilmStorage")
 @RequiredArgsConstructor
@@ -27,8 +28,17 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public Collection<Film> getAll() {
-        String sql = "SELECT * FROM FILMS " +
-                    "JOIN MPA M on M.MPA_ID = FILMS.MPA_ID";
+        String sql = "SELECT F.FILM_ID, F.FILM_TITLE, F.DESCRIPTION, F.RELEASE_DATE, F.DURATION, F.RATE, " +
+                "F.MPA_ID, M.MPA_NAME AS MPA_NAME, " +
+                "GROUP_CONCAT(DISTINCT G2.GENRE_ID) AS GENRE_ID, " +
+                "GROUP_CONCAT(DISTINCT G2.GENRE_NAME) AS GENRE_NAME, " +
+                "COUNT(DISTINCT L.USER_ID) AS LIKES_COUNT " +
+                "FROM FILMS AS F " +
+                "LEFT JOIN MPA M on M.MPA_ID = F.MPA_ID " +
+                "LEFT JOIN LIKES L on L.FILM_ID = f.FILM_ID " +
+                "LEFT JOIN FILMGENRES F2 on F2.FILM_ID = f.FILM_ID " +
+                "LEFT JOIN GENRES G2 on G2.GENRE_ID = F2.GENRE_ID " +
+                "GROUP BY F.FILM_ID";
         return jdbcTemplate.query(sql, this::mapRowToFilm);
     }
 
@@ -49,9 +59,17 @@ public class FilmDbStorage implements FilmStorage {
         }, keyHolder);
 
         int id = Objects.requireNonNull(keyHolder.getKey()).intValue();
+
         film.setId(id);
 
-        return film;
+        if (!film.getGenres().isEmpty()) {
+            for (Genre genre : film.getGenres()) {
+                String sqlForGenre = "INSERT INTO FILMGENRES SET FILM_ID = ?, GENRE_ID = ?";
+                jdbcTemplate.update(sqlForGenre, film.getId(), genre.getId());
+            }
+        }
+
+        return getFilm(film.getId());
     }
 
     @Override
@@ -59,7 +77,7 @@ public class FilmDbStorage implements FilmStorage {
         checkIdFilm(film.getId());
 
         String sql = "UPDATE FILMS SET "
-                + "FILM_TITLE = ?, DESCRIPTION = ?, RELEASE_DATE = ?, DURATION = ?, MPA_ID = ? "
+                + "FILM_TITLE = ?, DESCRIPTION = ?, RELEASE_DATE = ?, DURATION = ?, RATE = ?, MPA_ID = ? "
                 + "WHERE FILM_ID = ?";
 
         jdbcTemplate.update(sql,
@@ -67,6 +85,7 @@ public class FilmDbStorage implements FilmStorage {
                 film.getDescription(),
                 Date.valueOf(film.getReleaseDate()),
                 film.getDuration(),
+                film.getRate(),
                 film.getMpa().getId(),
                 film.getId());
 
@@ -83,11 +102,11 @@ public class FilmDbStorage implements FilmStorage {
     public Film getFilm(Integer id) {
         checkIdFilm(id);
 
-            String sql = "SELECT F.FILM_ID, F.FILM_TITLE, F.DESCRIPTION, F.RELEASE_DATE, F.DURATION, " +
+            String sql = "SELECT F.FILM_ID, F.FILM_TITLE, F.DESCRIPTION, F.RELEASE_DATE, F.DURATION, F.RATE, " +
                     "F.MPA_ID, M.MPA_NAME AS MPA_NAME, " +
                     "GROUP_CONCAT(DISTINCT G2.GENRE_ID) AS GENRE_ID, " +
                     "GROUP_CONCAT(DISTINCT G2.GENRE_NAME) AS GENRE_NAME, " +
-                    "COUNT(DISTINCT L.USER_ID) AS LIKES " +
+                    "COUNT(DISTINCT L.USER_ID) AS LIKES_COUNT " +
                     "FROM FILMS AS F " +
                     "LEFT JOIN MPA M on M.MPA_ID = F.MPA_ID " +
                     "LEFT JOIN LIKES L on L.FILM_ID = f.FILM_ID " +
@@ -119,7 +138,7 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public List<Film> getPopularFilms(Integer count) {
-        String sql = "SELECT F.FILM_ID, F.FILM_TITLE, F.DESCRIPTION, F.RELEASE_DATE, F.DURATION, " +
+        String sql = "SELECT F.FILM_ID, F.FILM_TITLE, F.DESCRIPTION, F.RELEASE_DATE, F.DURATION, F.RATE, " +
                 "F.MPA_ID, M.MPA_NAME, " +
                 "GROUP_CONCAT(DISTINCT G2.GENRE_ID) AS GENRE_ID, " +
                 "GROUP_CONCAT(DISTINCT G2.GENRE_NAME) AS GENRE_NAME, " +
@@ -144,27 +163,25 @@ public class FilmDbStorage implements FilmStorage {
             film.setDescription(resultSet.getString("DESCRIPTION"));
             film.setReleaseDate(Objects.requireNonNull(resultSet.getDate("RELEASE_DATE")).toLocalDate());
             film.setDuration(resultSet.getInt("DURATION"));
-            film.setRate(resultSet.getInt("LIKES_COUNT"));
+            film.setRate(resultSet.getInt("RATE"));
+
         Mpa mpa = new Mpa();
             mpa.setId(resultSet.getInt("MPA_ID"));
             mpa.setName(resultSet.getString("MPA_NAME"));
             film.setMpa(mpa);
 
-
-                Set<Genre> genreSet = new HashSet<>();
-                for (int i = 0; i < resultSet.getArray("GENRE_ID").getResultSet().getFetchSize(); i++) {
-                    genreSet.add(mapRowToGenre(resultSet.getArray("GENRE_ID").getResultSet(), i));
-                }
-                film.setGenres(genreSet);
-
-            return film;
+            film.setGenres(stringToGenreIdsSet(resultSet.getString("GENRE_ID")));
+            film.setLikes(resultSet.getInt("LIKES_COUNT"));
+        return film;
     }
 
-    private Genre mapRowToGenre (ResultSet resultSet, int rowNum) throws SQLException {
-        Genre genre = new Genre();
-        genre.setId(resultSet.getInt("GENRE_ID"));
-        genre.setName(resultSet.getString("GENRE_NAME"));
-        return genre;
+    private Set<Genre> stringToGenreIdsSet (String genreIds) {
+        Set<Genre> genreSet = Collections.emptySet();
+
+
+        Arrays.stream(genreIds.split(",")).forEach(genreSet.add(id -> Integer.parseInt(id))); collect(Collectors.toSet());
+
+        return Collections.emptySet();
     }
 
     private void checkIdFilm(Integer id) {

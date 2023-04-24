@@ -20,10 +20,6 @@ public class Film {
     private Integer duration;
     private Mpa mpa;
     private Integer rate;
-    private Set<Integer> likes = new HashSet<>();
+    private Integer likes;
     private Set<Genre> genres = new HashSet<>();
-
-    public Integer getLikesCount() {
-        return getLikes().size();
-    }
 }

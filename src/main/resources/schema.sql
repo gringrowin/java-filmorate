@@ -4,6 +4,7 @@ CREATE TABLE IF NOT EXISTS Films (
     description varchar(200),
     release_date DATE   NOT NULL,
     duration int   NULL,
+    rate int NULL,
     mpa_id int   NULL,
     CONSTRAINT pk_Films PRIMARY KEY (
         film_id
@@ -28,8 +29,8 @@ CREATE TABLE IF NOT EXISTS Users (
 );
 
 CREATE TABLE IF NOT EXISTS Genres (
-    genre_id int   NOT NULL,
-    genre_name varchar(40)   NOT NULL,
+    genre_id int,
+    genre_name varchar(40),
     CONSTRAINT pk_Genres PRIMARY KEY (
         genre_id
      ),
@@ -39,8 +40,8 @@ CREATE TABLE IF NOT EXISTS Genres (
 );
 
 CREATE TABLE IF NOT EXISTS FilmGenres (
-    film_id int   NOT NULL,
-    genre_id int   NOT NULL,
+    film_id int,
+    genre_id int,
     CONSTRAINT unique_pair UNIQUE (
     film_id, genre_id
     )
@@ -58,13 +59,13 @@ CREATE TABLE IF NOT EXISTS Mpa (
 );
 
 CREATE TABLE IF NOT EXISTS Friends (
-    user_id int   NOT NULL,
-    friend_id int   NOT NULL
+    user_id int,
+    friend_id int
 );
 
 CREATE TABLE IF NOT EXISTS Likes (
-    film_id int   NOT NULL,
-    user_id int   NOT NULL
+    film_id int,
+    user_id int
 );
 
 ALTER TABLE Films ADD CONSTRAINT IF NOT EXISTS fk_Films_mpa_id FOREIGN KEY(mpa_id)
