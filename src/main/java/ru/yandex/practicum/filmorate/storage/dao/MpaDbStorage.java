@@ -2,7 +2,10 @@ package ru.yandex.practicum.filmorate.storage.dao;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
+import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
+import ru.yandex.practicum.filmorate.exception.MpaNotFoundException;
 import ru.yandex.practicum.filmorate.model.Mpa;
 
 import java.sql.ResultSet;
@@ -22,6 +25,7 @@ public class MpaDbStorage {
     }
 
     public Mpa getMpa(Integer mpaId) {
+        checkIdMpa(mpaId);
         String sql = "SELECT * FROM MPA " +
                     "WHERE MPA_ID = ?";
         return jdbcTemplate.queryForObject(sql, this::mapRowToMpa, mpaId);
@@ -32,5 +36,15 @@ public class MpaDbStorage {
         mpa.setId(resultSet.getInt("MPA_ID"));
         mpa.setName(resultSet.getString("MPA_NAME"));
         return mpa;
+    }
+
+    private void checkIdMpa(Integer id) {
+        String sql = "SELECT * FROM MPA " +
+                "WHERE MPA_ID = ?" ;
+        SqlRowSet rows =  jdbcTemplate.queryForRowSet(sql, id);
+
+        if (!rows.next()) {
+            throw new MpaNotFoundException("MPA с ID: " + id + " не найден!");
+        }
     }
 }

@@ -170,18 +170,33 @@ public class FilmDbStorage implements FilmStorage {
             mpa.setName(resultSet.getString("MPA_NAME"));
             film.setMpa(mpa);
 
-            film.setGenres(stringToGenreIdsSet(resultSet.getString("GENRE_ID")));
+
+
+        film.setGenres(stringSetGenres(resultSet.getString("GENRE_ID"),
+                resultSet.getString("GENRE_NAME")));
+
+
             film.setLikes(resultSet.getInt("LIKES_COUNT"));
         return film;
     }
 
-    private Set<Genre> stringToGenreIdsSet (String genreIds) {
-        Set<Genre> genreSet = Collections.emptySet();
+    private Set<Genre> stringSetGenres (String genreId, String genreName) {
+        Set<Genre> genresSet = new HashSet<>();
 
+        if (genreId == null) {
+            return Collections.emptySet();
+        }
 
-        Arrays.stream(genreIds.split(",")).forEach(genreSet.add(id -> Integer.parseInt(id))); collect(Collectors.toSet());
+        String[] ids = genreId.split(",");
+        String[] names = genreName.split(",");
 
-        return Collections.emptySet();
+        for (int i = 0; i < ids.length; i++) {
+            Genre genre = new Genre();
+            genre.setId(Integer.parseInt(ids[i]));
+            genre.setName(names[i]);
+            genresSet.add(genre);
+        }
+        return genresSet;
     }
 
     private void checkIdFilm(Integer id) {
