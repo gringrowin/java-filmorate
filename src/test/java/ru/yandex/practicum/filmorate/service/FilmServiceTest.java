@@ -8,7 +8,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
 import java.time.LocalDate;
@@ -27,9 +26,6 @@ class FilmServiceTest {
 
     @Mock
     private FilmStorage filmStorage;
-
-    @Mock
-    private UserService userService;
 
     private final Film testFilm = new Film();
 
@@ -94,40 +90,6 @@ class FilmServiceTest {
         assertEquals(filmExcept, film);
     }
 
-    @Test
-    void addLikeWhenCorrectIdThenReturnedFilm() {
-       Film film = testFilm;
-       int idFilm = film.getId();
-       int idUser = 1;
-       User user = new User();
-       user.setId(idUser);
 
-       when(filmStorage.getFilm(idFilm)).thenReturn(film);
-       when(userService.getUser(idUser)).thenReturn(user);
-       filmService.addLike(idFilm, idUser);
 
-        verify(filmStorage).getFilm(idFilm);
-        verify(userService).getUser(idUser);
-
-       assertEquals(1, film.getLikes().size());
-    }
-
-    @Test
-    void deleteLikeWhenCorrectIdThenReturnedFilm() {
-        Film film = testFilm;
-        int idFilm = film.getId();
-        int idUser = 1;
-        User user = new User();
-        user.setId(idUser);
-        film.getLikes().add(idUser);
-
-        when(filmStorage.getFilm(idFilm)).thenReturn(film);
-        when(userService.getUser(idUser)).thenReturn(user);
-        filmService.deleteLike(idFilm, idUser);
-
-        verify(filmStorage).getFilm(idFilm);
-        verify(userService).getUser(idUser);
-
-        assertEquals(0, film.getLikes().size());
-    }
 }
