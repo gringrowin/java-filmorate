@@ -19,18 +19,18 @@ public class MpaDbStorage {
 
     public Collection<Mpa> getAll() {
         String sql = "SELECT * FROM MPA " +
-                    "ORDER BY MPA_ID";
+                "ORDER BY MPA_ID";
         return jdbcTemplate.query(sql, this::mapRowToMpa);
     }
 
     public Mpa getMpa(Integer mpaId) {
         checkIdMpa(mpaId);
         String sql = "SELECT * FROM MPA " +
-                    "WHERE MPA_ID = ?";
+                "WHERE MPA_ID = ?";
         return jdbcTemplate.queryForObject(sql, this::mapRowToMpa, mpaId);
     }
 
-    private Mpa mapRowToMpa (ResultSet resultSet, int rowNum) throws SQLException {
+    private Mpa mapRowToMpa(ResultSet resultSet, int rowNum) throws SQLException {
         Mpa mpa = new Mpa();
         mpa.setId(resultSet.getInt("MPA_ID"));
         mpa.setName(resultSet.getString("MPA_NAME"));
@@ -39,8 +39,8 @@ public class MpaDbStorage {
 
     private void checkIdMpa(Integer id) {
         String sql = "SELECT * FROM MPA " +
-                "WHERE MPA_ID = ?" ;
-        SqlRowSet rows =  jdbcTemplate.queryForRowSet(sql, id);
+                "WHERE MPA_ID = ?";
+        SqlRowSet rows = jdbcTemplate.queryForRowSet(sql, id);
 
         if (!rows.next()) {
             throw new MpaNotFoundException("MPA с ID: " + id + " не найден!");

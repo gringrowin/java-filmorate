@@ -42,7 +42,7 @@ class FilmorateApplicationTests {
 		testFilm.setDuration(120);
 		testFilm.setReleaseDate(LocalDate.of(1988, 12, 14));
 		Mpa mpa = new Mpa();
-			mpa.setId(1);
+		mpa.setId(1);
 		testFilm.setMpa(mpa);
 
 		Film fromDbFilm = filmDbStorage.add(testFilm);
@@ -110,7 +110,4 @@ class FilmorateApplicationTests {
 		assertEquals(3, popularFilms.size());
 		assertEquals(1, popularFilms.get(0).getId());
 	}
-
-
-
 }

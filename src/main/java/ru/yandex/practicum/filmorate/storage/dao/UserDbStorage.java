@@ -101,13 +101,13 @@ public class UserDbStorage implements UserStorage {
 
     private User mapRowToUser(ResultSet resultSet, int rowNum) throws SQLException {
         User user = new User();
-            user.setId(resultSet.getInt("USER_ID"));
-            user.setEmail(resultSet.getString("EMAIL"));
-            user.setLogin(resultSet.getString("LOGIN"));
-            user.setName(resultSet.getString("USER_NAME"));
-            user.setBirthday(Objects.requireNonNull(resultSet.getDate("BIRTHDAY")).toLocalDate());
-            user.setFriends(getFriends(user.getId()));
-            return user;
+        user.setId(resultSet.getInt("USER_ID"));
+        user.setEmail(resultSet.getString("EMAIL"));
+        user.setLogin(resultSet.getString("LOGIN"));
+        user.setName(resultSet.getString("USER_NAME"));
+        user.setBirthday(Objects.requireNonNull(resultSet.getDate("BIRTHDAY")).toLocalDate());
+        user.setFriends(getFriends(user.getId()));
+        return user;
     }
 
     private void checkIdUser(Integer id) {
@@ -131,7 +131,7 @@ public class UserDbStorage implements UserStorage {
             return friends;
 
         } catch (EmptyResultDataAccessException e) {
-           return Collections.emptySet();
+            return Collections.emptySet();
         }
     }
 }

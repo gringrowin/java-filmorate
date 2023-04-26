@@ -42,8 +42,8 @@ public class GenreDbStorage {
 
     private void checkIdGenre(Integer id) {
         String sql = "SELECT * FROM GENRES " +
-                "WHERE GENRE_ID = ?" ;
-        SqlRowSet rows =  jdbcTemplate.queryForRowSet(sql, id);
+                "WHERE GENRE_ID = ?";
+        SqlRowSet rows = jdbcTemplate.queryForRowSet(sql, id);
 
         if (!rows.next()) {
             throw new GenreNotFoundException("Genre с ID: " + id + " не найден!");
