@@ -9,6 +9,9 @@ import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.GenreStorage;
+import ru.yandex.practicum.filmorate.storage.LikeStorage;
+import ru.yandex.practicum.filmorate.storage.MpaStorage;
 
 import java.util.*;
 
@@ -18,11 +21,23 @@ public class FilmService {
 
 
     private final FilmStorage filmStorage;
+
+    private final GenreStorage genreStorage;
+    private final MpaStorage mpaStorage;
+    private final LikeStorage likeStorage;
+
     private final UserService userService;
 
     @Autowired
-    public FilmService(@Qualifier("dbFilmStorage") FilmStorage filmStorage, UserService userService) {
+    public FilmService(@Qualifier("dbFilmStorage") FilmStorage filmStorage,
+                       GenreStorage genreStorage,
+                       MpaStorage mpaStorage,
+                       LikeStorage likeStorage,
+                       UserService userService) {
         this.filmStorage = filmStorage;
+        this.genreStorage = genreStorage;
+        this.mpaStorage = mpaStorage;
+        this.likeStorage = likeStorage;
         this.userService = userService;
     }
 
@@ -63,7 +78,7 @@ public class FilmService {
     public Film addLike(Integer filmId, Integer userId) {
         checkUserId(userId);
         log.info("addLike: {} - Started add like to film ID: ", filmId);
-        Film film = filmStorage.addLike(filmId, userId);
+        Film film = likeStorage.addLike(getFilm(filmId), userId);
         log.info("addLike: {} - Finished", film);
         return film;
     }
@@ -71,14 +86,17 @@ public class FilmService {
     public Film deleteLike(Integer filmId, Integer userId) {
         checkUserId(userId);
         log.info("deleteLike: {} - Started delete like to film ID:", filmId);
-        Film film = filmStorage.deleteLike(filmId, userId);
+        Film film = likeStorage.deleteLike(getFilm(filmId), userId);
         log.info("deleteLike: {} - Finished", film);
         return film;
     }
 
     public List<Film> getPopularFilms(Integer count) {
         log.info("getPopularFilms: {} - TOP - ", count);
-        return filmStorage.getPopularFilms(count);
+        return findAll().stream().map(film -> film.setLikes(likeStorage.getLikes(film.getId())))
+                .sorted(Comparator.comparing(film -> likeStorage.getLikes()).reversed())
+                .limit(Objects.requireNonNullElse(count, 10))
+                .collect(Collectors.toList());
     }
 
     private void checkUserId(Integer userId) {
