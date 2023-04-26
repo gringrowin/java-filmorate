@@ -182,7 +182,7 @@ public class FilmDbStorage implements FilmStorage {
         return film;
     }
 
-    private Set<Genre> stringSetGenres (String genreId) {
+    private Set<Genre> stringSetGenres(String genreId) {
         Set<Genre> genresSet = new HashSet<>();
 
         if (genreId == null) {
@@ -198,7 +198,7 @@ public class FilmDbStorage implements FilmStorage {
 
     private void checkIdFilm(Integer id) {
         String sql = "SELECT * FROM FILMS " +
-                    "WHERE FILM_ID = ?" ;
+                    "WHERE FILM_ID = ?";
         SqlRowSet rows =  jdbcTemplate.queryForRowSet(sql, id);
 
         if (!rows.next()) {
