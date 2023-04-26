@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate.storage.dao;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -13,18 +12,17 @@ import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
+import java.sql.*;
 import java.sql.Date;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Component("dbFilmStorage")
 @RequiredArgsConstructor
 public class FilmDbStorage implements FilmStorage {
 
     private final JdbcTemplate jdbcTemplate;
+
+    private final GenreDbStorage genreDbStorage;
 
     @Override
     public Collection<Film> getAll() {
@@ -90,10 +88,16 @@ public class FilmDbStorage implements FilmStorage {
                 film.getId());
 
         if (!film.getGenres().isEmpty()) {
+            String sqlForDeleteGenre = "DELETE FROM FILMGENRES WHERE FILM_ID = ?";
+            jdbcTemplate.update(sqlForDeleteGenre, film.getId());
+
             for (Genre genre : film.getGenres()) {
-                String sqlForGenre = "INSERT INTO FILMGENRES SET FILM_ID = ?, GENRE_ID = ?";
-                jdbcTemplate.update(sqlForGenre, film.getId(), genre.getId());
+                    String sqlForAddGenre = "INSERT INTO FILMGENRES SET FILM_ID = ?, GENRE_ID = ?";
+                    jdbcTemplate.update(sqlForAddGenre, film.getId(), genre.getId());
             }
+        } else {
+            String sqlForDeleteGenre = "DELETE FROM FILMGENRES WHERE FILM_ID = ?";
+            jdbcTemplate.update(sqlForDeleteGenre, film.getId());
         }
         return getFilm(film.getId());
     }
@@ -172,30 +176,23 @@ public class FilmDbStorage implements FilmStorage {
 
 
 
-        film.setGenres(stringSetGenres(resultSet.getString("GENRE_ID"),
-                resultSet.getString("GENRE_NAME")));
-
+        film.setGenres(stringSetGenres(resultSet.getString("GENRE_ID")));
 
             film.setLikes(resultSet.getInt("LIKES_COUNT"));
         return film;
     }
 
-    private Set<Genre> stringSetGenres (String genreId, String genreName) {
+    private Set<Genre> stringSetGenres (String genreId) {
         Set<Genre> genresSet = new HashSet<>();
 
         if (genreId == null) {
             return Collections.emptySet();
         }
 
-        String[] ids = genreId.split(",");
-        String[] names = genreName.split(",");
+        Arrays.stream(genreId.split(","))
+                .map(Integer::parseInt)
+                .forEach(id -> genresSet.add(genreDbStorage.getGenre(id)));
 
-        for (int i = 0; i < ids.length; i++) {
-            Genre genre = new Genre();
-            genre.setId(Integer.parseInt(ids[i]));
-            genre.setName(names[i]);
-            genresSet.add(genre);
-        }
         return genresSet;
     }
 
