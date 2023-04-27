@@ -14,7 +14,6 @@ import ru.yandex.practicum.filmorate.storage.dao.FilmDbStorage;
 
 import java.time.LocalDate;
 import java.util.Collection;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

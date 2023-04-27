@@ -39,7 +39,7 @@ class UserServiceTest {
 
     @Test
     void findAllWhenStorageNotEmptyThenReturnedList() {
-        Collection<User> usersExcept = List.of(testUser);
+        List<User> usersExcept = List.of(testUser);
         when(userStorage.getAll()).thenReturn(usersExcept);
 
         Collection<User> users = userService.findAll();

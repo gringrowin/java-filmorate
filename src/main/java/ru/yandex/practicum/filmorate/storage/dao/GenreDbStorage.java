@@ -14,7 +14,6 @@ import java.sql.SQLException;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -39,7 +38,7 @@ public class GenreDbStorage implements GenreStorage {
     }
 
     @Override
-    public Film updateGenreByFilmToStorage(Film film) {
+    public void updateGenreByFilmToStorage(Film film) {
 
         if (!film.getGenres().isEmpty()) {
             String sqlForDeleteGenre = "DELETE FROM FILMGENRES WHERE FILM_ID = ?";
@@ -53,8 +52,6 @@ public class GenreDbStorage implements GenreStorage {
             String sqlForDeleteGenre = "DELETE FROM FILMGENRES WHERE FILM_ID = ?";
             jdbcTemplate.update(sqlForDeleteGenre, film.getId());
         }
-
-        return film;
     }
 
     public Set<Genre> getGenresByFilmFromStorage(Integer filmId) {

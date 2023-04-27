@@ -8,11 +8,11 @@ import java.util.Set;
 
 public interface GenreStorage {
 
-    public Collection<Genre> getAll();
+    Collection<Genre> getAll();
 
     Genre getGenre(Integer genreId);
 
-    Film updateGenreByFilmToStorage(Film film);
+    void updateGenreByFilmToStorage(Film film);
 
     Set<Genre> getGenresByFilmFromStorage(Integer filmId);
 }

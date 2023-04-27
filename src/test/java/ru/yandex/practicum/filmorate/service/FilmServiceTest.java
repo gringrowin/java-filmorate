@@ -40,7 +40,7 @@ class FilmServiceTest {
 
     @Test
     void findAllWhenStorageNotEmptyThenReturnedList() {
-        Collection<Film> filmsExcept = List.of(testFilm);
+        List<Film> filmsExcept = List.of(testFilm);
         when(filmStorage.getAll()).thenReturn(filmsExcept);
 
         Collection<Film> films = filmService.findAll();
