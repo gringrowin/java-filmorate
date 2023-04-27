@@ -80,33 +80,5 @@ class FilmorateApplicationTests {
 		assertEquals("Transformer", film1.getName());
 	}
 
-//	@Test
-//	public void testAddLikeToFilmInStorageDb() {
-//
-//		Film film = filmDbStorage.getFilm(3);
-//		assertEquals(0, film.getLikes());
-//
-//		filmDbStorage.addLike(3, 1);
-//		film = filmDbStorage.addLike(3, 2);
-//		assertEquals(2, film.getLikes());
-//	}
 
-//	@Test
-//	public void testDeleteLikeToFilmInStorageDb() {
-//
-//		Film film = filmDbStorage.getFilm(1);
-//		assertEquals(4, film.getLikes());
-//
-//		filmDbStorage.deleteLike(1, 1);
-//		film = filmDbStorage.deleteLike(1, 2);
-//		assertEquals(2, film.getLikes());
-//	}
-
-//	@Test
-//	public void testGetPopularFilmsInStorageDb() {
-//
-//		List<Film> popularFilms = filmDbStorage.getPopularFilms(5);
-//		assertEquals(3, popularFilms.size());
-//		assertEquals(1, popularFilms.get(0).getId());
-//	}
 }

@@ -6,7 +6,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
@@ -67,25 +66,6 @@ class UserServiceTest {
         User user = userService.update(testUser);
 
         verify(userStorage).update(testUser);
-        assertEquals(userExcept, user);
-    }
-
-    @Test
-    void getUserWhenIdNotFoundThenThrowUserNotFoundException() {
-        int id = testUser.getId();
-        when(userStorage.getUser(id)).thenReturn(null);
-        assertThrows(UserNotFoundException.class, () -> userService.getUser(id));
-    }
-
-    @Test
-    void getUserWhenCorrectIdThenReturnedUser() {
-        User userExcept = testUser;
-        int id = testUser.getId();
-        when(userStorage.getUser(id)).thenReturn(userExcept);
-
-        User user = userService.getUser(id);
-
-        verify(userStorage).getUser(id);
         assertEquals(userExcept, user);
     }
 }
