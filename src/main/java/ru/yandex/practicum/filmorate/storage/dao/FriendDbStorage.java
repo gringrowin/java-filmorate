@@ -35,6 +35,7 @@ public class FriendDbStorage implements FriendStorage {
 
         return user;
     }
+
     @Override
     public Set<Integer> getFriends(Integer userId) {
         Set<Integer> friends = new HashSet<>();

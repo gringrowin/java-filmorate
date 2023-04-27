@@ -56,6 +56,7 @@ public class LikeDbStorage implements LikeStorage {
             throw new FilmNotFoundException("Фильм с ID: " + id + " не найден!");
         }
     }
+
     private void checkIdUser(Integer id) {
         String sql = "SELECT * FROM USERS " +
                 "WHERE USER_ID = ?";
