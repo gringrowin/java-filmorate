@@ -52,7 +52,7 @@ class UserControllerTest {
     @SneakyThrows
     @Test
     void findAllWhenEmptyStorageThenReturnedOkWithEmptyList() {
-        Collection<User> allUsers = Collections.emptyList();
+        List<User> allUsers = Collections.emptyList();
         when(userService.findAll()).thenReturn(allUsers);
 
         String response = mockMvc.perform(get("/users"))

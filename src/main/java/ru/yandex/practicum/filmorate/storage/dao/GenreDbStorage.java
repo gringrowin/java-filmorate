@@ -57,12 +57,13 @@ public class GenreDbStorage implements GenreStorage {
         return film;
     }
 
-    public Set<Genre> getGenresByFilmFromStorage(Film film) {
+    public Set<Genre> getGenresByFilmFromStorage(Integer filmId) {
 
-        String sql = "SELECT * FROM FILMGENRES, GENRES " +
+        String sql = "SELECT FG.GENRE_ID, G2.GENRE_NAME  FROM FILMGENRES AS FG " +
+                "LEFT JOIN GENRES G2 on G2.GENRE_ID = FG.GENRE_ID " +
                 "WHERE FILM_ID = ?";
 
-        return new HashSet<>(jdbcTemplate.query(sql, this::mapRowToGenre, film.getId()));
+        return new HashSet<>(jdbcTemplate.query(sql, this::mapRowToGenre, filmId));
     }
 
     private Genre mapRowToGenre(ResultSet resultSet, int rowNum) throws SQLException {

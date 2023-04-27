@@ -7,9 +7,7 @@ import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @Component
 @Qualifier("inMemoryStorage")
@@ -18,8 +16,8 @@ public class InMemoryUserStorage implements UserStorage {
     private int idGenerator;
     private final Map<Integer, User> users = new HashMap<>();
 
-    public Collection<User> getAll() {
-        return users.values();
+    public List<User> getAll() {
+        return new ArrayList<>(users.values());
     }
 
     public User add(User user) {
@@ -56,15 +54,5 @@ public class InMemoryUserStorage implements UserStorage {
 
     public User getUser(Integer id) {
         return users.get(id);
-    }
-
-    @Override
-    public User addFriend(Integer userId, Integer friendId) {
-        return null;
-    }
-
-    @Override
-    public User deleteFriend(Integer userId, Integer friendId) {
-        return null;
     }
 }

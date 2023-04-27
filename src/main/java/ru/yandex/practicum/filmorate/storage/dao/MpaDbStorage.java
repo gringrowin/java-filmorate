@@ -10,7 +10,7 @@ import ru.yandex.practicum.filmorate.storage.MpaStorage;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Collection;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -18,7 +18,7 @@ public class MpaDbStorage implements MpaStorage {
 
     private final JdbcTemplate jdbcTemplate;
 
-    public Collection<Mpa> getAll() {
+    public List<Mpa> getAll() {
         String sql = "SELECT * FROM MPA " +
                 "ORDER BY MPA_ID";
         return jdbcTemplate.query(sql, this::mapRowToMpa);

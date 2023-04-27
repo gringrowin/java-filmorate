@@ -4,8 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.FriendStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.util.*;
@@ -17,14 +17,17 @@ public class UserService {
 
     private final UserStorage userStorage;
 
+    private final FriendStorage friendStorage;
+
     @Autowired
-    public UserService(@Qualifier("dbUserStorage") UserStorage userStorage) {
+    public UserService(@Qualifier("dbUserStorage") UserStorage userStorage, FriendStorage friendStorage) {
         this.userStorage = userStorage;
+        this.friendStorage = friendStorage;
     }
 
 
-    public Collection<User> findAll() {
-        Collection<User> users = userStorage.getAll();
+    public List<User> findAll() {
+        List<User> users = userStorage.getAll();
         log.info("findAll: {}", users);
         return users;
     }
@@ -48,26 +51,22 @@ public class UserService {
     public User getUser(Integer id) {
         User user = userStorage.getUser(id);
         log.info("getUser: {} - ", user);
-        if (user == null) {
-            log.error("user id not found: {}", id);
-            throw new UserNotFoundException(String.format(
-                    "Пользователь с ID %s не найден.", id));
-        }
+        user.setFriends(friendStorage.getFriends(id));
         return user;
     }
 
     public User addFriend(Integer userId, Integer friendId) {
         log.info("addFriend: {} - Started", friendId);
-        User user = userStorage.addFriend(userId, friendId);
+        User user = friendStorage.addFriend(getUser(userId), getUser(friendId));
         log.info("addFriend: {} - Finished", user);
-        return user;
+        return getUser(userId);
     }
 
     public User deleteFriend(Integer userId, Integer friendId) {
         log.info("deleteFriend: {} - Started", friendId);
-        User user = userStorage.deleteFriend(userId, friendId);
+        User user = friendStorage.deleteFriend(getUser(userId), getUser(friendId));
         log.info("deleteFriend: {} - Finished", user);
-        return user;
+        return getUser(userId);
     }
 
     public List<User> getFriends(Integer userId) {

@@ -24,7 +24,7 @@ public class UserDbStorage implements UserStorage {
     private final JdbcTemplate jdbcTemplate;
 
     @Override
-    public Collection<User> getAll() {
+    public List<User> getAll() {
         String sql = "SELECT * FROM USERS " +
                 "GROUP BY USER_ID";
 
@@ -79,25 +79,7 @@ public class UserDbStorage implements UserStorage {
         return jdbcTemplate.queryForObject(sql, this::mapRowToUser, id);
     }
 
-    @Override
-    public User addFriend(Integer userId, Integer friendId) {
-        checkIdUser(userId);
-        checkIdUser(friendId);
 
-        String sql = "INSERT INTO FRIENDS(USER_ID, FRIEND_ID) " +
-                "VALUES (?, ?)";
-        jdbcTemplate.update(sql, userId, friendId);
-
-        return getUser(userId);
-    }
-
-    @Override
-    public User deleteFriend(Integer userId, Integer friendId) {
-        String sql = "DELETE FROM FRIENDS WHERE USER_ID = ? AND FRIEND_ID = ?";
-        jdbcTemplate.update(sql, userId, friendId);
-
-        return getUser(userId);
-    }
 
     private User mapRowToUser(ResultSet resultSet, int rowNum) throws SQLException {
         User user = new User();
@@ -106,7 +88,6 @@ public class UserDbStorage implements UserStorage {
         user.setLogin(resultSet.getString("LOGIN"));
         user.setName(resultSet.getString("USER_NAME"));
         user.setBirthday(Objects.requireNonNull(resultSet.getDate("BIRTHDAY")).toLocalDate());
-        user.setFriends(getFriends(user.getId()));
         return user;
     }
 
@@ -117,21 +98,6 @@ public class UserDbStorage implements UserStorage {
             jdbcTemplate.queryForObject(sql, this::mapRowToUser, id);
         } catch (EmptyResultDataAccessException e) {
             throw new UserNotFoundException("Пользователь с ID: " + id + " не найден!");
-        }
-    }
-
-    private Set<Integer> getFriends(Integer userId) {
-        Set<Integer> friends = new HashSet<>();
-        try {
-            String sql = "SELECT FRIEND_ID FROM FRIENDS WHERE USER_ID = ?";
-            SqlRowSet friendsRows = jdbcTemplate.queryForRowSet(sql, userId);
-            while (friendsRows.next()) {
-                friends.add(friendsRows.getInt("FRIEND_ID"));
-            }
-            return friends;
-
-        } catch (EmptyResultDataAccessException e) {
-            return Collections.emptySet();
         }
     }
 }

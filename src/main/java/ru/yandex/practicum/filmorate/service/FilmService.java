@@ -14,6 +14,7 @@ import ru.yandex.practicum.filmorate.storage.LikeStorage;
 import ru.yandex.practicum.filmorate.storage.MpaStorage;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -41,37 +42,39 @@ public class FilmService {
         this.userService = userService;
     }
 
-
-    public Collection<Film> findAll() {
-        Collection<Film> films = filmStorage.getAll();
+    public List<Film> findAll() {
+        List<Film> films = filmStorage.getAll();
+        for (Film film: films) {
+            film.setGenres(genreStorage.getGenresByFilmFromStorage(film.getId()));
+            film.setLikes(likeStorage.getLikes(film.getId()));
+            film.setMpa(mpaStorage.getMpa(film.getMpa().getId()));
+        }
         log.info("findAll: {}", films);
         return films;
     }
 
-
     public Film create(Film film) {
         log.info("create: {} - Started", film);
         film = filmStorage.add(film);
+        genreStorage.updateGenreByFilmToStorage(film);
         log.info("create: {} - Finished", film);
-        return film;
+        return getFilm(film.getId());
     }
-
 
     public Film update(Film film) {
         log.info("update: {} - Started", film);
         film = filmStorage.update(film);
+        genreStorage.updateGenreByFilmToStorage(film);
         log.info("update: {} - Finished", film);
-        return film;
+        return getFilm(film.getId());
     }
 
     public Film getFilm(Integer id) {
         Film film = filmStorage.getFilm(id);
+        film.setGenres(genreStorage.getGenresByFilmFromStorage(id));
+        film.setLikes(likeStorage.getLikes(id));
+        film.setMpa(mpaStorage.getMpa(film.getMpa().getId()));
         log.info("getFilm: {} - ", film);
-        if (film == null) {
-            log.error("film id not found: {}", id);
-            throw new FilmNotFoundException(String.format(
-                    "Фильм с ID %s не найден.", id));
-        }
         return film;
     }
 
@@ -80,7 +83,7 @@ public class FilmService {
         log.info("addLike: {} - Started add like to film ID: ", filmId);
         Film film = likeStorage.addLike(getFilm(filmId), userId);
         log.info("addLike: {} - Finished", film);
-        return film;
+        return getFilm(filmId);
     }
 
     public Film deleteLike(Integer filmId, Integer userId) {
@@ -88,13 +91,12 @@ public class FilmService {
         log.info("deleteLike: {} - Started delete like to film ID:", filmId);
         Film film = likeStorage.deleteLike(getFilm(filmId), userId);
         log.info("deleteLike: {} - Finished", film);
-        return film;
+        return getFilm(filmId);
     }
 
     public List<Film> getPopularFilms(Integer count) {
         log.info("getPopularFilms: {} - TOP - ", count);
-        return findAll().stream().map(film -> film.setLikes(likeStorage.getLikes(film.getId())))
-                .sorted(Comparator.comparing(film -> likeStorage.getLikes()).reversed())
+        return findAll().stream().sorted(Comparator.comparing(Film::getLikes).reversed())
                 .limit(Objects.requireNonNullElse(count, 10))
                 .collect(Collectors.toList());
     }

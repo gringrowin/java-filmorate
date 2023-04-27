@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.storage.dao;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
@@ -10,6 +11,7 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.LikeStorage;
 
 import java.sql.ResultSet;
+import java.sql.SQLException;
 
 @Component
 @RequiredArgsConstructor
@@ -43,11 +45,10 @@ public class LikeDbStorage implements LikeStorage {
     public Integer getLikes(Integer filmId) {
         checkIdFilm(filmId);
 
-        String sql = "SELECT COUNT(DISTINCT USER_ID) FROM LIKES " +
+        String sql = "SELECT COUNT(DISTINCT USER_ID) AS COUNT FROM LIKES " +
                 "WHERE FILM_ID = ?";
-        jdbcTemplate.queryForObject(sql, ResultSet::getInt, filmId);
 
-        return jdbcTemplate.queryForObject(sql, ResultSet::getInt, filmId);
+        return jdbcTemplate.queryForObject(sql, (rs, rowNum) -> rs.getInt("COUNT"), filmId);
     }
 
     private void checkIdFilm(Integer id) {

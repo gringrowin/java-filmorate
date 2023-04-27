@@ -51,7 +51,7 @@ class FilmControllerTest {
     @SneakyThrows
     @Test
     void findAllWhenEmptyStorageThenReturnedOkWithEmptyList() {
-        Collection<Film> filmCollection = Collections.EMPTY_LIST;
+        List<Film> filmCollection = Collections.emptyList();
         when(filmService.findAll()).thenReturn(filmCollection);
 
         String response = mockMvc.perform(get("/films"))
