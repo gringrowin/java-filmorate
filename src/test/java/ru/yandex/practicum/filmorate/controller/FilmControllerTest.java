@@ -13,9 +13,7 @@ import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
-
 import java.time.LocalDate;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -51,7 +49,7 @@ class FilmControllerTest {
     @SneakyThrows
     @Test
     void findAllWhenEmptyStorageThenReturnedOkWithEmptyList() {
-        Collection<Film> filmCollection = Collections.EMPTY_LIST;
+        List<Film> filmCollection = Collections.emptyList();
         when(filmService.findAll()).thenReturn(filmCollection);
 
         String response = mockMvc.perform(get("/films"))

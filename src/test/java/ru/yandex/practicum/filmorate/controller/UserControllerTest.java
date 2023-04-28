@@ -14,7 +14,6 @@ import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 
 import java.time.LocalDate;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -52,7 +51,7 @@ class UserControllerTest {
     @SneakyThrows
     @Test
     void findAllWhenEmptyStorageThenReturnedOkWithEmptyList() {
-        Collection<User> allUsers = Collections.emptyList();
+        List<User> allUsers = Collections.emptyList();
         when(userService.findAll()).thenReturn(allUsers);
 
         String response = mockMvc.perform(get("/users"))

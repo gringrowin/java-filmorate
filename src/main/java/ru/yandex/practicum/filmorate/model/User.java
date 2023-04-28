@@ -7,6 +7,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Past;
 import javax.validation.constraints.Pattern;
 import java.time.LocalDate;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -23,4 +24,5 @@ public class User {
     @Past
     private LocalDate birthday;
     private Set<Integer> friends = new HashSet<>();
+
 }

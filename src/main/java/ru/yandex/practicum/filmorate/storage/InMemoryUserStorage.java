@@ -1,23 +1,23 @@
 package ru.yandex.practicum.filmorate.storage;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @Component
+@Qualifier("inMemoryStorage")
 @Slf4j
 public class InMemoryUserStorage implements UserStorage {
     private int idGenerator;
     private final Map<Integer, User> users = new HashMap<>();
 
-    public Collection<User> getAll() {
-        return users.values();
+    public List<User> getAll() {
+        return new ArrayList<>(users.values());
     }
 
     public User add(User user) {
