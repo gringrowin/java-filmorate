@@ -7,6 +7,8 @@ import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.enums.EventType;
+import ru.yandex.practicum.filmorate.model.enums.OperationType;
 import ru.yandex.practicum.filmorate.storage.LikeStorage;
 
 @Component
@@ -23,6 +25,21 @@ public class LikeDbStorage implements LikeStorage {
         jdbcTemplate.update(sql, film.getId(), userId);
         film.setLikes(getLikes(film.getId()));
 
+        sql = "INSERT INTO Feed " +
+                "SET " +
+                "event_timestamp = ?, " +
+                "user_id = ?, " +
+                "event_type = ?, " +
+                "operation = ?, " +
+                "entity_id = ?";
+
+        jdbcTemplate.update(sql,
+                System.currentTimeMillis(),
+                userId,
+                EventType.LIKE.toString(),
+                OperationType.ADD.toString(),
+                film.getId());
+
         return film;
     }
 
@@ -34,6 +51,21 @@ public class LikeDbStorage implements LikeStorage {
         jdbcTemplate.update(sql, film.getId(), userId);
 
         film.setLikes(getLikes(film.getId()));
+
+        sql = "INSERT INTO Feed " +
+                "SET " +
+                "event_timestamp = ?, " +
+                "user_id = ?, " +
+                "event_type = ?, " +
+                "operation = ?, " +
+                "entity_id = ?";
+
+        jdbcTemplate.update(sql,
+                System.currentTimeMillis(),
+                userId,
+                EventType.LIKE.toString(),
+                OperationType.REMOVE.toString(),
+                film.getId());
         return film;
     }
 

@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.model.Feed;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 
@@ -81,10 +82,18 @@ public class UserController {
 
     @GetMapping("/{id}/friends/common/{otherId}")
     public List<User> getCommonFriends(@PathVariable("id") Integer userId,
-                                 @PathVariable("otherId") Integer otherId) {
+                                       @PathVariable("otherId") Integer otherId) {
         log.info("getCommonFriends: {} - userId, {} - otherUserId", userId, otherId);
         List<User> commonFriends = userService.getCommonFriends(userId, otherId);
         log.info("getCommonFriends: {} - Finished", commonFriends);
         return commonFriends;
+    }
+
+    @GetMapping("/{id}/feed")
+    public List<Feed> getFeed(@PathVariable("id") Integer userId) {
+        log.info("getFeed: {} - userId", userId);
+        List<Feed> feed = userService.getFeed(userId);
+        log.info("getFeed: {} - Finished", userId);
+        return feed;
     }
 }

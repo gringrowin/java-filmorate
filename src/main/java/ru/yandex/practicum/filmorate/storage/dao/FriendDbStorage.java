@@ -6,6 +6,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.model.enums.EventType;
+import ru.yandex.practicum.filmorate.model.enums.OperationType;
 import ru.yandex.practicum.filmorate.storage.FriendStorage;
 
 import java.util.Collections;
@@ -25,6 +27,21 @@ public class FriendDbStorage implements FriendStorage {
                 "VALUES (?, ?)";
         jdbcTemplate.update(sql, user.getId(), friend.getId());
 
+        sql = "INSERT INTO Feed " +
+                "SET " +
+                "event_timestamp = ?, " +
+                "user_id = ?, " +
+                "event_type = ?, " +
+                "operation = ?, " +
+                "entity_id = ?";
+
+        jdbcTemplate.update(sql,
+                System.currentTimeMillis(),
+                user.getId(),
+                EventType.FRIEND.toString(),
+                OperationType.ADD.toString(),
+                friend.getId());
+
         return user;
     }
 
@@ -32,6 +49,20 @@ public class FriendDbStorage implements FriendStorage {
     public User deleteFriend(User user, User friend) {
         String sql = "DELETE FROM FRIENDS WHERE USER_ID = ? AND FRIEND_ID = ?";
         jdbcTemplate.update(sql, user.getId(), friend.getId());
+        sql = "INSERT INTO Feed " +
+                "SET " +
+                "event_timestamp = ?, " +
+                "user_id = ?, " +
+                "event_type = ?, " +
+                "operation = ?, " +
+                "entity_id = ?";
+
+        jdbcTemplate.update(sql,
+                System.currentTimeMillis(),
+                user.getId(),
+                EventType.FRIEND.toString(),
+                OperationType.REMOVE.toString(),
+                friend.getId());
 
         return user;
     }
