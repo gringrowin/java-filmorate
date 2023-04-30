@@ -42,7 +42,7 @@ public class FilmService {
 
     public List<Film> findAll() {
         List<Film> films = filmStorage.getAll();
-        for (Film film: films) {
+        for (Film film : films) {
             film.setGenres(genreStorage.getGenresByFilmFromStorage(film.getId()));
             film.setLikes(likeStorage.getLikes(film.getId()));
             film.setMpa(mpaStorage.getMpa(film.getMpa().getId()));
@@ -97,6 +97,17 @@ public class FilmService {
         return findAll().stream().sorted(Comparator.comparing(Film::getLikes).reversed())
                 .limit(Objects.requireNonNullElse(count, 10))
                 .collect(Collectors.toList());
+    }
+
+    public List<Film> getPopularFilmsGenreAndYearFiltered(Integer limit, Integer genreId, Integer year) {
+        log.info("getPopularFilms: {} - TOP, {} - genreId, {} - year - ", limit, genreId, year);
+        List<Film> films = filmStorage.getPopularFilmsGenreAndYearFiltered(genreId, year, limit);
+        for (Film film : films) {
+            film.setGenres(genreStorage.getGenresByFilmFromStorage(film.getId()));
+            film.setLikes(likeStorage.getLikes(film.getId()));
+            film.setMpa(mpaStorage.getMpa(film.getMpa().getId()));
+        }
+        return films;
     }
 
     private void checkUserId(Integer userId) {

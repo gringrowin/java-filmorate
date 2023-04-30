@@ -77,4 +77,15 @@ public class FilmController {
         log.info("getPopularFilms: {} - Finished", popularFilms);
         return popularFilms;
     }
+
+    @GetMapping("/popular")
+    public List<Film> getPopularFilmsGenreAndYearFiltered(
+            @RequestParam(defaultValue = "10", required = false) Integer limit,
+            @RequestParam Integer genreId,
+            @RequestParam Integer year) {
+        log.info("getPopularFilms: {} - count, {} - genreId, {} - year", limit, genreId, year);
+        List<Film> popularFilmsSorted = filmService.getPopularFilmsGenreAndYearFiltered(limit, genreId, year);
+        log.info("getPopularFilms: {} - Finished", popularFilmsSorted);
+        return popularFilmsSorted;
+    }
 }
