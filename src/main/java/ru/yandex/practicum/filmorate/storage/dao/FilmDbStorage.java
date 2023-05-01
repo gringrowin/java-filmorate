@@ -87,8 +87,8 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public List<Film> getFilmsByDirectorIdAndSort(Integer directorId, FilmSortBy sortBy) {
-        StringBuilder sql = new StringBuilder
-                ("SELECT *, COUNT(*) AS likes " +
+        StringBuilder sql = new StringBuilder(
+                "SELECT *, COUNT(*) AS likes " +
                         "FROM Films AS f " +
                         "INNER JOIN Film_directors AS fd ON f.film_id = fd.film_id " +
                         "INNER JOIN Mpa AS m ON f.mpa_id = m.mpa_id " +
