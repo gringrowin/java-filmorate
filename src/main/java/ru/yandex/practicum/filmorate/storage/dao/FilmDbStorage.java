@@ -84,6 +84,20 @@ public class FilmDbStorage implements FilmStorage {
             return jdbcTemplate.queryForObject(sql, this::mapRowToFilm, id);
     }
 
+    @Override
+    public List<Film> getCommonWithFriendFilmsSortedByPopular(Integer userId, Integer friendId) {
+        String sql = "SELECT *\n" +
+                "FROM FILMS\n" +
+                "WHERE FILM_ID IN (\n" +
+                "SELECT FILM_ID \n" +
+                "FROM LIKES\n" +
+                "WHERE USER_ID IN (?,?)\n" +
+                "GROUP BY FILM_ID\n" +
+                "ORDER BY count(USER_ID) DESC )";
+
+        return jdbcTemplate.query(sql, this::mapRowToFilm, userId, friendId);
+    }
+
     private Film mapRowToFilm(ResultSet resultSet, int rowNum) throws SQLException {
         Film film = new Film();
             film.setId(resultSet.getInt("FILM_ID"));

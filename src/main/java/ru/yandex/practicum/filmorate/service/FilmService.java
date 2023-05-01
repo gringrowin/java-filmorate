@@ -42,7 +42,7 @@ public class FilmService {
 
     public List<Film> findAll() {
         List<Film> films = filmStorage.getAll();
-        for (Film film: films) {
+        for (Film film : films) {
             film.setGenres(genreStorage.getGenresByFilmFromStorage(film.getId()));
             film.setLikes(likeStorage.getLikes(film.getId()));
             film.setMpa(mpaStorage.getMpa(film.getMpa().getId()));
@@ -106,5 +106,18 @@ public class FilmService {
             throw new UserNotFoundException(String.format(
                     "Пользователя с ID %s не найден.", userId));
         }
+    }
+
+    public List<Film> getCommonWithFriendFilmsSortedByPopular(Integer userId, Integer friendId) {
+        checkUserId(userId);
+        checkUserId(friendId);
+        List<Film> commonFilms = filmStorage.getCommonWithFriendFilmsSortedByPopular(userId, friendId);
+        for (Film film : commonFilms) {
+            film.setGenres(genreStorage.getGenresByFilmFromStorage(film.getId()));
+            film.setLikes(likeStorage.getLikes(film.getId()));
+            film.setMpa(mpaStorage.getMpa(film.getMpa().getId()));
+        }
+        log.info("Service getCommonWithFriendFilmsSortedByPopular: {} {} {} ", userId, friendId, commonFilms.size());
+        return commonFilms;
     }
 }

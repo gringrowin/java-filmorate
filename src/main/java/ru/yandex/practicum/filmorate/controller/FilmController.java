@@ -77,4 +77,13 @@ public class FilmController {
         log.info("getPopularFilms: {} - Finished", popularFilms);
         return popularFilms;
     }
+
+    @GetMapping("/common")//?userId={userId}&friendId={friendId}
+    public List<Film> getCommonWithFriendFilmsSortedByPopular(@Valid @RequestParam(required = false, name = "userId") Integer userId,
+                                                              @Valid @RequestParam(required = false, name = "friendId") Integer friendId) {
+        log.info("getCommonWithFriendFilmsSortedByPopular: {} {} - Started", userId, friendId);
+        List<Film> commonFilms = filmService.getCommonWithFriendFilmsSortedByPopular(userId, friendId);
+        log.info("getCommonWithFriendFilmsSortedByPopular: {} {} {} - Finished", userId, friendId, commonFilms.size());
+        return commonFilms;
+    }
 }
