@@ -22,4 +22,5 @@ public class Film {
     private Integer rate;
     private Integer likes;
     private Set<Genre> genres = new HashSet<>();
+    private Set<Director> directors = new HashSet<>();
 }
