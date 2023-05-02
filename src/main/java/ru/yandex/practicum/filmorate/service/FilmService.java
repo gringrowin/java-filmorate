@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.exception.InvalidParamsForSearch;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
@@ -106,5 +107,16 @@ public class FilmService {
             throw new UserNotFoundException(String.format(
                     "Пользователя с ID %s не найден.", userId));
         }
+    }
+
+    public List<Film> searchFilms(String query, String[] paramsForFinding) {
+        if (query == null || paramsForFinding == null || paramsForFinding.length > 2) {
+            throw new InvalidParamsForSearch("Заданы ошибочные параметры поиска.");
+        }
+        log.info("Service.searchFilms: {} - query, {} - by", query, paramsForFinding);
+        List<Film> findFilms = filmStorage.searchFilms(query, paramsForFinding);
+        log.info("Service.searchFilms: {} - Finished", findFilms);
+
+        return findFilms;
     }
 }
