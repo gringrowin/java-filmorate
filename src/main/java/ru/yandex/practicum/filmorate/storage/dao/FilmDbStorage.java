@@ -86,11 +86,22 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public List<Film> searchFilms(String query, String[] paramsForFinding) {
-        String byTitle = paramsForFinding[0];
-        String byDirector = paramsForFinding[1];
+        String queryByOneParam = paramsForFinding[0].equals("title") ?
+                " LOWER(F.FILM_NAME) LIKE LOWER('%" + query + "%')" :
+                " LOWER(D.DIRECTOR_NAME) LIKE LOWER('%" + query + "%')";
+        String queryByTwoParams = paramsForFinding.length == 2 ?
+                "OR LOWER(DIRECTOR_NAME) LIKE LOWER('%" + query + "%')" : "";
 
-        String sql = "SELECT * FROM FILMS " +
-                "LEFT JOIN FILMGENRES F on FILMS.FILM_ID = F.FILM_ID";
+        String sql = "SELECT F.FILM_ID, F.FILM_NAME, F.DESCRIPTION, " +
+                "F.RELEASE_DATE, F.DURATION, F.RATE, F.MPA_ID, " +
+                "COUNT(DISTINCT L.USER_ID) AS COUNT_LIKES, FD.DIRECTOR_ID, D.DIRECTOR_NAME " +
+                "FROM FILMS AS F " +
+                "LEFT JOIN LIKES L on F.FILM_ID = L.FILM_ID " +
+                "LEFT JOIN FILMDIRECTORS AS FD ON F.FILM_ID = FD.FILM_ID " +
+                "LEFT JOIN DIRECTORS D on D.DIRECTOR_ID = FD.DIRECTOR_ID " +
+                "WHERE " + queryByOneParam + queryByTwoParams + " " +
+                "GROUP BY F.FILM_ID " +
+                "ORDER BY COUNT_LIKES DESC";
 
         return jdbcTemplate.query(sql, this::mapRowToFilm);
     }

@@ -105,16 +105,16 @@ public class FilmService {
         User user = userService.getUser(userId);
         if (user == null) {
             throw new UserNotFoundException(String.format(
-                    "Пользователя с ID %s не найден.", userId));
+                    "Пользователь с ID %s не найден.", userId));
         }
     }
 
-    public List<Film> searchFilms(String query, String[] paramsForFinding) {
-        if (query == null || paramsForFinding == null || paramsForFinding.length > 2) {
+    public List<Film> searchFilms(String query, String[] paramsForSearch) {
+        if (query == null || paramsForSearch == null || paramsForSearch.length > 2) {
             throw new InvalidParamsForSearch("Заданы ошибочные параметры поиска.");
         }
-        log.info("Service.searchFilms: {} - query, {} - by", query, paramsForFinding);
-        List<Film> findFilms = filmStorage.searchFilms(query, paramsForFinding);
+        log.info("Service.searchFilms: {} - query, {} - by", query, paramsForSearch);
+        List<Film> findFilms = filmStorage.searchFilms(query, paramsForSearch);
         log.info("Service.searchFilms: {} - Finished", findFilms);
 
         return findFilms;
