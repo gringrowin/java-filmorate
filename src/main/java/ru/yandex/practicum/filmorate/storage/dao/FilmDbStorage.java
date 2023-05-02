@@ -88,11 +88,12 @@ public class FilmDbStorage implements FilmStorage {
     public List<Film> getCommonWithFriendFilmsSortedByPopular(Integer userId, Integer friendId) {
         String sql = "SELECT *\n" +
                 "FROM FILMS\n" +
-                "WHERE FILM_ID IN (\n" +
+                "WHERE FILM_ID in (\n" +
                 "SELECT FILM_ID \n" +
                 "FROM LIKES\n" +
                 "WHERE USER_ID IN (?,?)\n" +
                 "GROUP BY FILM_ID\n" +
+                "HAVING COUNT(DISTINCT USER_ID) = 2\n" +
                 "ORDER BY count(USER_ID) DESC )";
 
         return jdbcTemplate.query(sql, this::mapRowToFilm, userId, friendId);
