@@ -47,7 +47,13 @@ public class InMemoryFilmStorage implements FilmStorage {
         return films.get(id);
     }
 
+    @Override
+    public List<Film> getPopularFilms(Integer genreId, Integer year) {
+        return null;
+    }
+
     private Integer getIdGenerator() {
         return ++idGenerator;
     }
+
 }

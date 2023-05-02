@@ -14,6 +14,7 @@ import ru.yandex.practicum.filmorate.storage.MpaStorage;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @Slf4j
@@ -42,7 +43,7 @@ public class FilmService {
 
     public List<Film> findAll() {
         List<Film> films = filmStorage.getAll();
-        for (Film film: films) {
+        for (Film film : films) {
             film.setGenres(genreStorage.getGenresByFilmFromStorage(film.getId()));
             film.setLikes(likeStorage.getLikes(film.getId()));
             film.setMpa(mpaStorage.getMpa(film.getMpa().getId()));
@@ -92,11 +93,28 @@ public class FilmService {
         return getFilm(filmId);
     }
 
-    public List<Film> getPopularFilms(Integer count) {
-        log.info("getPopularFilms: {} - TOP - ", count);
-        return findAll().stream().sorted(Comparator.comparing(Film::getLikes).reversed())
-                .limit(Objects.requireNonNullElse(count, 10))
-                .collect(Collectors.toList());
+    public List<Film> getPopularFilms(Integer count, Integer genreId, Integer year) {
+        List<Film> popularFilms;
+        log.info("getPopularFilms: {} - TOP, {} - genreId, {} - year - ", count, genreId, year);
+        if (genreId != null) {
+            genreStorage.getGenre(genreId);
+        }
+        if (genreId == null && year == null) {
+            popularFilms = findAll();
+        } else {
+            popularFilms = filmStorage.getPopularFilms(genreId, year);
+        }
+        for (Film film : popularFilms) {
+            film.setGenres(genreStorage.getGenresByFilmFromStorage(film.getId()));
+            film.setLikes(likeStorage.getLikes(film.getId()));
+            film.setMpa(mpaStorage.getMpa(film.getMpa().getId()));
+        }
+        Stream<Film> filmsStream = popularFilms.stream()
+                .sorted(Comparator.comparing(Film::getLikes).reversed())
+                .limit(Objects.requireNonNullElse(count, 10));
+        popularFilms = filmsStream.collect(Collectors.toList());
+        filmsStream.close();
+        return popularFilms;
     }
 
     private void checkUserId(Integer userId) {
