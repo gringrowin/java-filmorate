@@ -84,6 +84,17 @@ public class FilmDbStorage implements FilmStorage {
             return jdbcTemplate.queryForObject(sql, this::mapRowToFilm, id);
     }
 
+    @Override
+    public List<Film> searchFilms(String query, String[] paramsForFinding) {
+        String byTitle = paramsForFinding[0];
+        String byDirector = paramsForFinding[1];
+
+        String sql = "SELECT * FROM FILMS " +
+                "LEFT JOIN FILMGENRES F on FILMS.FILM_ID = F.FILM_ID";
+
+        return jdbcTemplate.query(sql, this::mapRowToFilm);
+    }
+
     private Film mapRowToFilm(ResultSet resultSet, int rowNum) throws SQLException {
         Film film = new Film();
             film.setId(resultSet.getInt("FILM_ID"));
