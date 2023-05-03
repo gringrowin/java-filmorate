@@ -96,7 +96,6 @@ public class FilmDbStorage implements FilmStorage {
         Mpa mpa = new Mpa();
             mpa.setId(resultSet.getInt("MPA_ID"));
             film.setMpa(mpa);
-
         return film;
     }
 
