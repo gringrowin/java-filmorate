@@ -43,7 +43,7 @@ public class ErrorHandler {
 
     @ExceptionHandler(DirectorNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handleMpaNotFoundException(final DirectorNotFoundException e) {
+    public ErrorResponse handleDirectorNotFoundException(final DirectorNotFoundException e) {
         return new ErrorResponse(
                 e.getMessage()
         );
