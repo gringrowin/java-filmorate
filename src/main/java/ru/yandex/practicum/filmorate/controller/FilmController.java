@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.enums.FilmSortBy;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
 import javax.validation.Valid;
@@ -76,5 +77,11 @@ public class FilmController {
         List<Film> popularFilms = filmService.getPopularFilms(count);
         log.info("getPopularFilms: {} - Finished", popularFilms);
         return popularFilms;
+    }
+
+    @GetMapping("/director/{directorId}")
+    public List<Film> getFilmsByDirectorIdAndSort(@PathVariable int directorId, @RequestParam FilmSortBy sortBy) {
+        log.info("Command of FilmController to get sorted director film list");
+        return filmService.getFilmsByDirectorIdAndSort(directorId, sortBy);
     }
 }
