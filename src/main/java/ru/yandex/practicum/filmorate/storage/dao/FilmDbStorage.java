@@ -8,7 +8,7 @@ import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.FilmSortBy;
+import ru.yandex.practicum.filmorate.enums.FilmSortBy;
 import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
@@ -96,14 +96,13 @@ public class FilmDbStorage implements FilmStorage {
                         "WHERE fd.director_id = ? " +
                         "GROUP BY f.film_id ");
 
-        if (sortBy != null) {
-            if (sortBy.equals(FilmSortBy.likes)) {
-                sql.append("ORDER BY likes");
-            }
-            if (sortBy.equals(FilmSortBy.year)) {
-                sql.append("ORDER BY f.release_date");
-            }
+        if (sortBy.equals(FilmSortBy.likes)) {
+            sql.append("ORDER BY likes");
         }
+        if (sortBy.equals(FilmSortBy.year)) {
+            sql.append("ORDER BY f.release_date");
+        }
+
         return jdbcTemplate.query(sql.toString(), this::mapRowToFilm, directorId);
     }
 

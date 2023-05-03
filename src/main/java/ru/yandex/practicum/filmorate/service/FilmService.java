@@ -8,7 +8,7 @@ import ru.yandex.practicum.filmorate.exception.DirectorNotFoundException;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.FilmSortBy;
+import ru.yandex.practicum.filmorate.enums.FilmSortBy;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.GenreStorage;
@@ -45,14 +45,8 @@ public class FilmService {
 
     public List<Film> findAll() {
         List<Film> films = filmStorage.getAll();
-        for (Film film : films) {
-            film.setGenres(genreStorage.getGenresByFilmFromStorage(film.getId()));
-            film.setLikes(likeStorage.getLikes(film.getId()));
-            film.setMpa(mpaStorage.getMpa(film.getMpa().getId()));
-            film.setDirectors(directorService.getDirectorsByFilmToStorage(film.getId()));
-        }
         log.info("findAll: {}", films);
-        return films;
+        return addingInfoFilms(films);
     }
 
     public Film create(Film film) {
@@ -78,7 +72,7 @@ public class FilmService {
         film.setGenres(genreStorage.getGenresByFilmFromStorage(id));
         film.setLikes(likeStorage.getLikes(id));
         film.setMpa(mpaStorage.getMpa(film.getMpa().getId()));
-        film.setDirectors(directorService.getDirectorsByFilmToStorage(film.getId()));
+        film.setDirectors(directorService.getDirectorsByFilmFromStorage(film.getId()));
         log.info("getFilm: {} - ", film);
         return film;
     }
@@ -110,13 +104,7 @@ public class FilmService {
         checkDirectorId(directorId);
         log.info("Service command to get directors (id: {}) sorted by {}", directorId, sortBy);
         List<Film> films = filmStorage.getFilmsByDirectorIdAndSort(directorId, sortBy);
-        for (Film film : films) {
-            film.setGenres(genreStorage.getGenresByFilmFromStorage(film.getId()));
-            film.setLikes(likeStorage.getLikes(film.getId()));
-            film.setMpa(mpaStorage.getMpa(film.getMpa().getId()));
-            film.setDirectors(directorService.getDirectorsByFilmToStorage(film.getId()));
-        }
-        return films;
+        return addingInfoFilms(films);
     }
 
     private void checkUserId(Integer userId) {
@@ -135,5 +123,15 @@ public class FilmService {
             log.error("Director with id {} is not found!", directorId);
             throw new DirectorNotFoundException(String.format("Director with id %s is not found!", directorId));
         }
+    }
+
+    private List<Film> addingInfoFilms(List<Film> filmList) {
+        for (Film film : filmList) {
+            film.setGenres(genreStorage.getGenresByFilmFromStorage(film.getId()));
+            film.setLikes(likeStorage.getLikes(film.getId()));
+            film.setMpa(mpaStorage.getMpa(film.getMpa().getId()));
+            film.setDirectors(directorService.getDirectorsByFilmFromStorage(film.getId()));
+        }
+        return filmList;
     }
 }
