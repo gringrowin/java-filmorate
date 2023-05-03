@@ -4,9 +4,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.FriendStorage;
+import ru.yandex.practicum.filmorate.storage.LikeStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
+import ru.yandex.practicum.filmorate.storage.dao.FilmDbStorage;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -17,12 +21,21 @@ public class UserService {
 
     private final UserStorage userStorage;
 
+    private final FilmStorage filmStorage;
+
     private final FriendStorage friendStorage;
 
+    private final LikeStorage likeStorage;
+
     @Autowired
-    public UserService(@Qualifier("dbUserStorage") UserStorage userStorage, FriendStorage friendStorage) {
+    public UserService(@Qualifier("dbUserStorage") UserStorage userStorage,
+                       @Qualifier("dbFilmStorage") FilmStorage filmStorage,
+                       FriendStorage friendStorage,
+                       LikeStorage likeStorage) {
         this.userStorage = userStorage;
         this.friendStorage = friendStorage;
+        this.likeStorage = likeStorage;
+        this.filmStorage = filmStorage;
     }
 
 
@@ -98,5 +111,40 @@ public class UserService {
         if (user.getName() == null || user.getName().isBlank()) {
             user.setName(user.getLogin());
         }
+    }
+
+    public List<Film> getRecommendations(int userId){
+        List<Integer> userFilms = likeStorage.getLikedFilmsByUserId(userId);
+        List<User> users = findAll();
+        HashMap<Integer, List<Integer>> likes = new HashMap<>();
+        for (User user : users) {
+            if(user.getId() != userId){
+                likes.put(user.getId(), likeStorage.getLikedFilmsByUserId(user.getId()));
+            }
+        }
+        int maxCommonElementsCount = 0;
+        List<Integer> films = new ArrayList<>();
+        for (Integer anotherUserId : likes.keySet()) {
+            List<Integer> likedFilms = likes.get(anotherUserId);
+            int commonSum = 0;
+            for (Integer filmId:userFilms) {
+                for (Integer anotherFilmId : likedFilms) {
+                    if(filmId == anotherFilmId){
+                        commonSum++;
+                    }
+                }
+            }
+            if(commonSum>maxCommonElementsCount){
+                maxCommonElementsCount = commonSum;
+                films = likedFilms;
+            }
+        }
+        films.removeAll(userFilms);
+        System.out.println(films);
+        List<Film> recommendations = new ArrayList<>();
+        for (Integer filmId:films) {
+            //recommendations.add(FilmService::getFilm,filmId);
+        }
+        return recommendations;
     }
 }
