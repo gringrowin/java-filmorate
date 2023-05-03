@@ -19,8 +19,12 @@ public class ReviewLikeDbStorage implements ReviewLikeStorage {
     }
 
     @Override
-    public Review addLike(int reviewId, int userId) {
-        return null;
+    public void addLike(int reviewId, int userId) {
+        String sqlQueryLike = "INSERT INTO reviews_likes(review_id, user_id) " +
+                "values (?, ?) ";
+        jdbcTemplate.update(sqlQueryLike,
+                reviewId,
+                userId);
     }
 
     @Override
@@ -30,6 +34,7 @@ public class ReviewLikeDbStorage implements ReviewLikeStorage {
 
     @Override
     public Review addDisLike(int reviewId, int userId) {
+        // писать sql запрос
         return null;
     }
 
