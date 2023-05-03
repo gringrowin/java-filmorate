@@ -1,12 +1,14 @@
 package ru.yandex.practicum.filmorate.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.Review;
 import ru.yandex.practicum.filmorate.storage.dao.ReviewDbStorage;
 import ru.yandex.practicum.filmorate.storage.dao.ReviewLikeDbStorage;
 
 import java.util.Collection;
 
+@Service
 public class ReviewService {
     ReviewDbStorage reviewDbStorage;
     ReviewLikeDbStorage reviewLikeDbStorage;
