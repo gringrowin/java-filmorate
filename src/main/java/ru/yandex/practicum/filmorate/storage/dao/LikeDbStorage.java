@@ -7,11 +7,8 @@ import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.storage.LikeStorage;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,12 +49,13 @@ public class LikeDbStorage implements LikeStorage {
 
         return jdbcTemplate.queryForObject(sql, (rs, rowNum) -> rs.getInt("COUNT"), filmId);
     }
+
     @Override
-    public List<Integer> getLikedFilmsByUserId(int userId){
+    public List<Integer> getLikedFilmsByUserId(int userId) {
         String sql = "SELECT film_id FROM Likes WHERE user_id = ?";
         SqlRowSet sqlRowSet = jdbcTemplate.queryForRowSet(sql, userId);
         List<Integer> filmIds = new ArrayList<>();
-        while (sqlRowSet.next()){
+        while (sqlRowSet.next()) {
             filmIds.add(sqlRowSet.getInt("film_id"));
         }
         return filmIds;
