@@ -97,4 +97,12 @@ public class FilmController {
         log.info("getCommonFilmsForFriendSortedByPopular: {} {} {} - Finished", userId, friendId, commonFilms.size());
         return commonFilms;
     }
+
+    @DeleteMapping("/{filmId}")
+    public void deleteFilm(@PathVariable("filmId") Integer filmId) {
+        log.info("deleteFilmId: {} - filmId", filmId);
+        filmService.deleteFilm(filmId);
+//        log.info("deleteFilmId: {} - Finished", filmId);
+    }
+
 }

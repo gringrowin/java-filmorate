@@ -145,4 +145,9 @@ public class FilmService {
         log.info("Service getCommonFilmsForFriendSortedByPopular: {} {} {} ", userId, friendId, commonFilms.size());
         return addingInfoFilms(commonFilms);
     }
+
+    public void deleteFilm(Integer filmId) {
+        log.info("deleteFilm: {} - ", filmId);
+        filmStorage.deleteFilm(filmId);
+    }
 }
