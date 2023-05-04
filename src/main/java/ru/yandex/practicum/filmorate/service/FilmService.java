@@ -5,27 +5,29 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.InvalidParamsForSearch;
+import ru.yandex.practicum.filmorate.enums.FilmSortBy;
 import ru.yandex.practicum.filmorate.exception.DirectorNotFoundException;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.enums.FilmSortBy;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.GenreStorage;
 import ru.yandex.practicum.filmorate.storage.LikeStorage;
 import ru.yandex.practicum.filmorate.storage.MpaStorage;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.List;
 
 @Service
 @Slf4j
 public class FilmService {
+
     private final FilmStorage filmStorage;
+
     private final GenreStorage genreStorage;
     private final MpaStorage mpaStorage;
     private final LikeStorage likeStorage;
+
     private final UserService userService;
     private final DirectorService directorService;
 
@@ -41,6 +43,7 @@ public class FilmService {
         this.mpaStorage = mpaStorage;
         this.likeStorage = likeStorage;
         this.userService = userService;
+        this.directorService = directorService;
     }
 
     public List<Film> findAll() {
@@ -93,11 +96,12 @@ public class FilmService {
         return getFilm(filmId);
     }
 
-    public List<Film> getPopularFilms(Integer count) {
-        log.info("getPopularFilms: {} - TOP - ", count);
-        return findAll().stream().sorted(Comparator.comparing(Film::getLikes).reversed())
-                .limit(Objects.requireNonNullElse(count, 10))
-                .collect(Collectors.toList());
+    public List<Film> getPopularFilms(Integer count, Integer genreId, Integer year) {
+        List<Film> popularFilms;
+        log.info("getPopularFilms: {} - TOP, {} - genreId, {} - year - ", count, genreId, year);
+        popularFilms = filmStorage.getPopularFilms(count, genreId, year);
+        addingInfoFilms(popularFilms);
+        return popularFilms;
     }
 
     public List<Film> getFilmsByDirectorIdAndSort(Integer directorId, FilmSortBy sortBy) {
