@@ -42,19 +42,4 @@ class FilmServiceTest {
         mpa.setId(1);
         testFilm.setMpa(mpa);
     }
-
-//    @Test
-//    void findAllWhenStorageNotEmptyThenReturnedList() {
-//        List<Film> filmsExcept = List.of(testFilm);
-//        when(filmStorage.getAll()).thenReturn(filmsExcept);
-//        when(genreStorage.getGenresByFilmFromStorage(testFilm.getId()))
-//                .thenReturn(Collections.emptySet());
-//        when(likeStorage.getLikes(testFilm.getId())).thenReturn(0);
-//        when(mpaStorage.getMpa(testFilm.getMpa().getId())).thenReturn(testFilm.getMpa());
-//
-//        List<Film> films = filmService.findAll();
-//
-//        verify(filmStorage).getAll();
-//        assertEquals(filmsExcept, films);
-//    }
 }

@@ -6,15 +6,18 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
+import ru.yandex.practicum.filmorate.enums.FilmSortBy;
 import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.enums.FilmSortBy;
 import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
-import java.sql.*;
 import java.sql.Date;
-import java.util.*;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.Objects;
 
 @Component("dbFilmStorage")
 @RequiredArgsConstructor
@@ -29,6 +32,38 @@ public class FilmDbStorage implements FilmStorage {
                 "FROM FILMS AS F " +
                 "GROUP BY F.FILM_ID";
         return jdbcTemplate.query(sql, this::mapRowToFilm);
+    }
+
+    @Override
+    public List<Film> getPopularFilms(Integer count, Integer genreId, Integer year) {
+        List<Film> popularFilms;
+        String yearFilter = "WHERE YEAR(f.RELEASE_DATE) = ? ";
+        String genreFilter = "WHERE fg.GENRE_ID = ? ";
+        String genreJoin = "JOIN FILMGENRES fg ON f.FILM_ID = fg.FILM_ID ";
+        String genreAndYearFilter = "WHERE fg.GENRE_ID = ? AND YEAR(f.RELEASE_DATE) = ? ";
+        StringBuilder sql = new StringBuilder("SELECT F.FILM_ID, F.FILM_NAME, F.DESCRIPTION, " +
+                "F.RELEASE_DATE, F.DURATION, F.RATE, F.MPA_ID " +
+                "FROM FILMS AS F " +
+                "LEFT OUTER JOIN LIKES AS l ON l.film_id = f.film_id ");
+        String sqlEnd = "GROUP BY F.FILM_ID ORDER BY COUNT(l.user_id) DESC LIMIT (?)";
+
+        if (genreId == null && year == null) {
+            String sqlString = sql.append(sqlEnd).toString();
+            popularFilms = jdbcTemplate.query(sqlString, this::mapRowToFilm, count);
+
+        } else if (genreId == null && year != null) {
+            String sqlString = sql.append(yearFilter).append(sqlEnd).toString();
+            popularFilms = jdbcTemplate.query(sqlString, this::mapRowToFilm, year, count);
+
+        } else if (genreId != null && year == null) {
+            String sqlString = sql.append(genreJoin).append(genreFilter).append(sqlEnd).toString();
+            popularFilms = jdbcTemplate.query(sqlString, this::mapRowToFilm, genreId, count);
+
+        } else {
+            String sqlString = sql.append(genreJoin).append(genreAndYearFilter).append(sqlEnd).toString();
+            popularFilms = jdbcTemplate.query(sqlString, this::mapRowToFilm, genreId, year, count);
+        }
+        return popularFilms;
     }
 
     @Override
