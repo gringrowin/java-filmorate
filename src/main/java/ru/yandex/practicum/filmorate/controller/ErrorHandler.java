@@ -41,6 +41,14 @@ public class ErrorHandler {
         );
     }
 
+    @ExceptionHandler(DirectorNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleDirectorNotFoundException(final DirectorNotFoundException e) {
+        return new ErrorResponse(
+                e.getMessage()
+        );
+    }
+
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleInvalidParamsForSearch(final InvalidParamsForSearch e) {
