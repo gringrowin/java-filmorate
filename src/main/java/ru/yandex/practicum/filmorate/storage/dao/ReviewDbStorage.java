@@ -10,8 +10,10 @@ import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.exception.ReviewNotFoundException;
 import ru.yandex.practicum.filmorate.model.Review;
 import ru.yandex.practicum.filmorate.storage.ReviewStorage;
-
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
 
@@ -26,7 +28,7 @@ public class ReviewDbStorage implements ReviewStorage {
     }
 
     @Override
-    public Review addNewReview(Review review) {
+    public void addNewReview(Review review) {
         String sqlQueryReview = "insert into reviews(content, is_positive, user_id, film_id) " +
                 "values (?, ?, ?, ?) ";
         KeyHolder keyHolder = new GeneratedKeyHolder();           // вернуть id, сгенерированный в БД
@@ -39,7 +41,6 @@ public class ReviewDbStorage implements ReviewStorage {
             return stmt;
         }, keyHolder);
         review.setReviewId(keyHolder.getKey().intValue());
-        return getReviewById(review.getReviewId()).orElseThrow();
     }
 
     @Override
@@ -55,14 +56,15 @@ public class ReviewDbStorage implements ReviewStorage {
     }
 
     @Override
-    public void delete(int id) {
+    public void delete(Integer id) {
         String sqlQueryDeleteReview = "DELETE FROM reviews WHERE review_id = ? ";
         jdbcTemplate.update(sqlQueryDeleteReview, id);
+        log.info("Отзыв с идентификатором " + id + " удалён из базы");
     }
 
     @Override
-    public Optional<Review> getReviewById(int id) {
-        SqlRowSet reviewRows = jdbcTemplate.queryForRowSet("SELECT * FROM reviews, "  +
+    public Optional<Review> getReviewById(Integer id) {
+        SqlRowSet reviewRows = jdbcTemplate.queryForRowSet("SELECT * FROM reviews "  +
                 "WHERE review_id = ?", id);
         if (reviewRows.next()) {
             Review review = new Review(
@@ -72,17 +74,40 @@ public class ReviewDbStorage implements ReviewStorage {
                     reviewRows.getInt("user_id"),
                     reviewRows.getInt("film_id")
             );
-            log.info("Найден обзор c id: {} к фильму c id: {}.", id, review.getFilmId());
+            log.info("Найден отзыв c id: {} к фильму c id: {}.", id, review.getFilmId());
 
             return Optional.of(review);
         } else {
-            log.info("Обзор с идентификатором {} не найден.", id);
+            log.error("Отзыв с идентификатором {} не найден.", id);
             throw new ReviewNotFoundException("Ревью с id " + id + "  не найден");
         }
     }
 
-    @Override
-    public Collection<Review> getReviews() {
-        return null;
+    public Collection<Review> getReviews(Integer filmId, Integer countOfReviews) {
+        countOfReviews = (countOfReviews == null) ? 10 : countOfReviews;
+        String sqlWhereFilmId = (filmId != null) ? " WHERE film_id= " + filmId + " " : "";
+
+        String sqlQuery = "SELECT *, " +
+                "(COUNT(SELECT user_id FROM reviews_likes AS rl WHERE rl.review_id = r.review_id AND is_like = TRUE) - " +
+                "COUNT(SELECT user_id FROM reviews_likes AS rl WHERE rl.review_id = r.review_id AND is_like = FALSE)) as useful " +
+                "FROM reviews AS r " + sqlWhereFilmId +
+                "GROUP BY review_id " +
+                "ORDER BY useful DESC " +
+                "LIMIT " + countOfReviews;
+        Collection<Review> allReviews = new ArrayList<>();
+        allReviews = jdbcTemplate.query(sqlQuery, (rs, rowNum) -> makeReviews(rs));
+        return allReviews;
+    }
+
+    private Review makeReviews(ResultSet rs) throws SQLException {
+        String sql = "SELECT * " +
+                "FROM films AS f JOIN rate_mpa AS rm ON f.rate_id = rm.rate_id ";
+        return new Review(
+                rs.getInt("review_id"),
+                rs.getString("content"),
+                rs.getBoolean("is_positive"),
+                rs.getInt("user_id"),
+                rs.getInt("film_id"),
+                rs.getInt("useful"));
     }
 }

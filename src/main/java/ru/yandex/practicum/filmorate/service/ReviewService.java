@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.Review;
@@ -9,22 +10,30 @@ import ru.yandex.practicum.filmorate.storage.dao.ReviewLikeDbStorage;
 import java.util.Collection;
 
 @Service
+@Slf4j
 public class ReviewService {
     ReviewDbStorage reviewDbStorage;
     ReviewLikeDbStorage reviewLikeDbStorage;
+    UserService userService;
 
     @Autowired
-    public ReviewService(ReviewDbStorage reviewDbStorage) {
+    public ReviewService(ReviewDbStorage reviewDbStorage, ReviewLikeDbStorage reviewLikeDbStorage, UserService userService) {
         this.reviewDbStorage = reviewDbStorage;
+        this.reviewLikeDbStorage = reviewLikeDbStorage;
+        this.userService = userService;
     }
 
     public Review addNewReview(Review review) {
-        return reviewDbStorage.addNewReview(review);
+        reviewDbStorage.addNewReview(review);
+        Review newReview = getReviewById(review.getReviewId());
+        //newReview.setUseful(newReview.getReviewId());
+        log.info("Добавлен новый отзыв " + newReview.toString());
+        return newReview;
     }
 
     public Review getReviewById(int id) {
-        Review review = reviewDbStorage.getReviewById(id).orElseThrow();
-        review.setUseful(reviewLikeDbStorage.getUsefulness(id));
+        Review review = reviewDbStorage.getReviewById(id).get();
+        //review.setUseful(reviewLikeDbStorage.getUsefulness(id));
         return review;
     }
 
@@ -39,10 +48,24 @@ public class ReviewService {
     }
 
     public Collection<Review> getReviews(Integer filmId, Integer count) {
-        return null;
+        return reviewDbStorage.getReviews(filmId, count);
     }
 
-    public Collection<Review> getAllReviews(int countOfReviews) {
-        return null;
+
+    public Review addLikeToReview(int reviewId, int userId) {
+        reviewLikeDbStorage.addLike(reviewId, userId, true);
+        return getReviewById(reviewId);
     }
+
+    public Review addDisLikeToReview(int reviewId, int userId) {
+        reviewLikeDbStorage.addLike(reviewId, userId, false);
+        return getReviewById(reviewId);
+    }
+
+    public void deleteLikeFromReview(int reviewId, int userId) {  // удаляем и лайк и дизлайк
+        getReviewById(reviewId);                  // проверяем наличие ревью в бд
+        userService.getUser(userId);                            // проверяем наличие пользователя в бд
+        reviewLikeDbStorage.deleteLike(reviewId, userId);
+    }
+
 }

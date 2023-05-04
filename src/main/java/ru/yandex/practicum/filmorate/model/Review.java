@@ -2,20 +2,19 @@ package ru.yandex.practicum.filmorate.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
-
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Data
-@RequiredArgsConstructor
 @AllArgsConstructor
 public class Review {
-    private final Integer reviewId;
-    @NotBlank
+    private Integer reviewId;
+    @NotNull(message = "Текст отзыва не может быть пустым")
     private String content;
+    @NotNull(message = "Категория отзыва не может быть пустой")
     private Boolean isPositive;
+    @NotNull(message = "Не получен id пользователя")
     private final Integer userId;
+    @NotNull(message = "Не получен id фильма")
     private final Integer filmId;
     private Integer useful = 0;         //рейтинг полезности
 
@@ -27,7 +26,11 @@ public class Review {
         this.filmId = filmId;
     }
 
-    public void setReviewId(int intValue) {
+    public Review(String content, Boolean isPositive, Integer userId, Integer filmId) {
+        this.content = content;
+        this.isPositive = isPositive;
+        this.userId = userId;
+        this.filmId = filmId;
     }
 }
 

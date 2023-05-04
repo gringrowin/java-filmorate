@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Repository;
-import ru.yandex.practicum.filmorate.model.Review;
 import ru.yandex.practicum.filmorate.storage.ReviewLikeStorage;
 
 @Slf4j
@@ -19,45 +18,39 @@ public class ReviewLikeDbStorage implements ReviewLikeStorage {
     }
 
     @Override
-    public void addLike(int reviewId, int userId) {
-        String sqlQueryLike = "INSERT INTO reviews_likes(review_id, user_id) " +
-                "values (?, ?) ";
+    public void addLike(int reviewId, int userId, boolean isLike) {
+        String sqlQueryLike = "INSERT INTO reviews_likes(review_id, user_id, is_like) AS rl " +
+                "values (?, ?, ?), ";
         jdbcTemplate.update(sqlQueryLike,
+                reviewId,
+                userId,
+                isLike);
+    }
+
+    @Override
+    public void deleteLike(int reviewId, int userId) {
+        String sqlQueryDeleteLike = "DELETE FROM reviews_likes WHERE review_id = ?" +
+                " AND user_id = ? ";
+        jdbcTemplate.update(sqlQueryDeleteLike,
                 reviewId,
                 userId);
     }
 
     @Override
-    public Review deleteLike(int reviewId, int userId) {
-        return null;
-    }
-
-    @Override
-    public Review addDisLike(int reviewId, int userId) {
-        // писать sql запрос
-        return null;
-    }
-
-    @Override
-    public Review deleteDisLike(int reviewId, int userId) {
-        return null;
-    }
-
-    @Override
     public Integer getUsefulness(int id) {
-        String sqlQueryForLikes = "SELECT COUNT(review_id) AS cntLikes FROM reviews_likes, WHERE is_like = true " +
+        String sqlQueryForLikes = "SELECT COUNT(review_id) AS cntLikes FROM reviews_likes WHERE is_like = true " +
                 "AND review_id = ? ";
-        String sqlQueryForDisLikes = "SELECT COUNT(review_id) AS cntDisLikes FROM reviews_likes, " +
+        String sqlQueryForDisLikes = "SELECT COUNT(review_id) AS cntDisLikes FROM reviews_likes " +
                 "WHERE is_like = false " +
                 "AND review_id = ? ";
 
         SqlRowSet reviewLikesRows = jdbcTemplate.queryForRowSet(sqlQueryForLikes, id);
-        SqlRowSet reviewDisLikesRows = jdbcTemplate.queryForRowSet(sqlQueryForLikes, id);
+        SqlRowSet reviewDisLikesRows = jdbcTemplate.queryForRowSet(sqlQueryForDisLikes, id);
 
         int likesCount = 0;
         int disLikesCount = 0;
         if (reviewLikesRows.next()) {
-            likesCount = (reviewLikesRows.getInt("cnt"));
+            likesCount = (reviewLikesRows.getInt("cntLikes"));
             log.info("Обзор id: {} считают полезным {} пользователей", id, likesCount);
         }
         if (reviewDisLikesRows.next()) {

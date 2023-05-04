@@ -1,15 +1,9 @@
 package ru.yandex.practicum.filmorate.storage;
 
-import ru.yandex.practicum.filmorate.model.Review;
-
 public interface ReviewLikeStorage {
-    void addLike(int reviewId, int userId);
+    void addLike(int reviewId, int userId, boolean isLike);
 
-    Review deleteLike(int reviewId, int userId);
+    void deleteLike(int reviewId, int userId);
 
-    Review addDisLike(int reviewId, int userId);
-
-    Review deleteDisLike(int reviewId, int userId);
-
-    Integer getUsefulness(int id);
+   Integer getUsefulness(int id);
 }
