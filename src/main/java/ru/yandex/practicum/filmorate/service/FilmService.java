@@ -112,6 +112,7 @@ public class FilmService {
             film.setGenres(genreStorage.getGenresByFilmFromStorage(film.getId()));
             film.setLikes(likeStorage.getLikes(film.getId()));
             film.setMpa(mpaStorage.getMpa(film.getMpa().getId()));
+            film.setDirectors(directorService.getDirectorsByFilmFromStorage(film.getId()));
         }
         Stream<Film> filmsStream = popularFilms.stream()
                 .sorted(Comparator.comparing(Film::getLikes).reversed())
