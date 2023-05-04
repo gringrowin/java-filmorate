@@ -88,4 +88,13 @@ public class FilmController {
         log.info("Command of FilmController to get sorted director film list");
         return filmService.getFilmsByDirectorIdAndSort(directorId, sortBy);
     }
+
+    @GetMapping("/common")
+    public List<Film> getCommonFilmsForFriendSortedByPopular(@Valid @RequestParam(required = false, name = "userId") Integer userId,
+                                                             @Valid @RequestParam(required = false, name = "friendId") Integer friendId) {
+        log.info("getCommonFilmsForFriendSortedByPopular: {} {} - Started", userId, friendId);
+        List<Film> commonFilms = filmService.getCommonFilmsForFriendSortedByPopular(userId, friendId);
+        log.info("getCommonFilmsForFriendSortedByPopular: {} {} {} - Finished", userId, friendId, commonFilms.size());
+        return commonFilms;
+    }
 }

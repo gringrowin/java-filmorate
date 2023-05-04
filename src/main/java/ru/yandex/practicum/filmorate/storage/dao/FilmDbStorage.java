@@ -142,6 +142,15 @@ public class FilmDbStorage implements FilmStorage {
     }
 
 
+    @Override
+    public List<Film> getCommonFilmsForFriendSortedByPopular(Integer userId, Integer friendId) {
+        String sql = "SELECT * FROM FILMS WHERE FILM_ID in " +
+                "(SELECT FILM_ID FROM LIKES WHERE USER_ID IN (?,?) " +
+                "GROUP BY FILM_ID HAVING COUNT(DISTINCT USER_ID) = 2 ORDER BY count(USER_ID) DESC )";
+
+        return jdbcTemplate.query(sql, this::mapRowToFilm, userId, friendId);
+    }
+
     private Film mapRowToFilm(ResultSet resultSet, int rowNum) throws SQLException {
         Film film = new Film();
         film.setId(resultSet.getInt("FILM_ID"));
@@ -160,8 +169,8 @@ public class FilmDbStorage implements FilmStorage {
 
     private void checkIdFilm(Integer id) {
         String sql = "SELECT * FROM FILMS " +
-                "WHERE FILM_ID = ?";
-        SqlRowSet rows = jdbcTemplate.queryForRowSet(sql, id);
+                    "WHERE FILM_ID = ?";
+        SqlRowSet rows =  jdbcTemplate.queryForRowSet(sql, id);
 
         if (!rows.next()) {
             throw new FilmNotFoundException("Фильм с ID: " + id + " не найден!");
