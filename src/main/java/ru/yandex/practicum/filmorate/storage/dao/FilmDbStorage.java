@@ -8,6 +8,7 @@ import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.enums.FilmSortBy;
 import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
@@ -77,32 +78,55 @@ public class FilmDbStorage implements FilmStorage {
     public Film getFilm(Integer id) {
         checkIdFilm(id);
 
-            String sql = "SELECT * " +
-                    "FROM FILMS AS F, MPA AS M " +
-                    "WHERE F.MPA_ID = M.MPA_ID AND F.FILM_ID = ? ";
+        String sql = "SELECT * " +
+                "FROM FILMS AS F, MPA AS M " +
+                "WHERE F.MPA_ID = M.MPA_ID AND F.FILM_ID = ? ";
 
-            return jdbcTemplate.queryForObject(sql, this::mapRowToFilm, id);
+        return jdbcTemplate.queryForObject(sql, this::mapRowToFilm, id);
     }
+
+    @Override
+    public List<Film> getFilmsByDirectorIdAndSort(Integer directorId, FilmSortBy sortBy) {
+        StringBuilder sql = new StringBuilder(
+                "SELECT *, COUNT(*) AS likes " +
+                        "FROM Films AS f " +
+                        "INNER JOIN Film_directors AS fd ON f.film_id = fd.film_id " +
+                        "INNER JOIN Mpa AS m ON f.mpa_id = m.mpa_id " +
+                        "LEFT JOIN Likes AS l ON f.film_id = l.film_id " +
+                        "WHERE fd.director_id = ? " +
+                        "GROUP BY f.film_id ");
+
+        if (sortBy.equals(FilmSortBy.likes)) {
+            sql.append("ORDER BY likes");
+        }
+        if (sortBy.equals(FilmSortBy.year)) {
+            sql.append("ORDER BY f.release_date");
+        }
+
+        return jdbcTemplate.query(sql.toString(), this::mapRowToFilm, directorId);
+    }
+
 
     private Film mapRowToFilm(ResultSet resultSet, int rowNum) throws SQLException {
         Film film = new Film();
-            film.setId(resultSet.getInt("FILM_ID"));
-            film.setName(resultSet.getString("FILM_NAME"));
-            film.setDescription(resultSet.getString("DESCRIPTION"));
-            film.setReleaseDate(Objects.requireNonNull(resultSet.getDate("RELEASE_DATE")).toLocalDate());
-            film.setDuration(resultSet.getInt("DURATION"));
-            film.setRate(resultSet.getInt("RATE"));
+        film.setId(resultSet.getInt("FILM_ID"));
+        film.setName(resultSet.getString("FILM_NAME"));
+        film.setDescription(resultSet.getString("DESCRIPTION"));
+        film.setReleaseDate(Objects.requireNonNull(resultSet.getDate("RELEASE_DATE")).toLocalDate());
+        film.setDuration(resultSet.getInt("DURATION"));
+        film.setRate(resultSet.getInt("RATE"));
 
         Mpa mpa = new Mpa();
             mpa.setId(resultSet.getInt("MPA_ID"));
             film.setMpa(mpa);
+
         return film;
     }
 
     private void checkIdFilm(Integer id) {
         String sql = "SELECT * FROM FILMS " +
-                    "WHERE FILM_ID = ?";
-        SqlRowSet rows =  jdbcTemplate.queryForRowSet(sql, id);
+                "WHERE FILM_ID = ?";
+        SqlRowSet rows = jdbcTemplate.queryForRowSet(sql, id);
 
         if (!rows.next()) {
             throw new FilmNotFoundException("Фильм с ID: " + id + " не найден!");
