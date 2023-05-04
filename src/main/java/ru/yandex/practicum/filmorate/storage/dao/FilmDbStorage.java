@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.storage.dao;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -19,6 +20,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Objects;
 
+@Slf4j
 @Component("dbFilmStorage")
 @RequiredArgsConstructor
 public class FilmDbStorage implements FilmStorage {
@@ -151,6 +153,16 @@ public class FilmDbStorage implements FilmStorage {
         return jdbcTemplate.query(sql, this::mapRowToFilm, userId, friendId);
     }
 
+    @Override
+    public void deleteFilm(Integer filmId) {
+        checkIdFilm(filmId);
+
+        String sql = "DELETE FROM FILMS WHERE FILM_ID = ?";
+
+        jdbcTemplate.update(sql, filmId);
+        log.info("deleteFilm: {} - Finished", filmId);
+    }
+
     private Film mapRowToFilm(ResultSet resultSet, int rowNum) throws SQLException {
         Film film = new Film();
         film.setId(resultSet.getInt("FILM_ID"));
@@ -176,4 +188,6 @@ public class FilmDbStorage implements FilmStorage {
             throw new FilmNotFoundException("Фильм с ID: " + id + " не найден!");
         }
     }
+
+
 }
