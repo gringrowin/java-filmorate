@@ -50,13 +50,14 @@ public class DirectorService {
         return directorStorage.getAll();
     }
 
-    public void delete(Integer directorId) {
-        boolean isDirectorDeleted = directorStorage.delete(directorId);
-        if (!isDirectorDeleted) {
+    public Director delete(Integer directorId) {
+        Director director = directorStorage.delete(directorId);
+        if (director == null) {
             log.error("Director with id {} is not found!", directorId);
             throw new DirectorNotFoundException(String.format("Director with id %s is not found!", directorId));
         }
         log.info("Service command to delete director by id {}", directorId);
+        return director;
     }
 
     public void updateDirectorsByFilmToStorage(Film film) {

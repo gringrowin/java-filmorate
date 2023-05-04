@@ -133,7 +133,7 @@ public class FilmDbStorage implements FilmStorage {
                 "COUNT(DISTINCT L.USER_ID) AS COUNT_LIKES, FD.DIRECTOR_ID, D.DIRECTOR_NAME " +
                 "FROM FILMS AS F " +
                 "LEFT JOIN LIKES L on F.FILM_ID = L.FILM_ID " +
-                "LEFT JOIN FILMDIRECTORS AS FD ON F.FILM_ID = FD.FILM_ID " +
+                "LEFT JOIN FILM_DIRECTORS AS FD ON F.FILM_ID = FD.FILM_ID " +
                 "LEFT JOIN DIRECTORS D on D.DIRECTOR_ID = FD.DIRECTOR_ID " +
                 "WHERE " + queryByOneParam + queryByTwoParams + " " +
                 "GROUP BY F.FILM_ID " +

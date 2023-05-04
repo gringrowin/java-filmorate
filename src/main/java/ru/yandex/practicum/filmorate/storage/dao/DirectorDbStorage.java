@@ -57,14 +57,31 @@ public class DirectorDbStorage implements DirectorStorage {
     }
 
     @Override
+    public Set<Director> getByFilmId(Integer filmId) {
+        String sql = "SELECT fd.director_id, d.director_name " +
+                "FROM Film_directors AS fd " +
+                "INNER JOIN Directors AS d ON fd.director_id = d.director_id " +
+                "WHERE film_id = ?";
+        try {
+            return new HashSet<>(jdbcTemplate.query(sql, this::directorMapping, filmId));
+        } catch (DataAccessException exception) {
+            return null;
+        }
+    }
+
+    @Override
     public void updateDirectorsByFilmToStorage(Film film) {
-        String sqlForDeleteDirectors = "DELETE FROM FILM_DIRECTORS WHERE DIRECTOR_ID = ?";
-        jdbcTemplate.update(sqlForDeleteDirectors, film.getId());
         if (!film.getDirectors().isEmpty()) {
+            String sqlForDeleteDirectors = "DELETE FROM FILM_DIRECTORS WHERE DIRECTOR_ID = ?";
+            jdbcTemplate.update(sqlForDeleteDirectors, film.getId());
+
             for (Director director : film.getDirectors()) {
                 String sqlForAddDirectorsToFilm = "INSERT INTO FILM_DIRECTORS SET FILM_ID = ?, DIRECTOR_ID = ?";
                 jdbcTemplate.update(sqlForAddDirectorsToFilm, film.getId(), director.getId());
             }
+        } else {
+            String sqlForDeleteDirectors = "DELETE FROM FILM_DIRECTORS WHERE DIRECTOR_ID = ?";
+            jdbcTemplate.update(sqlForDeleteDirectors, film.getId());
         }
     }
 
@@ -87,13 +104,12 @@ public class DirectorDbStorage implements DirectorStorage {
     }
 
     @Override
-    public boolean delete(Integer directorId) {
+    public Director delete(Integer directorId) {
         String sql = "DELETE FROM Directors " +
                 "WHERE director_id = ?";
         Director director = getById(directorId);
-        if (director == null) return false;
         jdbcTemplate.update(sql, directorId);
-        return true;
+        return director;
     }
 
     private Director directorMapping(ResultSet resultSet, int rowNumber) throws SQLException {
