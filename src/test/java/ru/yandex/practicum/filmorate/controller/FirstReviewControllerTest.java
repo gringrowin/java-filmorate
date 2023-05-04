@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @AutoConfigureTestDatabase
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
-class ReviewControllerTest {
+class FirstReviewControllerTest {
     private ReviewController controller;
     @Autowired
     private ReviewService reviewService;

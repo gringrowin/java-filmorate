@@ -2,13 +2,14 @@ package ru.yandex.practicum.filmorate.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 @Data
 @AllArgsConstructor
 public class Review {
     private Integer reviewId;
-    @NotNull(message = "Текст отзыва не может быть пустым")
+    @NotBlank(message = "Текст отзыва не может быть пустым")
     private String content;
     @NotNull(message = "Категория отзыва не может быть пустой")
     private Boolean isPositive;

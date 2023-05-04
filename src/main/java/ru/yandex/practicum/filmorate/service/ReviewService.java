@@ -2,18 +2,21 @@ package ru.yandex.practicum.filmorate.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.Review;
+import ru.yandex.practicum.filmorate.storage.ReviewLikeStorage;
+import ru.yandex.practicum.filmorate.storage.ReviewStorage;
 import ru.yandex.practicum.filmorate.storage.dao.ReviewDbStorage;
 import ru.yandex.practicum.filmorate.storage.dao.ReviewLikeDbStorage;
 
 import java.util.Collection;
 
-@Service
 @Slf4j
+@Service
 public class ReviewService {
-    ReviewDbStorage reviewDbStorage;
-    ReviewLikeDbStorage reviewLikeDbStorage;
+    ReviewStorage reviewDbStorage;
+    ReviewLikeStorage reviewLikeDbStorage;
     UserService userService;
 
     @Autowired
