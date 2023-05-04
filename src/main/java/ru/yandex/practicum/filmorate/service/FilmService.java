@@ -4,20 +4,18 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.enums.FilmSortBy;
 import ru.yandex.practicum.filmorate.exception.DirectorNotFoundException;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.enums.FilmSortBy;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.GenreStorage;
 import ru.yandex.practicum.filmorate.storage.LikeStorage;
 import ru.yandex.practicum.filmorate.storage.MpaStorage;
 
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -100,25 +98,8 @@ public class FilmService {
     public List<Film> getPopularFilms(Integer count, Integer genreId, Integer year) {
         List<Film> popularFilms;
         log.info("getPopularFilms: {} - TOP, {} - genreId, {} - year - ", count, genreId, year);
-        if (genreId != null) {
-            genreStorage.getGenre(genreId);
-        }
-        if (genreId == null && year == null) {
-            popularFilms = findAll();
-        } else {
-            popularFilms = filmStorage.getPopularFilms(genreId, year);
-        }
-        for (Film film : popularFilms) {
-            film.setGenres(genreStorage.getGenresByFilmFromStorage(film.getId()));
-            film.setLikes(likeStorage.getLikes(film.getId()));
-            film.setMpa(mpaStorage.getMpa(film.getMpa().getId()));
-            film.setDirectors(directorService.getDirectorsByFilmFromStorage(film.getId()));
-        }
-        Stream<Film> filmsStream = popularFilms.stream()
-                .sorted(Comparator.comparing(Film::getLikes).reversed())
-                .limit(Objects.requireNonNullElse(count, 10));
-        popularFilms = filmsStream.collect(Collectors.toList());
-        filmsStream.close();
+        popularFilms = filmStorage.getPopularFilms(count, genreId, year);
+        addingInfoFilms(popularFilms);
         return popularFilms;
     }
 

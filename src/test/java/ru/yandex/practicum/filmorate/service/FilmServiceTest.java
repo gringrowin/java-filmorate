@@ -42,5 +42,4 @@ class FilmServiceTest {
         mpa.setId(1);
         testFilm.setMpa(mpa);
     }
-
 }
