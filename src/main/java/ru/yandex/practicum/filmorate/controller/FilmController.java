@@ -2,10 +2,12 @@ package ru.yandex.practicum.filmorate.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.enums.FilmSortBy;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import java.util.Collection;
 import java.util.List;
 
@@ -71,10 +73,19 @@ public class FilmController {
     }
 
     @GetMapping("/popular")
-    public List<Film> getPopularFilms(@RequestParam(defaultValue = "10", required = false) Integer count) {
-        log.info("getPopularFilms: {} - count", count);
-        List<Film> popularFilms = filmService.getPopularFilms(count);
+    public List<Film> getPopularFilms(
+            @RequestParam(defaultValue = "10", required = false) Integer count,
+            @RequestParam(required = false) Integer genreId,
+            @RequestParam(required = false) @Min(1895) Integer year) {
+        log.info("getPopularFilms: {} - count, {} - genreId, {} - year", count, genreId, year);
+        List<Film> popularFilms = filmService.getPopularFilms(count, genreId, year);
         log.info("getPopularFilms: {} - Finished", popularFilms);
         return popularFilms;
+    }
+
+    @GetMapping("/director/{directorId}")
+    public List<Film> getFilmsByDirectorIdAndSort(@PathVariable int directorId, @RequestParam FilmSortBy sortBy) {
+        log.info("Command of FilmController to get sorted director film list");
+        return filmService.getFilmsByDirectorIdAndSort(directorId, sortBy);
     }
 }
