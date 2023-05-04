@@ -65,6 +65,11 @@ public class InMemoryFilmStorage implements FilmStorage {
         return null;
     }
 
+    @Override
+    public void deleteFilm(Integer filmId) {
+
+    }
+
     private Integer getIdGenerator() {
         return ++idGenerator;
     }
