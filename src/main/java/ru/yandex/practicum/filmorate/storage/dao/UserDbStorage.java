@@ -14,7 +14,8 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.List;
+import java.util.Objects;
 
 @Component("dbUserStorage")
 @RequiredArgsConstructor
@@ -77,7 +78,6 @@ public class UserDbStorage implements UserStorage {
 
         return jdbcTemplate.queryForObject(sql, this::mapRowToUser, id);
     }
-
 
 
     private User mapRowToUser(ResultSet resultSet, int rowNum) throws SQLException {

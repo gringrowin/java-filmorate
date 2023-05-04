@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.enums.FilmSortBy;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
+import ru.yandex.practicum.filmorate.service.LikeService;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
@@ -17,9 +18,12 @@ import java.util.List;
 public class FilmController {
 
     private final FilmService filmService;
+    private final LikeService likeService;
 
-    public FilmController(FilmService filmService) {
+    public FilmController(FilmService filmService,
+                          LikeService likeService) {
         this.filmService = filmService;
+        this.likeService = likeService;
     }
 
     @GetMapping
@@ -58,7 +62,7 @@ public class FilmController {
     public Film addLike(@PathVariable("id") Integer filmId,
                         @PathVariable("userId") Integer userId) {
         log.info("addLike: {} - filmId, {} - userId", filmId, userId);
-        Film film = filmService.addLike(filmId, userId);
+        Film film = likeService.addLike(filmId, userId);
         log.info("addLike: {} - Finished", film);
         return film;
     }
@@ -67,7 +71,7 @@ public class FilmController {
     public Film deleteLike(@PathVariable("id") Integer filmId,
                            @PathVariable("userId") Integer userId) {
         log.info("deleteLike: {} - filmId, {} - userId", filmId, userId);
-        Film film = filmService.deleteLike(filmId, userId);
+        Film film = likeService.deleteLike(filmId, userId);
         log.info("deleteLike: {} - Finished", film);
         return film;
     }
