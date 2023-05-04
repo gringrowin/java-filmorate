@@ -138,16 +138,11 @@ public class FilmService {
         return filmList;
     }
 
-    public List<Film> getCommonWithFriendFilmsSortedByPopular(Integer userId, Integer friendId) {
+    public List<Film> getCommonFilmsForFriendSortedByPopular(Integer userId, Integer friendId) {
         checkUserId(userId);
         checkUserId(friendId);
-        List<Film> commonFilms = filmStorage.getCommonWithFriendFilmsSortedByPopular(userId, friendId);
-        for (Film film : commonFilms) {
-            film.setGenres(genreStorage.getGenresByFilmFromStorage(film.getId()));
-            film.setLikes(likeStorage.getLikes(film.getId()));
-            film.setMpa(mpaStorage.getMpa(film.getMpa().getId()));
-        }
-        log.info("Service getCommonWithFriendFilmsSortedByPopular: {} {} {} ", userId, friendId, commonFilms.size());
-        return commonFilms;
+        List<Film> commonFilms = filmStorage.getCommonFilmsForFriendSortedByPopular(userId, friendId);
+        log.info("Service getCommonFilmsForFriendSortedByPopular: {} {} {} ", userId, friendId, commonFilms.size());
+        return addingInfoFilms(commonFilms);
     }
 }

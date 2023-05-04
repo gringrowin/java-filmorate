@@ -143,16 +143,10 @@ public class FilmDbStorage implements FilmStorage {
 
 
     @Override
-    public List<Film> getCommonWithFriendFilmsSortedByPopular(Integer userId, Integer friendId) {
-        String sql = "SELECT *\n" +
-                "FROM FILMS\n" +
-                "WHERE FILM_ID in (\n" +
-                "SELECT FILM_ID \n" +
-                "FROM LIKES\n" +
-                "WHERE USER_ID IN (?,?)\n" +
-                "GROUP BY FILM_ID\n" +
-                "HAVING COUNT(DISTINCT USER_ID) = 2\n" +
-                "ORDER BY count(USER_ID) DESC )";
+    public List<Film> getCommonFilmsForFriendSortedByPopular(Integer userId, Integer friendId) {
+        String sql = "SELECT * FROM FILMS WHERE FILM_ID in " +
+                "(SELECT FILM_ID FROM LIKES WHERE USER_ID IN (?,?) " +
+                "GROUP BY FILM_ID HAVING COUNT(DISTINCT USER_ID) = 2 ORDER BY count(USER_ID) DESC )";
 
         return jdbcTemplate.query(sql, this::mapRowToFilm, userId, friendId);
     }
