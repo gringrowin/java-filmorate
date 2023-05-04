@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.enums.FilmSortBy;
 
 import java.util.*;
 
@@ -47,6 +48,10 @@ public class InMemoryFilmStorage implements FilmStorage {
         return films.get(id);
     }
 
+    public List<Film> getFilmsByDirectorIdAndSort(Integer directorId, FilmSortBy filmSortBy) {
+        return null;
+    }
+
     @Override
     public List<Film> getPopularFilms(Integer genreId, Integer year) {
         return null;
@@ -55,5 +60,4 @@ public class InMemoryFilmStorage implements FilmStorage {
     private Integer getIdGenerator() {
         return ++idGenerator;
     }
-
 }

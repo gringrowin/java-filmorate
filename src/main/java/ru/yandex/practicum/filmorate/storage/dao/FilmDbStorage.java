@@ -8,6 +8,7 @@ import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.enums.FilmSortBy;
 import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
@@ -114,6 +115,28 @@ public class FilmDbStorage implements FilmStorage {
 
         return jdbcTemplate.queryForObject(sql, this::mapRowToFilm, id);
     }
+
+    @Override
+    public List<Film> getFilmsByDirectorIdAndSort(Integer directorId, FilmSortBy sortBy) {
+        StringBuilder sql = new StringBuilder(
+                "SELECT *, COUNT(*) AS likes " +
+                        "FROM Films AS f " +
+                        "INNER JOIN Film_directors AS fd ON f.film_id = fd.film_id " +
+                        "INNER JOIN Mpa AS m ON f.mpa_id = m.mpa_id " +
+                        "LEFT JOIN Likes AS l ON f.film_id = l.film_id " +
+                        "WHERE fd.director_id = ? " +
+                        "GROUP BY f.film_id ");
+
+        if (sortBy.equals(FilmSortBy.likes)) {
+            sql.append("ORDER BY likes");
+        }
+        if (sortBy.equals(FilmSortBy.year)) {
+            sql.append("ORDER BY f.release_date");
+        }
+
+        return jdbcTemplate.query(sql.toString(), this::mapRowToFilm, directorId);
+    }
+
 
     private Film mapRowToFilm(ResultSet resultSet, int rowNum) throws SQLException {
         Film film = new Film();
