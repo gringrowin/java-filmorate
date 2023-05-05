@@ -21,6 +21,10 @@ public class ReviewLikeDbStorage implements ReviewLikeStorage {
     public void addLike(int reviewId, int userId, boolean isLike) {     // добавляет и лайки и дизлайки
         String sqlQueryLike = "UPDATE reviews_likes SET is_like = ? " +
                 "WHERE review_id = ? AND user_id = ?";
+
+//        String sqlQueryLike2 = "INSERT INTO reviews_likes (is_like, review_id, user_id) VALUES(?, ?, ?) " +
+//                "ON CONFLICT DO NOTHING ";
+
         jdbcTemplate.update(sqlQueryLike,
                 isLike,
                 reviewId,
@@ -46,7 +50,6 @@ public class ReviewLikeDbStorage implements ReviewLikeStorage {
         jdbcTemplate.update(sqlQueryDeleteLike,
                 reviewId,
                 userId);
-
     }
 
     @Override
@@ -75,6 +78,10 @@ public class ReviewLikeDbStorage implements ReviewLikeStorage {
         }
         return likesCount - disLikesCount;
 
+    }
+}
+
+
 //        String sqlQueryForUseful1 = "SELECT (COUNT(SELECT review_id FROM reviews_likes WHERE review_id = ? " +
 //                " AND is_like = TRUE) - " +
 //                "COUNT(SELECT review_id FROM reviews_likes WHERE review_id = ? AND is_like = FALSE)) " +
@@ -93,5 +100,3 @@ public class ReviewLikeDbStorage implements ReviewLikeStorage {
 //            log.info("Рейтинг полезности обзора id: {} составляет {} ", id, usefulness);
 //        }
 //        return usefulness;
-    }
-}
