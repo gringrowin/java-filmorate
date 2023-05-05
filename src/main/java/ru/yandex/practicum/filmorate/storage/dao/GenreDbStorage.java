@@ -41,22 +41,22 @@ public class GenreDbStorage implements GenreStorage {
     public void updateGenreByFilmToStorage(Film film) {
 
         if (!film.getGenres().isEmpty()) {
-            String sqlForDeleteGenre = "DELETE FROM FILMGENRES WHERE FILM_ID = ?";
+            String sqlForDeleteGenre = "DELETE FROM FILM_GENRES WHERE FILM_ID = ?";
             jdbcTemplate.update(sqlForDeleteGenre, film.getId());
 
             for (Genre genre : film.getGenres()) {
-                    String sqlForAddGenre = "INSERT INTO FILMGENRES SET FILM_ID = ?, GENRE_ID = ?";
+                    String sqlForAddGenre = "INSERT INTO FILM_GENRES SET FILM_ID = ?, GENRE_ID = ?";
                     jdbcTemplate.update(sqlForAddGenre, film.getId(), genre.getId());
             }
         } else {
-            String sqlForDeleteGenre = "DELETE FROM FILMGENRES WHERE FILM_ID = ?";
+            String sqlForDeleteGenre = "DELETE FROM FILM_GENRES WHERE FILM_ID = ?";
             jdbcTemplate.update(sqlForDeleteGenre, film.getId());
         }
     }
 
     public Set<Genre> getGenresByFilmFromStorage(Integer filmId) {
 
-        String sql = "SELECT FG.GENRE_ID, G2.GENRE_NAME  FROM FILMGENRES AS FG " +
+        String sql = "SELECT FG.GENRE_ID, G2.GENRE_NAME  FROM FILM_GENRES AS FG " +
                 "LEFT JOIN GENRES G2 on G2.GENRE_ID = FG.GENRE_ID " +
                 "WHERE FILM_ID = ?";
 

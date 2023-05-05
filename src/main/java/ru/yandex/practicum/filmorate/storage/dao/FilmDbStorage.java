@@ -41,7 +41,7 @@ public class FilmDbStorage implements FilmStorage {
         List<Film> popularFilms;
         String yearFilter = "WHERE YEAR(f.RELEASE_DATE) = ? ";
         String genreFilter = "WHERE fg.GENRE_ID = ? ";
-        String genreJoin = "JOIN FILMGENRES fg ON f.FILM_ID = fg.FILM_ID ";
+        String genreJoin = "JOIN FILM_GENRES fg ON f.FILM_ID = fg.FILM_ID ";
         String genreAndYearFilter = "WHERE fg.GENRE_ID = ? AND YEAR(f.RELEASE_DATE) = ? ";
         StringBuilder sql = new StringBuilder("SELECT F.FILM_ID, F.FILM_NAME, F.DESCRIPTION, " +
                 "F.RELEASE_DATE, F.DURATION, F.RATE, F.MPA_ID " +

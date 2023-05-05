@@ -128,7 +128,7 @@ public class FilmService {
         List<Film> findFilms = filmStorage.searchFilms(query, paramsForSearch);
         log.info("Service.searchFilms: {} - Finished", findFilms);
 
-        return findFilms;
+        return addingInfoFilms(findFilms);
     }
 
     private void checkDirectorId(Integer directorId) {
