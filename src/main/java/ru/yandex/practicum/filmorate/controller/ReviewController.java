@@ -51,7 +51,7 @@ public class ReviewController {
         reviewService.addLikeToReview(id, userId);
     }
 
-    @PutMapping("/{id}/disLike/{userId}")
+    @PutMapping("/{id}/dislike/{userId}")
     public void addDisLikeToReview(@PathVariable int id, @PathVariable int userId){
         log.trace("Получен запрос на добавление дизлайка на отзыв с id={} от пользователя с id={}", id, userId);
         reviewService.addDisLikeToReview(id, userId);
@@ -62,7 +62,7 @@ public class ReviewController {
         reviewService.deleteLikeFromReview(id, userId);
     }
 
-    @DeleteMapping("/{id}/disLike/{userId}")
+    @DeleteMapping("/{id}/dislike/{userId}")
     public void deleteDisLikeFromReview(@PathVariable int id, @PathVariable int userId){
         reviewService.deleteLikeFromReview(id, userId);
     }

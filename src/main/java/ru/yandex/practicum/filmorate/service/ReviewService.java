@@ -4,6 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
+import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.Review;
 import ru.yandex.practicum.filmorate.storage.ReviewLikeStorage;
 import ru.yandex.practicum.filmorate.storage.ReviewStorage;
@@ -29,6 +31,12 @@ public class ReviewService {
     }
 
     public Review addNewReview(Review review) {
+        if (review.getUserId() <1)  {
+            throw new UserNotFoundException("id пользователя не может быть меньше 1");
+        }
+        if (review.getFilmId() <1)  {
+            throw new FilmNotFoundException("id фильма не может быть меньше 1");
+        }
         reviewDbStorage.addNewReview(review);
         Review newReview = getReviewById(review.getReviewId());
         log.info("Добавлен новый отзыв " + newReview.toString());
