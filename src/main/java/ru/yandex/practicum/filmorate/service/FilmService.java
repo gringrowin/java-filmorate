@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.exception.InvalidParamsForSearch;
 import ru.yandex.practicum.filmorate.enums.FilmSortBy;
 import ru.yandex.practicum.filmorate.exception.DirectorNotFoundException;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
@@ -115,8 +116,19 @@ public class FilmService {
         User user = userService.getUser(userId);
         if (user == null) {
             throw new UserNotFoundException(String.format(
-                    "Пользователя с ID %s не найден.", userId));
+                    "Пользователь с ID %s не найден.", userId));
         }
+    }
+
+    public List<Film> searchFilms(String query, String[] paramsForSearch) {
+        if (query == null || paramsForSearch == null || paramsForSearch.length > 2) {
+            throw new InvalidParamsForSearch("Заданы ошибочные параметры поиска.");
+        }
+        log.info("Service.searchFilms: {} - query, {} - by", query, paramsForSearch);
+        List<Film> findFilms = filmStorage.searchFilms(query, paramsForSearch);
+        log.info("Service.searchFilms: {} - Finished", findFilms);
+
+        return addingInfoFilms(findFilms);
     }
 
     private void checkDirectorId(Integer directorId) {
@@ -136,5 +148,18 @@ public class FilmService {
             film.setDirectors(directorService.getDirectorsByFilmFromStorage(film.getId()));
         }
         return filmList;
+    }
+
+    public List<Film> getCommonFilmsForFriendSortedByPopular(Integer userId, Integer friendId) {
+        checkUserId(userId);
+        checkUserId(friendId);
+        List<Film> commonFilms = filmStorage.getCommonFilmsForFriendSortedByPopular(userId, friendId);
+        log.info("Service getCommonFilmsForFriendSortedByPopular: {} {} {} ", userId, friendId, commonFilms.size());
+        return addingInfoFilms(commonFilms);
+    }
+
+    public void deleteFilm(Integer filmId) {
+        log.info("deleteFilm: {} - ", filmId);
+        filmStorage.deleteFilm(filmId);
     }
 }

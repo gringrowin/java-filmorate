@@ -81,10 +81,16 @@ public class UserController {
 
     @GetMapping("/{id}/friends/common/{otherId}")
     public List<User> getCommonFriends(@PathVariable("id") Integer userId,
-                                 @PathVariable("otherId") Integer otherId) {
+                                       @PathVariable("otherId") Integer otherId) {
         log.info("getCommonFriends: {} - userId, {} - otherUserId", userId, otherId);
         List<User> commonFriends = userService.getCommonFriends(userId, otherId);
         log.info("getCommonFriends: {} - Finished", commonFriends);
         return commonFriends;
+    }
+
+    @DeleteMapping("/{userId}")
+    public void deleteUser(@PathVariable("userId") Integer userId) {
+        log.info("deleteUser: {} - userId", userId);
+        userService.deleteUser(userId);
     }
 }

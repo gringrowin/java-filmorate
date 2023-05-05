@@ -51,6 +51,11 @@ public class InMemoryFilmStorage implements FilmStorage {
         return films.get(id);
     }
 
+    @Override
+    public List<Film> searchFilms(String query, String[] paramsForFinding) {
+        return null;
+    }
+
     public List<Film> getFilmsByDirectorIdAndSort(Integer directorId, FilmSortBy filmSortBy) {
         return null;
     }
@@ -58,6 +63,16 @@ public class InMemoryFilmStorage implements FilmStorage {
     @Override
     public List<Film> getPopularFilms(Integer count, Integer genreId, Integer year) {
         return null;
+    }
+
+    @Override
+    public List<Film> getCommonFilmsForFriendSortedByPopular(Integer userId, Integer friendId) {
+        return null;
+    }
+
+    @Override
+    public void deleteFilm(Integer filmId) {
+
     }
 
     private Integer getIdGenerator() {

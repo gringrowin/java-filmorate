@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.storage.dao;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -14,8 +15,10 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.List;
+import java.util.Objects;
 
+@Slf4j
 @Component("dbUserStorage")
 @RequiredArgsConstructor
 public class UserDbStorage implements UserStorage {
@@ -78,7 +81,15 @@ public class UserDbStorage implements UserStorage {
         return jdbcTemplate.queryForObject(sql, this::mapRowToUser, id);
     }
 
+    @Override
+    public void deleteUser(Integer userId) {
+        checkIdUser(userId);
 
+        String sql = "DELETE FROM USERS WHERE USER_ID = ?";
+
+        jdbcTemplate.update(sql, userId);
+        log.info("deleteUser: {} - Finished", userId);
+    }
 
     private User mapRowToUser(ResultSet resultSet, int rowNum) throws SQLException {
         User user = new User();
