@@ -9,6 +9,8 @@ DELETE from FRIENDS;
 DELETE from LIKES;
 DELETE from REVIEWS;
 
+
+
 insert into GENRES (GENRE_ID, GENRE_NAME)
 VALUES (1, 'Комедия');
 insert into GENRES (GENRE_ID, GENRE_NAME)

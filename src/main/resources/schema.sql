@@ -84,9 +84,8 @@ CREATE TABLE IF NOT EXISTS Directors
 
 CREATE TABLE IF NOT EXISTS Film_directors
 (
-    film_id INT REFERENCES Films (film_id) ON DELETE CASCADE NOT NULL,
-    director_id INT REFERENCES Directors (director_id) ON DELETE CASCADE NOT NULL,
-    PRIMARY KEY (film_id, director_id)
+    film_id INT REFERENCES Films (film_id) NOT NULL,
+    director_id INT REFERENCES Directors (director_id) NOT NULL
 );
 --Добавление функционала "режиссёры"
 
