@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.storage.dao;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -19,6 +20,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Objects;
 
+@Slf4j
 @Component("dbFilmStorage")
 @RequiredArgsConstructor
 public class FilmDbStorage implements FilmStorage {
@@ -164,6 +166,25 @@ public class FilmDbStorage implements FilmStorage {
     }
 
 
+    @Override
+    public List<Film> getCommonFilmsForFriendSortedByPopular(Integer userId, Integer friendId) {
+        String sql = "SELECT * FROM FILMS WHERE FILM_ID in " +
+                "(SELECT FILM_ID FROM LIKES WHERE USER_ID IN (?,?) " +
+                "GROUP BY FILM_ID HAVING COUNT(DISTINCT USER_ID) = 2 ORDER BY count(USER_ID) DESC )";
+
+        return jdbcTemplate.query(sql, this::mapRowToFilm, userId, friendId);
+    }
+
+    @Override
+    public void deleteFilm(Integer filmId) {
+        checkIdFilm(filmId);
+
+        String sql = "DELETE FROM FILMS WHERE FILM_ID = ?";
+
+        jdbcTemplate.update(sql, filmId);
+        log.info("deleteFilm: {} - Finished", filmId);
+    }
+
     private Film mapRowToFilm(ResultSet resultSet, int rowNum) throws SQLException {
         Film film = new Film();
         film.setId(resultSet.getInt("FILM_ID"));
@@ -182,11 +203,13 @@ public class FilmDbStorage implements FilmStorage {
 
     private void checkIdFilm(Integer id) {
         String sql = "SELECT * FROM FILMS " +
-                "WHERE FILM_ID = ?";
-        SqlRowSet rows = jdbcTemplate.queryForRowSet(sql, id);
+                    "WHERE FILM_ID = ?";
+        SqlRowSet rows =  jdbcTemplate.queryForRowSet(sql, id);
 
         if (!rows.next()) {
             throw new FilmNotFoundException("Фильм с ID: " + id + " не найден!");
         }
     }
+
+
 }

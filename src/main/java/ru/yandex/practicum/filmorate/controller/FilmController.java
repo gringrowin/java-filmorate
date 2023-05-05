@@ -90,6 +90,23 @@ public class FilmController {
         return filmService.getFilmsByDirectorIdAndSort(directorId, sortBy);
     }
 
+    @GetMapping("/common")
+    public List<Film> getCommonFilmsForFriendSortedByPopular(@Valid @RequestParam(required = false, name = "userId") Integer userId,
+                                                             @Valid @RequestParam(required = false, name = "friendId") Integer friendId) {
+        log.info("getCommonFilmsForFriendSortedByPopular: {} {} - Started", userId, friendId);
+        List<Film> commonFilms = filmService.getCommonFilmsForFriendSortedByPopular(userId, friendId);
+        log.info("getCommonFilmsForFriendSortedByPopular: {} {} {} - Finished", userId, friendId, commonFilms.size());
+        return commonFilms;
+    }
+
+    @DeleteMapping("/{filmId}")
+    public void deleteFilm(@PathVariable("filmId") Integer filmId) {
+        log.info("deleteFilmId: {} - filmId", filmId);
+        filmService.deleteFilm(filmId);
+//        log.info("deleteFilmId: {} - Finished", filmId);
+    }
+
+
     @GetMapping("/search")
     public List<Film> searchFilms(@RequestParam @NotBlank String query,
                              @RequestParam(name = "by", required = false) String[] paramsForFinding) {

@@ -97,7 +97,7 @@ ALTER TABLE Films
 
 ALTER TABLE FilmGenres
     ADD CONSTRAINT IF NOT EXISTS fk_FilmGenres_film_id FOREIGN KEY (film_id)
-        REFERENCES Films (film_id);
+        REFERENCES Films (film_id) ON DELETE CASCADE;
 
 
 ALTER TABLE FilmGenres
@@ -107,22 +107,22 @@ ALTER TABLE FilmGenres
 
 ALTER TABLE Friends
     ADD CONSTRAINT IF NOT EXISTS fk_Friends_user_id FOREIGN KEY (user_id)
-        REFERENCES Users (user_id);
+        REFERENCES Users (user_id) ON DELETE CASCADE;
 
 
 ALTER TABLE Friends
     ADD CONSTRAINT IF NOT EXISTS fk_Friends_friends_id FOREIGN KEY (friend_id)
-        REFERENCES Users (user_id);
+        REFERENCES Users (user_id) ON DELETE CASCADE;
 
 
 ALTER TABLE Likes
     ADD CONSTRAINT IF NOT EXISTS fk_Likes_film_id FOREIGN KEY (film_id)
-        REFERENCES Films (film_id);
+        REFERENCES Films (film_id) ON DELETE CASCADE;
 
 
 ALTER TABLE Likes
     ADD CONSTRAINT IF NOT EXISTS fk_Likes_user_id FOREIGN KEY (user_id)
-        REFERENCES Users (user_id);
+        REFERENCES Users (user_id) ON DELETE CASCADE;
 
 ALTER TABLE FILMS
     ALTER COLUMN FILM_ID RESTART WITH 1;
