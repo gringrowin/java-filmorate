@@ -12,11 +12,13 @@ public interface DirectorStorage {
 
     Director getById(Integer directorId);
 
+    Set<Director> getByFilmId(Integer filmId);
+
     void updateDirectorsByFilmToStorage(Film film);
 
     Set<Director> getDirectorsByFilmFromStorage(Integer filmId);
 
     Set<Director> getAll();
 
-    boolean delete(Integer directorId);
+    Director delete(Integer directorId);
 }

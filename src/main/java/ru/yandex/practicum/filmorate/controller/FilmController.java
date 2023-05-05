@@ -8,6 +8,7 @@ import ru.yandex.practicum.filmorate.service.FilmService;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
 import java.util.Collection;
 import java.util.List;
 
@@ -105,4 +106,13 @@ public class FilmController {
 //        log.info("deleteFilmId: {} - Finished", filmId);
     }
 
+
+    @GetMapping("/search")
+    public List<Film> searchFilms(@RequestParam @NotBlank String query,
+                             @RequestParam(name = "by", required = false) String[] paramsForFinding) {
+        log.info("Controller.searchFilms: {} - query, {} - by", query, paramsForFinding);
+        List<Film> findFilms = filmService.searchFilms(query, paramsForFinding);
+        log.info("Controller.searchFilms: {} - Finished", findFilms);
+        return findFilms;
+    }
 }
