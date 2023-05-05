@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @AutoConfigureTestDatabase
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
-class FirstReviewControllerTest {
+class ReviewControllerTest {
     private ReviewController controller;
     @Autowired
     private ReviewService reviewService;
@@ -139,10 +139,22 @@ class FirstReviewControllerTest {
 
     @Test
     void addLikeToReview() {
+        Review testReview = new Review("This film is beautiful.", true,
+                testUser.getId(), testFilm.getId());
+        controller.addNewReview(testReview);
+        controller.addLikeToReview(testFilm.getId(),testUser.getId());
+        assertEquals(1, controller.getReviewById(testReview.getReviewId()).getUseful(),
+                "Лайк не добавлен, либо некорректно сформирована оценка полезности ");
     }
 
     @Test
     void addDisLikeToReview() {
+        Review testReview = new Review("This film is beautiful.", true,
+                testUser.getId(), testFilm.getId());
+        controller.addNewReview(testReview);
+        controller.addDisLikeToReview(testFilm.getId(),testUser.getId());
+        assertEquals(-1, controller.getReviewById(testReview.getReviewId()).getUseful(),
+                "ДизЛайк не добавлен, либо некорректно сформирована оценка полезности ");
     }
 
     @Test

@@ -15,12 +15,14 @@ import java.util.Collection;
 @Slf4j
 @Service
 public class ReviewService {
-    ReviewStorage reviewDbStorage;
-    ReviewLikeStorage reviewLikeDbStorage;
+    ReviewDbStorage reviewDbStorage;
+    ReviewLikeDbStorage reviewLikeDbStorage;
     UserService userService;
 
     @Autowired
-    public ReviewService(ReviewDbStorage reviewDbStorage, ReviewLikeDbStorage reviewLikeDbStorage, UserService userService) {
+    public ReviewService(ReviewDbStorage reviewDbStorage,
+                         ReviewLikeDbStorage reviewLikeDbStorage,
+                         UserService userService) {
         this.reviewDbStorage = reviewDbStorage;
         this.reviewLikeDbStorage = reviewLikeDbStorage;
         this.userService = userService;
@@ -29,14 +31,13 @@ public class ReviewService {
     public Review addNewReview(Review review) {
         reviewDbStorage.addNewReview(review);
         Review newReview = getReviewById(review.getReviewId());
-        //newReview.setUseful(newReview.getReviewId());
         log.info("Добавлен новый отзыв " + newReview.toString());
         return newReview;
     }
 
     public Review getReviewById(int id) {
         Review review = reviewDbStorage.getReviewById(id).get();
-        //review.setUseful(reviewLikeDbStorage.getUsefulness(id));
+        review.setUseful(reviewLikeDbStorage.getUsefulness(id));
         return review;
     }
 
@@ -54,15 +55,12 @@ public class ReviewService {
         return reviewDbStorage.getReviews(filmId, count);
     }
 
-
-    public Review addLikeToReview(int reviewId, int userId) {
+    public void addLikeToReview(int reviewId, int userId) {
         reviewLikeDbStorage.addLike(reviewId, userId, true);
-        return getReviewById(reviewId);
     }
 
-    public Review addDisLikeToReview(int reviewId, int userId) {
+    public void addDisLikeToReview(int reviewId, int userId) {
         reviewLikeDbStorage.addLike(reviewId, userId, false);
-        return getReviewById(reviewId);
     }
 
     public void deleteLikeFromReview(int reviewId, int userId) {  // удаляем и лайк и дизлайк

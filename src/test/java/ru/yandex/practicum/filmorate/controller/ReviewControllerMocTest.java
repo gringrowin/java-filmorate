@@ -12,28 +12,28 @@ import ru.yandex.practicum.filmorate.service.ReviewService;
 
 @WebMvcTest(ReviewController.class)
 class ReviewControllerMocTest {
-//    @MockBean
-//    private ReviewService reviewService;
-//
-//    @Autowired
-//    private ObjectMapper objectMapper;
-
+    @MockBean
+    private ReviewService reviewService;
     @Autowired
     private MockMvc mockMvc;
 
     @Test
-    public void whenRequestResponseCorrect() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("reviews"))
+    public void whenGetRequestResponseCorrect() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/reviews"))
                 .andExpect(MockMvcResultMatchers.status().isOk());
-//                .andExpect(MockMvcResultMatchers.content().json())
-//                .andExpect()
-
     }
 
-//    private final String jsonResponse200 = """
-//        {
-//            "id": "2222"
-//
-//        """
+    @Test
+    public void whenPostRequestResponseCorrect() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.post("/reviews"))
+                .andExpect(MockMvcResultMatchers.status().isOk());
+    }
+
+    @Test
+    public void whenPutRequestResponseCorrect() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.put("/reviews/1/like/1"))
+                .andExpect(MockMvcResultMatchers.status().isOk());
+    }
+
 
 }
