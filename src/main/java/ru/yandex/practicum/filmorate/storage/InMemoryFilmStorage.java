@@ -18,8 +18,8 @@ import java.util.Map;
 @Slf4j
 public class InMemoryFilmStorage implements FilmStorage {
 
-    private int idGenerator;
     private final Map<Integer, Film> films = new HashMap<>();
+    private int idGenerator;
 
     public List<Film> getAll() {
         return new ArrayList<>(films.values());
