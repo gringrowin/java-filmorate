@@ -6,7 +6,7 @@ import java.util.Collection;
 import java.util.Optional;
 
 public interface ReviewStorage {
-    void addNewReview(Review review);
+    Review addNewReview(Review review);
 
     Review update(Review review);
 

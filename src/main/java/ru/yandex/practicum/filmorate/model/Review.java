@@ -3,9 +3,9 @@ package ru.yandex.practicum.filmorate.model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Positive;
 
 @Data
 @AllArgsConstructor
@@ -17,10 +17,8 @@ public class Review {
     @NotNull(message = "Категория отзыва не может быть пустой")
     private Boolean isPositive;
     @NotNull(message = "Не получен id пользователя")
-    @Positive(message = "id не может быть отрицательным")
     private Integer userId;
     @NotNull(message = "Не получен id фильма")
-    @Positive(message = "id не может быть отрицательным")
     private Integer filmId;
     private Integer useful = 0;         //рейтинг полезности
 

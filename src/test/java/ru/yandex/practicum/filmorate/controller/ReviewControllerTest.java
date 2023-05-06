@@ -133,7 +133,7 @@ class ReviewControllerTest {
         testCollectionReviews.add(review1FromBd);
         testCollectionReviews.add(review2FromBd);
 
-        assertEquals(testCollectionReviews, controller.getReviewsToFilm(testFilm.getId(), null),
+        assertEquals(testCollectionReviews, controller.getReviewsToFilm(testFilm.getId(), 2),
                 "коллекция отзывов не сформирована, или не вернулась");
     }
 

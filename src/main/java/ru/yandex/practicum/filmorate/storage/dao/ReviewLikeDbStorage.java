@@ -18,7 +18,7 @@ public class ReviewLikeDbStorage implements ReviewLikeStorage {
     }
 
     @Override
-    public void addLike(int reviewId, int userId, boolean isLike) {     // добавляет и лайки и дизлайки
+    public void addReaction(int reviewId, int userId, boolean isLike) {     // добавляет и лайки и дизлайки
         String sqlQueryLike = "INSERT INTO reviews_likes (review_id, user_id, is_like) " +
                 "VALUES(?, ?, ?) ";
 
@@ -29,7 +29,7 @@ public class ReviewLikeDbStorage implements ReviewLikeStorage {
     }
 
     @Override
-    public void deleteLike(int reviewId, int userId) {
+    public void deleteReaction(int reviewId, int userId) {
         String sqlQueryDeleteLike = "DELETE FROM reviews_likes WHERE review_id = ?" +
                 " AND user_id = ? ";
         jdbcTemplate.update(sqlQueryDeleteLike,

@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Review;
 import ru.yandex.practicum.filmorate.service.ReviewService;
+
 import javax.validation.Valid;
 import java.util.Collection;
 
@@ -40,8 +41,9 @@ public class ReviewController {
     }
 
     @GetMapping
-    public Collection<Review> getReviewsToFilm(@RequestParam(required = false) Integer filmId,
-                                               @RequestParam(required = false) Integer count) {
+    public Collection<Review> getReviewsToFilm(
+            @RequestParam(required = false) Integer filmId,
+            @RequestParam(defaultValue = "10", required = false) Integer count) {
         log.info("Получен запрос на поиск отзывов на фильм с id={} в количестве {}", filmId, count);
         return reviewService.getReviews(filmId, count);
     }

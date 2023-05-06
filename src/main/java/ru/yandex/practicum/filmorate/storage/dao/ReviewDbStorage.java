@@ -7,7 +7,9 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Repository;
+import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.exception.ReviewNotFoundException;
+import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.Review;
 import ru.yandex.practicum.filmorate.storage.ReviewStorage;
 
@@ -29,7 +31,8 @@ public class ReviewDbStorage implements ReviewStorage {
     }
 
     @Override
-    public void addNewReview(Review review) {
+    public Review addNewReview(Review review) {
+        idValidation(review);
         String sqlQueryReview = "insert into reviews(content, is_positive, user_id, film_id) " +
                 "values (?, ?, ?, ?) ";
         KeyHolder keyHolder = new GeneratedKeyHolder();           // вернуть id, сгенерированный в БД
@@ -44,10 +47,12 @@ public class ReviewDbStorage implements ReviewStorage {
         review.setReviewId(keyHolder.getKey().intValue());
         log.info("отзыву к фильму {}, добавленному пользователем {}, присвоен id {}",
                 review.getFilmId(), review.getUserId(), review.getReviewId());
+        return getReviewById(review.getReviewId()).get();
     }
 
     @Override
     public Review update(Review review) {
+        getReviewById(review.getReviewId());
         String sqlQuery = "UPDATE reviews SET " +
                 "content = ?, is_positive = ? " +
                 "WHERE review_id = ? ";
@@ -60,6 +65,7 @@ public class ReviewDbStorage implements ReviewStorage {
 
     @Override
     public void delete(Integer id) {
+        getReviewById(id);
         String sqlQueryDeleteReview = "DELETE FROM reviews WHERE review_id = ? ";
         jdbcTemplate.update(sqlQueryDeleteReview, id);
         log.info("Отзыв с идентификатором " + id + " удалён из базы");
@@ -87,7 +93,6 @@ public class ReviewDbStorage implements ReviewStorage {
     }
 
     public Collection<Review> getReviews(Integer filmId, Integer countOfReviews) {
-        countOfReviews = (countOfReviews == null) ? 10 : countOfReviews;
         String sqlWhereFilmId = (filmId != null) ? " WHERE film_id= " + filmId + " " : "";
 
         String sqlQuery = "SELECT *, " +
@@ -112,5 +117,14 @@ public class ReviewDbStorage implements ReviewStorage {
                 rs.getInt("user_id"),
                 rs.getInt("film_id"),
                 rs.getInt("useful"));
+    }
+
+    private void idValidation(Review review) {
+        if (review.getUserId() < 1) {
+            throw new UserNotFoundException("id пользователя не может быть меньше 1");
+        }
+        if (review.getFilmId() < 1) {
+            throw new FilmNotFoundException("id фильма не может быть меньше 1");
+        }
     }
 }
