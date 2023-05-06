@@ -60,21 +60,19 @@ public class FilmController {
     }
 
     @PutMapping("/{id}/like/{userId}")
-    public Film addLike(@PathVariable("id") Integer filmId,
+    public void addLike(@PathVariable("id") Integer filmId,
                         @PathVariable("userId") Integer userId) {
         log.info("addLike: {} - filmId, {} - userId", filmId, userId);
-        Film film = likeService.addLike(filmId, userId);
-        log.info("addLike: {} - Finished", film);
-        return film;
+        likeService.addLike(filmId, userId);
+        log.info("addLike: {} - Finished", filmId);
     }
 
     @DeleteMapping("/{id}/like/{userId}")
-    public Film deleteLike(@PathVariable("id") Integer filmId,
+    public void deleteLike(@PathVariable("id") Integer filmId,
                            @PathVariable("userId") Integer userId) {
         log.info("deleteLike: {} - filmId, {} - userId", filmId, userId);
-        Film film = likeService.deleteLike(filmId, userId);
-        log.info("deleteLike: {} - Finished", film);
-        return film;
+        likeService.deleteLike(filmId, userId);
+        log.info("deleteLike: {} - Finished", filmId);
     }
 
     @GetMapping("/popular")
@@ -107,13 +105,12 @@ public class FilmController {
     public void deleteFilm(@PathVariable("filmId") Integer filmId) {
         log.info("deleteFilmId: {} - filmId", filmId);
         filmService.deleteFilm(filmId);
-//        log.info("deleteFilmId: {} - Finished", filmId);
     }
 
 
     @GetMapping("/search")
     public List<Film> searchFilms(@RequestParam @NotBlank String query,
-                             @RequestParam(name = "by", required = false) String[] paramsForFinding) {
+                                  @RequestParam(name = "by", required = false) String[] paramsForFinding) {
         log.info("Controller.searchFilms: {} - query, {} - by", query, paramsForFinding);
         List<Film> findFilms = filmService.searchFilms(query, paramsForFinding);
         log.info("Controller.searchFilms: {} - Finished", findFilms);

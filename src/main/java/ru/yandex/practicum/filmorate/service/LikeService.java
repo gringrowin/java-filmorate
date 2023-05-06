@@ -3,28 +3,19 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
-import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.LikeStorage;
+
+import java.util.List;
 
 @Service
 @Slf4j
 public class LikeService {
 
-    private final FilmService filmService;
-
     private final LikeStorage likeStorage;
 
-    private final UserService userService;
-
     @Autowired
-    public LikeService(FilmService filmService,
-                       LikeStorage likeStorage,
-                       UserService userService) {
-        this.filmService = filmService;
+    public LikeService(LikeStorage likeStorage) {
         this.likeStorage = likeStorage;
-        this.userService = userService;
     }
 
     public Integer getLikes(Integer filmId) {
@@ -33,29 +24,22 @@ public class LikeService {
         return likes;
     }
 
-    public Film addLike(Integer filmId, Integer userId) {
-        checkUserId(userId);
+    public void addLike(Integer filmId, Integer userId) {
         log.info("addLike: {} - Started add like to film ID: ", filmId);
-        Film film = likeStorage.addLike(filmService.getFilm(filmId), userId);
-        log.info("addLike: {} - Finished", film);
-        return filmService.getFilm(filmId);
+        likeStorage.addLike(filmId, userId);
+        log.info("addLike: {} - Finished", filmId);
     }
 
-    public Film deleteLike(Integer filmId, Integer userId) {
-        checkUserId(userId);
+    public void deleteLike(Integer filmId, Integer userId) {
         log.info("deleteLike: {} - Started delete like to film ID:", filmId);
-        Film film = likeStorage.deleteLike(filmService.getFilm(filmId), userId);
-        log.info("deleteLike: {} - Finished", film);
-        return filmService.getFilm(filmId);
+        likeStorage.deleteLike(filmId, userId);
+        log.info("deleteLike: {} - Finished", filmId);
     }
 
-    private void checkUserId(Integer userId) {
-        log.info("checkUserId: {} - ", userId);
-        User user = userService.getUser(userId);
-        if (user == null) {
-            throw new UserNotFoundException(String.format(
-                    "Пользователя с ID %s не найден.", userId));
-        }
+    public List<Integer> getLikedFilmsByUserId(int userId) {
+        log.info("getLikedFilmsByUserId: {} - Started:", userId);
+        List<Integer> likedFilmes = likeStorage.getLikedFilmsByUserId(userId);
+        log.info("getLikedFilmsByUserId: {} - Finished", userId);
+        return likedFilmes;
     }
-
 }

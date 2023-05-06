@@ -6,7 +6,6 @@ import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
-import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.LikeStorage;
 
 import java.util.ArrayList;
@@ -18,26 +17,22 @@ public class LikeDbStorage implements LikeStorage {
 
     private final JdbcTemplate jdbcTemplate;
 
-    public Film addLike(Film film, Integer userId) {
-        checkIdFilm(film.getId());
+    @Override
+    public void addLike(Integer filmId, Integer userId) {
+        checkIdFilm(filmId);
         checkIdUser(userId);
 
         String sql = "INSERT INTO LIKES (FILM_ID, USER_ID) VALUES (?, ?)";
-        jdbcTemplate.update(sql, film.getId(), userId);
-        film.setLikes(getLikes(film.getId()));
-
-        return film;
+        jdbcTemplate.update(sql, filmId, userId);
     }
 
-    public Film deleteLike(Film film, Integer userId) {
-        checkIdFilm(film.getId());
+    @Override
+    public void deleteLike(Integer filmId, Integer userId) {
+        checkIdFilm(filmId);
         checkIdUser(userId);
 
         String sql = "DELETE FROM LIKES WHERE FILM_ID = ? AND USER_ID = ?";
-        jdbcTemplate.update(sql, film.getId(), userId);
-
-        film.setLikes(getLikes(film.getId()));
-        return film;
+        jdbcTemplate.update(sql, filmId, userId);
     }
 
     @Override

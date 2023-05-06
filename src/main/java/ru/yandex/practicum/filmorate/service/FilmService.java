@@ -4,13 +4,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.exception.InvalidParamsForSearch;
 import ru.yandex.practicum.filmorate.enums.FilmSortBy;
 import ru.yandex.practicum.filmorate.exception.DirectorNotFoundException;
+import ru.yandex.practicum.filmorate.exception.InvalidParamsForSearch;
 import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
-import ru.yandex.practicum.filmorate.storage.LikeStorage;
 
 import java.util.List;
 
@@ -22,19 +21,19 @@ public class FilmService {
 
     private final GenreService genreService;
     private final MpaService mpaService;
-    private final LikeStorage likeStorage;
+    private final LikeService likeService;
     private final DirectorService directorService;
 
     @Autowired
     public FilmService(@Qualifier("dbFilmStorage") FilmStorage filmStorage,
                        GenreService genreService,
                        MpaService mpaService,
-                       LikeStorage likeStorage,
+                       LikeService likeService,
                        DirectorService directorService) {
         this.filmStorage = filmStorage;
         this.genreService = genreService;
         this.mpaService = mpaService;
-        this.likeStorage = likeStorage;
+        this.likeService = likeService;
         this.directorService = directorService;
     }
 
@@ -65,7 +64,7 @@ public class FilmService {
     public Film getFilm(Integer id) {
         Film film = filmStorage.getFilm(id);
         film.setGenres(genreService.getGenresByFilmFromStorage(id));
-        film.setLikes(likeStorage.getLikes(id));
+        film.setLikes(likeService.getLikes(id));
         film.setMpa(mpaService.getMpa(film.getMpa().getId()));
         film.setDirectors(directorService.getDirectorsByFilmFromStorage(film.getId()));
         log.info("getFilm: {} - ", film);
@@ -86,16 +85,6 @@ public class FilmService {
         List<Film> films = filmStorage.getFilmsByDirectorIdAndSort(directorId, sortBy);
         return addingInfoFilms(films);
     }
-
-    private void checkUserId(Integer userId) {
-        log.info("checkUserId: {} - ", userId);
-        User user = userService.getUser(userId);
-        if (user == null) {
-            throw new UserNotFoundException(String.format(
-                    "Пользователь с ID %s не найден.", userId));
-        }
-    }
-
     public List<Film> searchFilms(String query, String[] paramsForSearch) {
         if (query == null || paramsForSearch == null || paramsForSearch.length > 2) {
             throw new InvalidParamsForSearch("Заданы ошибочные параметры поиска.");
@@ -119,7 +108,7 @@ public class FilmService {
     private List<Film> addingInfoFilms(List<Film> filmList) {
         for (Film film : filmList) {
             film.setGenres(genreService.getGenresByFilmFromStorage(film.getId()));
-            film.setLikes(likeStorage.getLikes(film.getId()));
+            film.setLikes(likeService.getLikes(film.getId()));
             film.setMpa(mpaService.getMpa(film.getMpa().getId()));
             film.setDirectors(directorService.getDirectorsByFilmFromStorage(film.getId()));
         }
@@ -127,8 +116,8 @@ public class FilmService {
     }
 
     public List<Film> getCommonFilmsForFriendSortedByPopular(Integer userId, Integer friendId) {
-        checkUserId(userId);
-        checkUserId(friendId);
+//        checkUserId(userId);
+//        checkUserId(friendId);
         List<Film> commonFilms = filmStorage.getCommonFilmsForFriendSortedByPopular(userId, friendId);
         log.info("Service getCommonFilmsForFriendSortedByPopular: {} {} {} ", userId, friendId, commonFilms.size());
         return addingInfoFilms(commonFilms);
