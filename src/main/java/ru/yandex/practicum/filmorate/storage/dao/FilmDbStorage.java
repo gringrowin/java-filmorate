@@ -195,16 +195,16 @@ public class FilmDbStorage implements FilmStorage {
         film.setRate(resultSet.getInt("RATE"));
 
         Mpa mpa = new Mpa();
-            mpa.setId(resultSet.getInt("MPA_ID"));
-            film.setMpa(mpa);
+        mpa.setId(resultSet.getInt("MPA_ID"));
+        film.setMpa(mpa);
 
         return film;
     }
 
     private void checkIdFilm(Integer id) {
         String sql = "SELECT * FROM FILMS " +
-                    "WHERE FILM_ID = ?";
-        SqlRowSet rows =  jdbcTemplate.queryForRowSet(sql, id);
+                "WHERE FILM_ID = ?";
+        SqlRowSet rows = jdbcTemplate.queryForRowSet(sql, id);
 
         if (!rows.next()) {
             throw new FilmNotFoundException("Фильм с ID: " + id + " не найден!");

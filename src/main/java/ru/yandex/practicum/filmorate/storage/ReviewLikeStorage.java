@@ -5,5 +5,5 @@ public interface ReviewLikeStorage {
 
     void deleteLike(int reviewId, int userId);
 
-   Integer getUsefulness(int id);
+    Integer getUsefulness(int id);
 }

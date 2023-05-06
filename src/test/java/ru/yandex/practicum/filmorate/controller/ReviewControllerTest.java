@@ -20,14 +20,17 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import static org.junit.jupiter.api.Assertions.*;
-
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
 @AutoConfigureTestDatabase
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 class ReviewControllerTest {
+    Film testFilm = new Film();
+    User testUser = new User();
+    User testUser2 = new User();
     private ReviewController controller;
     @Autowired
     private ReviewService reviewService;
@@ -35,9 +38,6 @@ class ReviewControllerTest {
     private FilmService filmService;
     @Autowired
     private UserService userService;
-    Film testFilm = new Film();;
-    User testUser = new User();
-    User testUser2 = new User();
 
     @BeforeEach
     public void beforeEach() {
@@ -142,7 +142,7 @@ class ReviewControllerTest {
         Review testReview = new Review("This film is beautiful.", true,
                 testUser.getId(), testFilm.getId());
         controller.addNewReview(testReview);
-        controller.addLikeToReview(testFilm.getId(),testUser.getId());
+        controller.addLikeToReview(testFilm.getId(), testUser.getId());
         assertEquals(1, controller.getReviewById(testReview.getReviewId()).getUseful(),
                 "Лайк не добавлен, либо некорректно сформирована оценка полезности ");
     }
@@ -152,7 +152,7 @@ class ReviewControllerTest {
         Review testReview = new Review("This film is beautiful.", true,
                 testUser.getId(), testFilm.getId());
         controller.addNewReview(testReview);
-        controller.addDisLikeToReview(testFilm.getId(),testUser.getId());
+        controller.addDisLikeToReview(testFilm.getId(), testUser.getId());
         assertEquals(-1, controller.getReviewById(testReview.getReviewId()).getUseful(),
                 "ДизЛайк не добавлен, либо некорректно сформирована оценка полезности ");
     }

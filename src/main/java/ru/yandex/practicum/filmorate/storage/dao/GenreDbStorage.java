@@ -23,7 +23,7 @@ public class GenreDbStorage implements GenreStorage {
 
     public Collection<Genre> getAll() {
         String sql = "SELECT * FROM GENRES " +
-                    "GROUP BY GENRE_ID";
+                "GROUP BY GENRE_ID";
 
         return jdbcTemplate.query(sql, this::mapRowToGenre);
     }
@@ -45,8 +45,8 @@ public class GenreDbStorage implements GenreStorage {
             jdbcTemplate.update(sqlForDeleteGenre, film.getId());
 
             for (Genre genre : film.getGenres()) {
-                    String sqlForAddGenre = "INSERT INTO FILM_GENRES SET FILM_ID = ?, GENRE_ID = ?";
-                    jdbcTemplate.update(sqlForAddGenre, film.getId(), genre.getId());
+                String sqlForAddGenre = "INSERT INTO FILM_GENRES SET FILM_ID = ?, GENRE_ID = ?";
+                jdbcTemplate.update(sqlForAddGenre, film.getId(), genre.getId());
             }
         } else {
             String sqlForDeleteGenre = "DELETE FROM FILM_GENRES WHERE FILM_ID = ?";

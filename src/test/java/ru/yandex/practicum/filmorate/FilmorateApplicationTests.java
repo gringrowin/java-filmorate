@@ -22,63 +22,63 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @AutoConfigureTestDatabase
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 @SqlGroup({
-		@Sql(scripts = "classpath:schema.sql",
-				config = @SqlConfig(encoding = "UTF-8"),
-				executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
-		@Sql(scripts = "classpath:create_test_data.sql",
-				config = @SqlConfig(encoding = "UTF-8"),
-				executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
+        @Sql(scripts = "classpath:schema.sql",
+                config = @SqlConfig(encoding = "UTF-8"),
+                executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
+        @Sql(scripts = "classpath:create_test_data.sql",
+                config = @SqlConfig(encoding = "UTF-8"),
+                executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
 })
 class FilmorateApplicationTests {
 
-	private final FilmDbStorage filmDbStorage;
+    private final FilmDbStorage filmDbStorage;
 
-	@Test
-	public void testAddFilmToStorageDb() {
-		Film testFilm = new Film();
-		testFilm.setName("Robocop4");
-		testFilm.setDescription("RobCop4");
-		testFilm.setDuration(120);
-		testFilm.setReleaseDate(LocalDate.of(1988, 12, 14));
-		Mpa mpa = new Mpa();
-		mpa.setId(1);
-		testFilm.setMpa(mpa);
+    @Test
+    public void testAddFilmToStorageDb() {
+        Film testFilm = new Film();
+        testFilm.setName("Robocop4");
+        testFilm.setDescription("RobCop4");
+        testFilm.setDuration(120);
+        testFilm.setReleaseDate(LocalDate.of(1988, 12, 14));
+        Mpa mpa = new Mpa();
+        mpa.setId(1);
+        testFilm.setMpa(mpa);
 
-		Film fromDbFilm = filmDbStorage.add(testFilm);
+        Film fromDbFilm = filmDbStorage.add(testFilm);
 
-		assertEquals(4, fromDbFilm.getId());
-		assertEquals(testFilm.getName(), fromDbFilm.getName());
-		assertEquals(testFilm.getDuration(), fromDbFilm.getDuration());
-	}
+        assertEquals(4, fromDbFilm.getId());
+        assertEquals(testFilm.getName(), fromDbFilm.getName());
+        assertEquals(testFilm.getDuration(), fromDbFilm.getDuration());
+    }
 
-	@Test
-	public void testGetAllFilmsFromStorageDb() {
+    @Test
+    public void testGetAllFilmsFromStorageDb() {
 
-		Collection<Film> films = filmDbStorage.getAll();
+        Collection<Film> films = filmDbStorage.getAll();
 
-		assertEquals(3, films.size());
-	}
+        assertEquals(3, films.size());
+    }
 
-	@Test
-	public void testGetFilmFromStorageDb() {
+    @Test
+    public void testGetFilmFromStorageDb() {
 
-		Film film = filmDbStorage.getFilm(1);
+        Film film = filmDbStorage.getFilm(1);
 
-		assertEquals(1, film.getId());
-	}
+        assertEquals(1, film.getId());
+    }
 
-	@Test
-	public void testUpdateFilmInStorageDb() {
+    @Test
+    public void testUpdateFilmInStorageDb() {
 
-		Film film = filmDbStorage.getFilm(1);
-		assertEquals("Robocopy1", film.getName());
+        Film film = filmDbStorage.getFilm(1);
+        assertEquals("Robocopy1", film.getName());
 
-		film.setName("Transformer");
+        film.setName("Transformer");
 
-		Film film1 = filmDbStorage.update(film);
+        Film film1 = filmDbStorage.update(film);
 
-		assertEquals("Transformer", film1.getName());
-	}
+        assertEquals("Transformer", film1.getName());
+    }
 
 
 }

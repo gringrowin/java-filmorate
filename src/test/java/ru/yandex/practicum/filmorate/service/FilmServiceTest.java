@@ -17,9 +17,9 @@ import java.time.LocalDate;
 @ExtendWith(MockitoExtension.class)
 class FilmServiceTest {
 
+    private final Film testFilm = new Film();
     @InjectMocks
     private FilmService filmService;
-
     @Mock
     private FilmStorage filmStorage;
     @Mock
@@ -28,8 +28,6 @@ class FilmServiceTest {
     private MpaStorage mpaStorage;
     @Mock
     private LikeStorage likeStorage;
-
-    private final Film testFilm = new Film();
 
     @BeforeEach
     void initializationTestFilm() {

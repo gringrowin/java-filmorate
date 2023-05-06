@@ -7,14 +7,17 @@ import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Component
 @Qualifier("inMemoryStorage")
 @Slf4j
 public class InMemoryUserStorage implements UserStorage {
-    private int idGenerator;
     private final Map<Integer, User> users = new HashMap<>();
+    private int idGenerator;
 
     public List<User> getAll() {
         return new ArrayList<>(users.values());

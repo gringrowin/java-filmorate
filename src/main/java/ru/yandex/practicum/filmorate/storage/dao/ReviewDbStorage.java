@@ -2,7 +2,6 @@ package ru.yandex.practicum.filmorate.storage.dao;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -11,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.exception.ReviewNotFoundException;
 import ru.yandex.practicum.filmorate.model.Review;
 import ru.yandex.practicum.filmorate.storage.ReviewStorage;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -52,9 +52,9 @@ public class ReviewDbStorage implements ReviewStorage {
                 "content = ?, is_positive = ? " +
                 "WHERE review_id = ? ";
         jdbcTemplate.update(sqlQuery,
-               review.getContent(),
-               review.getIsPositive(),
-               review.getReviewId());
+                review.getContent(),
+                review.getIsPositive(),
+                review.getReviewId());
         return getReviewById(review.getReviewId()).orElseThrow();
     }
 
@@ -67,7 +67,7 @@ public class ReviewDbStorage implements ReviewStorage {
 
     @Override
     public Optional<Review> getReviewById(Integer id) {
-        SqlRowSet reviewRows = jdbcTemplate.queryForRowSet("SELECT * FROM reviews "  +
+        SqlRowSet reviewRows = jdbcTemplate.queryForRowSet("SELECT * FROM reviews " +
                 "WHERE review_id = ?", id);
         if (reviewRows.next()) {
             Review review = new Review(

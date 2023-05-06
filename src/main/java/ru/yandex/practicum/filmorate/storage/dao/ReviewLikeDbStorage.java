@@ -19,16 +19,13 @@ public class ReviewLikeDbStorage implements ReviewLikeStorage {
 
     @Override
     public void addLike(int reviewId, int userId, boolean isLike) {     // добавляет и лайки и дизлайки
-        String sqlQueryLike = "UPDATE reviews_likes SET is_like = ? " +
-                "WHERE review_id = ? AND user_id = ?";
-
-//        String sqlQueryLike2 = "INSERT INTO reviews_likes (is_like, review_id, user_id) VALUES(?, ?, ?) " +
-//                "ON CONFLICT DO NOTHING ";
+        String sqlQueryLike = "INSERT INTO reviews_likes (review_id, user_id, is_like) " +
+                "VALUES(?, ?, ?) ";
 
         jdbcTemplate.update(sqlQueryLike,
-                isLike,
                 reviewId,
-                userId);
+                userId,
+                isLike);
     }
 
     public Integer getLike(int reviewId, int userId) {
@@ -45,7 +42,7 @@ public class ReviewLikeDbStorage implements ReviewLikeStorage {
 
     @Override
     public void deleteLike(int reviewId, int userId) {
-        String sqlQueryDeleteLike = "DELETE * FROM reviews_likes WHERE review_id = ?" +
+        String sqlQueryDeleteLike = "DELETE FROM reviews_likes WHERE review_id = ?" +
                 " AND user_id = ? ";
         jdbcTemplate.update(sqlQueryDeleteLike,
                 reviewId,
@@ -80,23 +77,3 @@ public class ReviewLikeDbStorage implements ReviewLikeStorage {
 
     }
 }
-
-
-//        String sqlQueryForUseful1 = "SELECT (COUNT(SELECT review_id FROM reviews_likes WHERE review_id = ? " +
-//                " AND is_like = TRUE) - " +
-//                "COUNT(SELECT review_id FROM reviews_likes WHERE review_id = ? AND is_like = FALSE)) " +
-//                "as useful";
-//
-//        String sqlQueryForUseful2 = "SELECT " +
-//                "(COUNT(SELECT user_id FROM reviews_likes AS rl WHERE rl.review_id = r.review_id AND is_like = TRUE) - " +
-//                "COUNT(SELECT user_id FROM reviews_likes AS rl WHERE rl.review_id = r.review_id AND is_like = FALSE)) as useful " +
-//                "FROM reviews AS r ";
-//
-//        SqlRowSet reviewUsefulRows = jdbcTemplate.queryForRowSet(sqlQueryForUseful2, id, id);
-//
-//        int usefulness = 0;
-//        if (reviewUsefulRows.next()) {
-//            usefulness = (reviewUsefulRows.getInt("useful"));
-//            log.info("Рейтинг полезности обзора id: {} составляет {} ", id, usefulness);
-//        }
-//        return usefulness;

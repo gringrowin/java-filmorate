@@ -2,16 +2,12 @@ package ru.yandex.practicum.filmorate.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.Review;
-import ru.yandex.practicum.filmorate.storage.ReviewLikeStorage;
-import ru.yandex.practicum.filmorate.storage.ReviewStorage;
 import ru.yandex.practicum.filmorate.storage.dao.ReviewDbStorage;
 import ru.yandex.practicum.filmorate.storage.dao.ReviewLikeDbStorage;
-
 import java.util.Collection;
 
 @Slf4j
@@ -31,10 +27,10 @@ public class ReviewService {
     }
 
     public Review addNewReview(Review review) {
-        if (review.getUserId() <1)  {
+        if (review.getUserId() < 1) {
             throw new UserNotFoundException("id пользователя не может быть меньше 1");
         }
-        if (review.getFilmId() <1)  {
+        if (review.getFilmId() < 1) {
             throw new FilmNotFoundException("id фильма не может быть меньше 1");
         }
         reviewDbStorage.addNewReview(review);
@@ -55,7 +51,7 @@ public class ReviewService {
     }
 
     public void deleteReview(int id) {
-        getReviewById(id);                              // проверяем есть ли в бд искомое по id ревью
+        getReviewById(id);
         reviewDbStorage.delete(id);
     }
 
@@ -71,9 +67,9 @@ public class ReviewService {
         reviewLikeDbStorage.addLike(reviewId, userId, false);
     }
 
-    public void deleteLikeFromReview(int reviewId, int userId) {  // удаляем и лайк и дизлайк
-        getReviewById(reviewId);                  // проверяем наличие ревью в бд
-        userService.getUser(userId);                            // проверяем наличие пользователя в бд
+    public void deleteLikeFromReview(int reviewId, int userId) {     // удаляем и лайк и дизлайк
+        getReviewById(reviewId);
+        userService.getUser(userId);
         reviewLikeDbStorage.deleteLike(reviewId, userId);
     }
 
