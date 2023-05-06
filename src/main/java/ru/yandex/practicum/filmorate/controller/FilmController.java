@@ -109,7 +109,7 @@ public class FilmController {
 
     @GetMapping("/search")
     public List<Film> searchFilms(@RequestParam @NotBlank String query,
-                             @RequestParam(name = "by", required = false) String[] paramsForFinding) {
+                                  @RequestParam(name = "by", required = false) String[] paramsForFinding) {
         log.info("Controller.searchFilms: {} - query, {} - by", query, paramsForFinding);
         List<Film> findFilms = filmService.searchFilms(query, paramsForFinding);
         log.info("Controller.searchFilms: {} - Finished", findFilms);
