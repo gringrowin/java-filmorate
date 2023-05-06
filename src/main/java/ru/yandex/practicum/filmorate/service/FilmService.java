@@ -117,8 +117,6 @@ public class FilmService {
     }
 
     public List<Film> getCommonFilmsForFriendSortedByPopular(Integer userId, Integer friendId) {
-//        checkUserId(userId);
-//        checkUserId(friendId);
         List<Film> commonFilms = filmStorage.getCommonFilmsForFriendSortedByPopular(userId, friendId);
         log.info("Service getCommonFilmsForFriendSortedByPopular: {} {} {} ", userId, friendId, commonFilms.size());
         return addingInfoFilms(commonFilms);
