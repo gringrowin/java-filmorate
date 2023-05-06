@@ -28,18 +28,6 @@ public class ReviewLikeDbStorage implements ReviewLikeStorage {
                 isLike);
     }
 
-    public Integer getLike(int reviewId, int userId) {
-        String sqlQueryForLike = "SELECT COUNT(review_id) AS cntLikes FROM reviews_likes WHERE is_like = true " +
-                "AND review_id = ? AND user_id = ? ";
-        SqlRowSet reviewLikeRows = jdbcTemplate.queryForRowSet(sqlQueryForLike, reviewId, userId);
-
-        Integer likesCount = 0;
-        if (reviewLikeRows.next()) {
-            likesCount = (reviewLikeRows.getInt("cntLikes"));
-        }
-        return likesCount;
-    }
-
     @Override
     public void deleteLike(int reviewId, int userId) {
         String sqlQueryDeleteLike = "DELETE FROM reviews_likes WHERE review_id = ?" +
@@ -51,9 +39,9 @@ public class ReviewLikeDbStorage implements ReviewLikeStorage {
 
     @Override
     public Integer getUsefulness(int id) {
-        String sqlQueryForLikes = "SELECT COUNT(review_id) AS cntLikes FROM reviews_likes WHERE is_like = true " +
+        String sqlQueryForLikes = "SELECT COUNT(review_id) AS countLikes FROM reviews_likes WHERE is_like = true " +
                 "AND review_id = ? ";
-        String sqlQueryForDisLikes = "SELECT COUNT(review_id) AS cntDisLikes FROM reviews_likes " +
+        String sqlQueryForDisLikes = "SELECT COUNT(review_id) AS countDisLikes FROM reviews_likes " +
                 "WHERE is_like = false " +
                 "AND review_id = ? ";
 
@@ -63,17 +51,14 @@ public class ReviewLikeDbStorage implements ReviewLikeStorage {
         int likesCount = 0;
         int disLikesCount = 0;
         if (reviewLikesRows.next()) {
-            likesCount = (reviewLikesRows.getInt("cntLikes"));
-            log.info("Обзор id: {} считают полезным {} пользователей", id, likesCount);
+            likesCount = (reviewLikesRows.getInt("countLikes"));
         }
         if (reviewDisLikesRows.next()) {
-            disLikesCount = (reviewDisLikesRows.getInt("cntDisLikes"));
-            log.info("Обзор id: {} считают бесполезным {} пользователей", id, disLikesCount);
+            disLikesCount = (reviewDisLikesRows.getInt("countDisLikes"));
         }
-        if (likesCount - disLikesCount == 0) {
-            log.info("Обзор id: {} не получил оценку полезности со стороны пользователей", id);
-        }
-        return likesCount - disLikesCount;
+        int usefulness = likesCount - disLikesCount;
+        log.info("Полезность обзора id: {} оценена пользователями как {} ", id, usefulness);
 
+        return usefulness;
     }
 }

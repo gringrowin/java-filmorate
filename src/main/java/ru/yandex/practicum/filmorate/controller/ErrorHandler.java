@@ -51,7 +51,7 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse reviewNotFoundException(final ReviewNotFoundException e) {
+    public ErrorResponse handleReviewNotFoundException(final ReviewNotFoundException e) {
         return new ErrorResponse(
                 e.getMessage()
         );

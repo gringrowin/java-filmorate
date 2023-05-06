@@ -19,11 +19,13 @@ public class ReviewController {
 
     @PostMapping()
     public Review addNewReview(@Valid @RequestBody Review review) {
+        log.info("Получен запрос на добавление нового отзыва " + review);
         return reviewService.addNewReview(review);
     }
 
     @PutMapping()
     public Review updateReview(@Valid @RequestBody Review review) {
+        log.info("Получен запрос на обновление отзыва с ID " + review.getReviewId());
         return reviewService.updateReview(review);
     }
 

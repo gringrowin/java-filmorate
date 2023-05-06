@@ -27,15 +27,15 @@ public class ReviewService {
     }
 
     public Review addNewReview(Review review) {
-        if (review.getUserId() < 1) {
-            throw new UserNotFoundException("id пользователя не может быть меньше 1");
-        }
-        if (review.getFilmId() < 1) {
-            throw new FilmNotFoundException("id фильма не может быть меньше 1");
-        }
+//        if (review.getUserId() < 1) {
+//            throw new UserNotFoundException("id пользователя не может быть меньше 1");
+//        }
+//        if (review.getFilmId() < 1) {
+//            throw new FilmNotFoundException("id фильма не может быть меньше 1");
+//        }
         reviewDbStorage.addNewReview(review);
         Review newReview = getReviewById(review.getReviewId());
-        log.info("Добавлен новый отзыв " + newReview.toString());
+        log.info("Добавлен новый отзыв " + newReview);
         return newReview;
     }
 
@@ -46,7 +46,7 @@ public class ReviewService {
     }
 
     public Review updateReview(Review review) {
-        getReviewById(review.getReviewId());            // проверяем есть ли в бд ревью, которое хотим обновить
+        getReviewById(review.getReviewId());
         return reviewDbStorage.update(review);
     }
 
@@ -67,10 +67,9 @@ public class ReviewService {
         reviewLikeDbStorage.addLike(reviewId, userId, false);
     }
 
-    public void deleteLikeFromReview(int reviewId, int userId) {     // удаляем и лайк и дизлайк
+    public void deleteLikeFromReview(int reviewId, int userId) {
         getReviewById(reviewId);
         userService.getUser(userId);
         reviewLikeDbStorage.deleteLike(reviewId, userId);
     }
-
 }
