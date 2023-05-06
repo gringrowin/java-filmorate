@@ -6,11 +6,7 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.FriendStorage;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -42,26 +38,24 @@ public class FriendService {
 
     public List<User> getFriends(Integer userId) {
         log.info("getFriends: {} - ", userService.getUser(userId));
-        return userService.getUser(userId)
-                .getFriends()
-                .stream()
-                .map(userService::getUser)
-                .collect(Collectors.toList());
+        List<User> friends = new ArrayList<>();
+        for (Integer friendId : friendStorage.getFriends(userId)) {
+            friends.add(userService.getUser(friendId));
+        }
+        return friends;
     }
 
     public List<User> getCommonFriends(Integer userId, Integer otherId) {
-        Set<Integer> userFriends = userService.getUser(userId).getFriends();
+        Set<User> userFriends = new HashSet<>(getFriends(userId));
         log.info("getCommonFriends: {} - Started", userFriends);
-        Set<Integer> otherFriends = userService.getUser(otherId).getFriends();
+        Set<User> otherFriends = new HashSet<>(getFriends(otherId));
         log.info("getCommonFriends: {} - Started", otherFriends);
         if (userFriends == null || otherFriends == null) {
             return Collections.emptyList();
         }
-        Set<Integer> commonFriends = new HashSet<>(userFriends);
+        Set<User> commonFriends = new HashSet<>(userFriends);
         commonFriends.retainAll(otherFriends);
         log.info("getCommonFriends: {} - Finished", commonFriends);
-        return commonFriends.stream()
-                .map(userService::getUser)
-                .collect(Collectors.toList());
+        return new ArrayList<>(commonFriends);
     }
 }
