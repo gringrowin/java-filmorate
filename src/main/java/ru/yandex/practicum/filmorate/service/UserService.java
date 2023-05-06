@@ -13,6 +13,11 @@ import ru.yandex.practicum.filmorate.storage.UserStorage;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -106,5 +111,10 @@ public class UserService {
             recommendations.add(filmService.getFilm(filmId));
         }
         return recommendations;
+    }
+
+    public void deleteUser(Integer userId) {
+        log.info("deleteUser: {} - ", userId);
+        userStorage.deleteUser(userId);
     }
 }

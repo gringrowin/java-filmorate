@@ -52,7 +52,7 @@ public class GenreDbStorage implements GenreStorage {
 
     public Set<Genre> getGenresByFilmFromStorage(Integer filmId) {
 
-        String sql = "SELECT FG.GENRE_ID, G2.GENRE_NAME  FROM FILMGENRES AS FG " +
+        String sql = "SELECT FG.GENRE_ID, G2.GENRE_NAME  FROM FILM_GENRES AS FG " +
                 "LEFT JOIN GENRES G2 on G2.GENRE_ID = FG.GENRE_ID " +
                 "WHERE FILM_ID = ?";
 
