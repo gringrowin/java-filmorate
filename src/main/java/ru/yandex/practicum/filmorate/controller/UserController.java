@@ -3,7 +3,9 @@ package ru.yandex.practicum.filmorate.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Feed;
+import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.FriendService;
 import ru.yandex.practicum.filmorate.service.UserService;
 
 import javax.validation.Valid;
@@ -17,9 +19,12 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
+    private final FriendService friendService;
 
-    public UserController(UserService userService) {
+    public UserController(UserService userService,
+                          FriendService friendService) {
         this.userService = userService;
+        this.friendService = friendService;
     }
 
     @GetMapping
@@ -58,7 +63,7 @@ public class UserController {
     public User addFriend(@PathVariable("id") Integer userId,
                           @PathVariable("friendId") Integer friendId) {
         log.info("addFriend: {} - userId, {} - friendId", userId, friendId);
-        User user = userService.addFriend(userId, friendId);
+        User user = friendService.addFriend(userId, friendId);
         log.info("addFriend: {} - Finished", user);
         return user;
     }
@@ -67,7 +72,7 @@ public class UserController {
     public User deleteFriend(@PathVariable("id") Integer userId,
                              @PathVariable("friendId") Integer friendId) {
         log.info("deleteFriend: {} - userId, {} - friendId", userId, friendId);
-        User user = userService.deleteFriend(userId, friendId);
+        User user = friendService.deleteFriend(userId, friendId);
         log.info("deleteFriend: {} - Finished", user);
         return user;
     }
@@ -75,7 +80,7 @@ public class UserController {
     @GetMapping("/{id}/friends")
     public List<User> getFriends(@PathVariable("id") Integer userId) {
         log.info("getFriends: {} - userId", userId);
-        List<User> userFriends = userService.getFriends(userId);
+        List<User> userFriends = friendService.getFriends(userId);
         log.info("getFriends: {} - Finished", userFriends);
         return userFriends;
     }
@@ -84,9 +89,20 @@ public class UserController {
     public List<User> getCommonFriends(@PathVariable("id") Integer userId,
                                        @PathVariable("otherId") Integer otherId) {
         log.info("getCommonFriends: {} - userId, {} - otherUserId", userId, otherId);
-        List<User> commonFriends = userService.getCommonFriends(userId, otherId);
+        List<User> commonFriends = friendService.getCommonFriends(userId, otherId);
         log.info("getCommonFriends: {} - Finished", commonFriends);
         return commonFriends;
+    }
+
+    @GetMapping("/{id}/recommendations")
+    public List<Film> getRecommendations(@PathVariable("id") int userId) {
+        return userService.getRecommendations(userId);
+    }
+
+    @DeleteMapping("/{userId}")
+    public void deleteUser(@PathVariable("userId") Integer userId) {
+        log.info("deleteUser: {} - userId", userId);
+        userService.deleteUser(userId);
     }
 
     @GetMapping("/{id}/feed")

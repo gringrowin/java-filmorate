@@ -3,19 +3,23 @@ package ru.yandex.practicum.filmorate.storage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
+import ru.yandex.practicum.filmorate.enums.FilmSortBy;
 import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Component
 @Qualifier("inMemoryStorage")
 @Slf4j
 public class InMemoryFilmStorage implements FilmStorage {
 
-    private int idGenerator;
     private final Map<Integer, Film> films = new HashMap<>();
+    private int idGenerator;
 
     public List<Film> getAll() {
         return new ArrayList<>(films.values());
@@ -45,6 +49,30 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     public Film getFilm(Integer id) {
         return films.get(id);
+    }
+
+    @Override
+    public List<Film> searchFilms(String query, String[] paramsForFinding) {
+        return null;
+    }
+
+    public List<Film> getFilmsByDirectorIdAndSort(Integer directorId, FilmSortBy filmSortBy) {
+        return null;
+    }
+
+    @Override
+    public List<Film> getPopularFilms(Integer count, Integer genreId, Integer year) {
+        return null;
+    }
+
+    @Override
+    public List<Film> getCommonFilmsForFriendSortedByPopular(Integer userId, Integer friendId) {
+        return null;
+    }
+
+    @Override
+    public void deleteFilm(Integer filmId) {
+
     }
 
     private Integer getIdGenerator() {

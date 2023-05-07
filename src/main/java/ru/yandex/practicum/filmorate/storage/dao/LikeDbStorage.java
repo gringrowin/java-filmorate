@@ -11,19 +11,22 @@ import ru.yandex.practicum.filmorate.model.enums.EventType;
 import ru.yandex.practicum.filmorate.model.enums.OperationType;
 import ru.yandex.practicum.filmorate.storage.LikeStorage;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Component
 @RequiredArgsConstructor
 public class LikeDbStorage implements LikeStorage {
 
     private final JdbcTemplate jdbcTemplate;
 
-    public Film addLike(Film film, Integer userId) {
-        checkIdFilm(film.getId());
+    @Override
+    public void addLike(Integer filmId, Integer userId) {
+        checkIdFilm(filmId);
         checkIdUser(userId);
 
         String sql = "INSERT INTO LIKES (FILM_ID, USER_ID) VALUES (?, ?)";
-        jdbcTemplate.update(sql, film.getId(), userId);
-        film.setLikes(getLikes(film.getId()));
+        jdbcTemplate.update(sql, filmId, userId);
 
         sql = "INSERT INTO Feed " +
                 "SET " +
@@ -38,19 +41,16 @@ public class LikeDbStorage implements LikeStorage {
                 userId,
                 EventType.LIKE.toString(),
                 OperationType.ADD.toString(),
-                film.getId());
-
-        return film;
+                filmId);
     }
 
-    public Film deleteLike(Film film, Integer userId) {
-        checkIdFilm(film.getId());
+    @Override
+    public void deleteLike(Integer filmId, Integer userId) {
+        checkIdFilm(filmId);
         checkIdUser(userId);
 
         String sql = "DELETE FROM LIKES WHERE FILM_ID = ? AND USER_ID = ?";
-        jdbcTemplate.update(sql, film.getId(), userId);
-
-        film.setLikes(getLikes(film.getId()));
+        jdbcTemplate.update(sql, filmId, userId);
 
         sql = "INSERT INTO Feed " +
                 "SET " +
@@ -65,8 +65,7 @@ public class LikeDbStorage implements LikeStorage {
                 userId,
                 EventType.LIKE.toString(),
                 OperationType.REMOVE.toString(),
-                film.getId());
-        return film;
+                filmId);
     }
 
     @Override
@@ -77,6 +76,17 @@ public class LikeDbStorage implements LikeStorage {
                 "WHERE FILM_ID = ?";
 
         return jdbcTemplate.queryForObject(sql, (rs, rowNum) -> rs.getInt("COUNT"), filmId);
+    }
+
+    @Override
+    public List<Integer> getLikedFilmsByUserId(int userId) {
+        String sql = "SELECT film_id FROM Likes WHERE user_id = ?";
+        SqlRowSet sqlRowSet = jdbcTemplate.queryForRowSet(sql, userId);
+        List<Integer> filmIds = new ArrayList<>();
+        while (sqlRowSet.next()) {
+            filmIds.add(sqlRowSet.getInt("film_id"));
+        }
+        return filmIds;
     }
 
     private void checkIdFilm(Integer id) {

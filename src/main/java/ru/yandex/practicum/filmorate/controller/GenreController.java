@@ -7,8 +7,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.yandex.practicum.filmorate.model.Genre;
-import ru.yandex.practicum.filmorate.storage.GenreStorage;
-import ru.yandex.practicum.filmorate.storage.dao.GenreDbStorage;
+import ru.yandex.practicum.filmorate.service.GenreService;
 
 import java.util.Collection;
 
@@ -17,17 +16,17 @@ import java.util.Collection;
 @RequestMapping("/genres")
 public class GenreController {
 
-    private final GenreStorage genreStorage;
+    private final GenreService genreService;
 
     @Autowired
-    public GenreController(GenreDbStorage genreStorage) {
-        this.genreStorage = genreStorage;
+    public GenreController(GenreService genreService) {
+        this.genreService = genreService;
     }
 
     @GetMapping
     public Collection<Genre> getAll() {
         log.info("getAll - Started");
-        Collection<Genre> allGenre = genreStorage.getAll();
+        Collection<Genre> allGenre = genreService.getAll();
         log.info("getAll: {} - Finished", allGenre);
         return allGenre;
     }
@@ -35,7 +34,7 @@ public class GenreController {
     @GetMapping("/{genreId}")
     public Genre getGenre(@PathVariable("genreId") Integer genreId) {
         log.info("getGenre - Started");
-        Genre genre = genreStorage.getGenre(genreId);
+        Genre genre = genreService.getGenre(genreId);
         log.info("getGenre: {} - Finished", genre);
         return genre;
     }
