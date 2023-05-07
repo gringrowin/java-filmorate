@@ -26,21 +26,6 @@ public class LikeDbStorage implements LikeStorage {
 
         String sql = "INSERT INTO LIKES (FILM_ID, USER_ID) VALUES (?, ?)";
         jdbcTemplate.update(sql, filmId, userId);
-
-        sql = "INSERT INTO Feed " +
-                "SET " +
-                "event_timestamp = ?, " +
-                "user_id = ?, " +
-                "event_type = ?, " +
-                "operation = ?, " +
-                "entity_id = ?";
-
-        jdbcTemplate.update(sql,
-                System.currentTimeMillis(),
-                userId,
-                EventType.LIKE.toString(),
-                OperationType.ADD.toString(),
-                filmId);
     }
 
     @Override
@@ -50,21 +35,6 @@ public class LikeDbStorage implements LikeStorage {
 
         String sql = "DELETE FROM LIKES WHERE FILM_ID = ? AND USER_ID = ?";
         jdbcTemplate.update(sql, filmId, userId);
-
-        sql = "INSERT INTO Feed " +
-                "SET " +
-                "event_timestamp = ?, " +
-                "user_id = ?, " +
-                "event_type = ?, " +
-                "operation = ?, " +
-                "entity_id = ?";
-
-        jdbcTemplate.update(sql,
-                System.currentTimeMillis(),
-                userId,
-                EventType.LIKE.toString(),
-                OperationType.REMOVE.toString(),
-                filmId);
     }
 
     @Override

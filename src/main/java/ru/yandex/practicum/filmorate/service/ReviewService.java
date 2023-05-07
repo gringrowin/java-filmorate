@@ -3,6 +3,8 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.enums.EventType;
+import ru.yandex.practicum.filmorate.enums.OperationType;
 import ru.yandex.practicum.filmorate.model.Review;
 import ru.yandex.practicum.filmorate.storage.dao.ReviewDbStorage;
 import ru.yandex.practicum.filmorate.storage.dao.ReviewLikeDbStorage;
@@ -12,21 +14,26 @@ import java.util.Collection;
 @Slf4j
 @Service
 public class ReviewService {
-    ReviewDbStorage reviewDbStorage;
-    ReviewLikeDbStorage reviewLikeDbStorage;
-    UserService userService;
+    private final ReviewDbStorage reviewDbStorage;
+    private final ReviewLikeDbStorage reviewLikeDbStorage;
+    private final UserService userService;
+
+    private final FeedService feedService;
 
     @Autowired
     public ReviewService(ReviewDbStorage reviewDbStorage,
                          ReviewLikeDbStorage reviewLikeDbStorage,
-                         UserService userService) {
+                         UserService userService,
+                         FeedService feedService) {
         this.reviewDbStorage = reviewDbStorage;
+        this.feedService = feedService;
         this.reviewLikeDbStorage = reviewLikeDbStorage;
         this.userService = userService;
     }
 
     public Review addNewReview(Review review) {
         Review newReview = reviewDbStorage.addNewReview(review);
+        feedService.addFeedEvent(EventType.REVIEW, OperationType.ADD, review.getUserId(), review.getReviewId());
         log.info("Добавлен новый отзыв " + newReview);
         return newReview;
     }
@@ -38,11 +45,15 @@ public class ReviewService {
     }
 
     public Review updateReview(Review review) {
-        return reviewDbStorage.update(review);
+        Review updatedReview = reviewDbStorage.update(review);
+        feedService.addFeedEvent(EventType.REVIEW, OperationType.UPDATE, updatedReview.getUserId(), updatedReview.getReviewId());
+        return updatedReview;
     }
 
     public void deleteReview(int id) {
+        Review review = getReviewById(id);
         reviewDbStorage.delete(id);
+        feedService.addFeedEvent(EventType.REVIEW, OperationType.REMOVE, review.getUserId(), review.getReviewId());
     }
 
     public Collection<Review> getReviews(Integer filmId, Integer count) {
