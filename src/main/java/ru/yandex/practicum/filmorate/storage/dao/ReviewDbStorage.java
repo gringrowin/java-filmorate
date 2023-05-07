@@ -7,8 +7,6 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Repository;
-import ru.yandex.practicum.filmorate.enums.EventType;
-import ru.yandex.practicum.filmorate.enums.OperationType;
 import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.exception.ReviewNotFoundException;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
@@ -48,21 +46,6 @@ public class ReviewDbStorage implements ReviewStorage {
         }, keyHolder);
         review.setReviewId(keyHolder.getKey().intValue());
 
-        String sql = "INSERT INTO Feed " +
-                "SET " +
-                "event_timestamp = ?, " +
-                "user_id = ?, " +
-                "event_type = ?, " +
-                "operation = ?, " +
-                "entity_id = ?";
-
-        jdbcTemplate.update(sql,
-                System.currentTimeMillis(),
-                review.getUserId(),
-                EventType.REVIEW.toString(),
-                OperationType.ADD.toString(),
-                review.getReviewId());
-
         log.info("отзыву к фильму {}, добавленному пользователем {}, присвоен id {}",
                 review.getFilmId(), review.getUserId(), review.getReviewId());
         return getReviewById(review.getReviewId()).get();
@@ -78,49 +61,13 @@ public class ReviewDbStorage implements ReviewStorage {
                 review.getContent(),
                 review.getIsPositive(),
                 review.getReviewId());
-
-        Review updatedReview = getReviewById(review.getReviewId()).get();
-
-        String sql = "INSERT INTO Feed " +
-                "SET " +
-                "event_timestamp = ?, " +
-                "user_id = ?, " +
-                "event_type = ?, " +
-                "operation = ?, " +
-                "entity_id = ?";
-
-        jdbcTemplate.update(sql,
-                System.currentTimeMillis(),
-                updatedReview.getUserId(),
-                EventType.REVIEW.toString(),
-                OperationType.UPDATE.toString(),
-                updatedReview.getReviewId());
-
         return getReviewById(review.getReviewId()).orElseThrow();
     }
 
     @Override
     public void delete(Integer id) {
-        Review review = getReviewById(id).get();
         String sqlQueryDeleteReview = "DELETE FROM reviews WHERE review_id = ? ";
         jdbcTemplate.update(sqlQueryDeleteReview, id);
-
-        String sql = "INSERT INTO Feed " +
-                "SET " +
-                "event_timestamp = ?, " +
-                "user_id = ?, " +
-                "event_type = ?, " +
-                "operation = ?, " +
-                "entity_id = ?";
-
-        jdbcTemplate.update(sql,
-                System.currentTimeMillis(),
-                review.getUserId(),
-                EventType.REVIEW.toString(),
-                OperationType.REMOVE.toString(),
-                review.getReviewId());
-
-
         log.info("Отзыв с идентификатором " + id + " удалён из базы");
     }
 

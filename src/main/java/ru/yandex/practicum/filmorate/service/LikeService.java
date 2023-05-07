@@ -3,6 +3,8 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.enums.EventType;
+import ru.yandex.practicum.filmorate.enums.OperationType;
 import ru.yandex.practicum.filmorate.storage.LikeStorage;
 
 import java.util.List;
@@ -13,9 +15,13 @@ public class LikeService {
 
     private final LikeStorage likeStorage;
 
+    private final FeedService feedService;
+
     @Autowired
-    public LikeService(LikeStorage likeStorage) {
+    public LikeService(LikeStorage likeStorage,
+                       FeedService feedService) {
         this.likeStorage = likeStorage;
+        this.feedService = feedService;
     }
 
     public Integer getLikes(Integer filmId) {
@@ -27,12 +33,14 @@ public class LikeService {
     public void addLike(Integer filmId, Integer userId) {
         log.info("addLike: {} - Started add like to film ID: ", filmId);
         likeStorage.addLike(filmId, userId);
+        feedService.addFeedEvent(EventType.LIKE, OperationType.ADD, userId, filmId);
         log.info("addLike: {} - Finished", filmId);
     }
 
     public void deleteLike(Integer filmId, Integer userId) {
         log.info("deleteLike: {} - Started delete like to film ID:", filmId);
         likeStorage.deleteLike(filmId, userId);
+        feedService.addFeedEvent(EventType.LIKE, OperationType.REMOVE, userId, filmId);
         log.info("deleteLike: {} - Finished", filmId);
     }
 

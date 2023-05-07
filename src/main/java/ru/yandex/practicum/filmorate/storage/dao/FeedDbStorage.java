@@ -12,6 +12,7 @@ import ru.yandex.practicum.filmorate.storage.FeedStorage;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.Instant;
 import java.util.List;
 
 @Component("dbFeedStorage")
@@ -31,13 +32,31 @@ public class FeedDbStorage implements FeedStorage {
         return jdbcTemplate.query(sql, this::mapRowToFeed, userId);
     }
 
+    @Override
+    public void addFeedEvent(EventType eventType, OperationType operationType, int userId, int entityId) {
+        String sql = "INSERT INTO Feed " +
+                "SET " +
+                "event_timestamp = ?, " +
+                "user_id = ?, " +
+                "event_type = ?, " +
+                "operation = ?, " +
+                "entity_id = ?";
+
+        jdbcTemplate.update(sql,
+                Instant.now().toEpochMilli(),
+                userId,
+                eventType.toString(),
+                operationType.toString(),
+                entityId);
+    }
+
 
     private Feed mapRowToFeed(ResultSet rs, int rowNum) throws SQLException {
         return Feed.builder()
                 .timestamp(rs.getLong("event_timestamp"))
-                .userId(rs.getLong("user_id"))
                 .eventType(EventType.valueOf(rs.getString("event_type")))
                 .operation(OperationType.valueOf(rs.getString("operation")))
+                .userId(rs.getLong("user_id"))
                 .eventId(rs.getLong("event_id"))
                 .entityId(rs.getLong("entity_id"))
                 .build();
