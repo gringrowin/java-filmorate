@@ -2,8 +2,10 @@ package ru.yandex.practicum.filmorate.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.model.Feed;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.FeedService;
 import ru.yandex.practicum.filmorate.service.FriendService;
 import ru.yandex.practicum.filmorate.service.UserService;
 
@@ -16,13 +18,15 @@ import java.util.List;
 @RestController
 @RequestMapping("/users")
 public class UserController {
-
     private final UserService userService;
+    private final FeedService feedService;
     private final FriendService friendService;
 
     public UserController(UserService userService,
+                          FeedService feedService,
                           FriendService friendService) {
         this.userService = userService;
+        this.feedService = feedService;
         this.friendService = friendService;
     }
 
@@ -102,5 +106,13 @@ public class UserController {
     public void deleteUser(@PathVariable("userId") Integer userId) {
         log.info("deleteUser: {} - userId", userId);
         userService.deleteUser(userId);
+    }
+
+    @GetMapping("/{id}/feed")
+    public List<Feed> getFeed(@PathVariable("id") Integer userId) {
+        log.info("getFeed: {} - userId", userId);
+        List<Feed> feed = feedService.getFeed(userId);
+        log.info("getFeed: {} - Finished", userId);
+        return feed;
     }
 }
