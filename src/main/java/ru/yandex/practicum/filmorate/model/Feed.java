@@ -15,11 +15,12 @@ public class Feed {
     @NotNull
     private long userId;
     @NotNull
-    private EventType eventType;
-    @NotNull
     private OperationType operation;
     @NotNull
     private long eventId;
     @NotNull
     private long entityId;
+    @NotNull
+    private EventType eventType;
 }
+
