@@ -5,20 +5,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.Feed;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.FeedStorage;
-import ru.yandex.practicum.filmorate.storage.FriendStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -30,18 +22,13 @@ public class UserService {
 
     private final LikeService likeService;
 
-    private final FeedStorage feedStorage;
-
     @Autowired
     public UserService(@Qualifier("dbUserStorage") UserStorage userStorage,
                        FilmService filmService,
-                       LikeService likeService),
-                       @Qualifier("dbFeedStorage") FeedStorage feedStorage) {
+                       LikeService likeService) {
         this.userStorage = userStorage;
         this.likeService = likeService;
         this.filmService = filmService;
-        this.friendStorage = friendStorage;
-        this.feedStorage = feedStorage;
     }
 
 
@@ -116,9 +103,5 @@ public class UserService {
     public void deleteUser(Integer userId) {
         log.info("deleteUser: {} - ", userId);
         userStorage.deleteUser(userId);
-    }
-
-    public List<Feed> getFeed(long userId) {
-        return feedStorage.getFeed(userId);
     }
 }

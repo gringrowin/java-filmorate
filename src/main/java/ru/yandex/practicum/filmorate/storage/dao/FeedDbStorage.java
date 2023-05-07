@@ -2,10 +2,12 @@ package ru.yandex.practicum.filmorate.storage.dao;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
+import ru.yandex.practicum.filmorate.enums.EventType;
+import ru.yandex.practicum.filmorate.enums.OperationType;
+import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.Feed;
-import ru.yandex.practicum.filmorate.model.enums.EventType;
-import ru.yandex.practicum.filmorate.model.enums.OperationType;
 import ru.yandex.practicum.filmorate.storage.FeedStorage;
 
 import java.sql.ResultSet;
@@ -19,11 +21,12 @@ public class FeedDbStorage implements FeedStorage {
     private final JdbcTemplate jdbcTemplate;
 
     @Override
-    public List<Feed> getFeed(long userId) {
+    public List<Feed> getFeed(int userId) {
+        checkIdUser(userId);
         String sql = "SELECT * " +
                 "FROM Feed AS f " +
                 "WHERE f.user_id = ? " +
-                "ORDER BY f.event_timestamp DESC";
+                "ORDER BY f.event_id";
 
         return jdbcTemplate.query(sql, this::mapRowToFeed, userId);
     }
@@ -38,5 +41,15 @@ public class FeedDbStorage implements FeedStorage {
                 .eventId(rs.getLong("event_id"))
                 .entityId(rs.getLong("entity_id"))
                 .build();
+    }
+
+    private void checkIdUser(Integer id) {
+        String sql = "SELECT * FROM USERS " +
+                "WHERE USER_ID = ?";
+        SqlRowSet rows = jdbcTemplate.queryForRowSet(sql, id);
+
+        if (!rows.next()) {
+            throw new UserNotFoundException("Пользователь с ID: " + id + " не найден!");
+        }
     }
 }
