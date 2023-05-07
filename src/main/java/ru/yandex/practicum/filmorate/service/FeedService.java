@@ -21,10 +21,13 @@ public class FeedService {
     }
 
     public List<Feed> getFeed(int userId) {
+        log.info("Получение ленты пользователя");
         return feedStorage.getFeed(userId);
     }
 
     public void addFeedEvent(EventType eventType, OperationType operationType, int userId, int entityId) {
+        log.info("Начато добавление события {} с операцией {} в ленту пользователя {}. Id сущности: {}",
+                eventType, operationType, userId, entityId);
         feedStorage.addFeedEvent(eventType, operationType, userId, entityId);
     }
 }

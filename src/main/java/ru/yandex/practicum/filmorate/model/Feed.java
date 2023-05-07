@@ -11,15 +11,15 @@ import javax.validation.constraints.NotNull;
 @Builder
 public class Feed {
     @NotNull
-    private long timestamp;
+    private Long timestamp;
     @NotNull
-    private long userId;
+    private Long userId;
     @NotNull
     private OperationType operation;
     @NotNull
-    private long eventId;
+    private Long eventId;
     @NotNull
-    private long entityId;
+    private Long entityId;
     @NotNull
     private EventType eventType;
 }
