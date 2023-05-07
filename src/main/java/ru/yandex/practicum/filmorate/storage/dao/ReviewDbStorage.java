@@ -53,7 +53,7 @@ public class ReviewDbStorage implements ReviewStorage {
 
     @Override
     public Review update(Review review) {
-
+        getReviewById(review.getReviewId());
         String sqlQuery = "UPDATE reviews SET " +
                 "content = ?, is_positive = ? " +
                 "WHERE review_id = ? ";
@@ -66,6 +66,7 @@ public class ReviewDbStorage implements ReviewStorage {
 
     @Override
     public void delete(Integer id) {
+        getReviewById(id);
         String sqlQueryDeleteReview = "DELETE FROM reviews WHERE review_id = ? ";
         jdbcTemplate.update(sqlQueryDeleteReview, id);
         log.info("Отзыв с идентификатором " + id + " удалён из базы");
