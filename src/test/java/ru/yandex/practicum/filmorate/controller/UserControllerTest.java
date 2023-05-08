@@ -21,29 +21,25 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(UserController.class)
 class UserControllerTest {
 
+    private final User testUser = new User();
     @MockBean
     private UserService userService;
-
     @Autowired
     private ObjectMapper objectMapper;
-
     @Autowired
     private MockMvc mockMvc;
-
-    private final User testUser = new User();
 
     @BeforeEach
     void initializationTestUser() {
         testUser.setId(1);
         testUser.setLogin("login");
         testUser.setName("name");
-        testUser.setBirthday(LocalDate.of(2000, 1,1));
+        testUser.setBirthday(LocalDate.of(2000, 1, 1));
         testUser.setEmail("mail@mail.ru");
         testUser.setFriends(Set.of(2));
     }
