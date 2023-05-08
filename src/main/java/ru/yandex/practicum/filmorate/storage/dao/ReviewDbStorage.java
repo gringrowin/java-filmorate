@@ -45,6 +45,7 @@ public class ReviewDbStorage implements ReviewStorage {
             return stmt;
         }, keyHolder);
         review.setReviewId(keyHolder.getKey().intValue());
+
         log.info("отзыву к фильму {}, добавленному пользователем {}, присвоен id {}",
                 review.getFilmId(), review.getUserId(), review.getReviewId());
         return getReviewById(review.getReviewId()).get();

@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.enums.FilmSortBy;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
+import ru.yandex.practicum.filmorate.service.LikeService;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
@@ -16,11 +17,13 @@ import java.util.List;
 @RestController
 @RequestMapping("/films")
 public class FilmController {
-
     private final FilmService filmService;
+    private final LikeService likeService;
 
-    public FilmController(FilmService filmService) {
+    public FilmController(FilmService filmService,
+                          LikeService likeService) {
         this.filmService = filmService;
+        this.likeService = likeService;
     }
 
     @GetMapping
@@ -56,21 +59,19 @@ public class FilmController {
     }
 
     @PutMapping("/{id}/like/{userId}")
-    public Film addLike(@PathVariable("id") Integer filmId,
+    public void addLike(@PathVariable("id") Integer filmId,
                         @PathVariable("userId") Integer userId) {
         log.info("addLike: {} - filmId, {} - userId", filmId, userId);
-        Film film = filmService.addLike(filmId, userId);
-        log.info("addLike: {} - Finished", film);
-        return film;
+        likeService.addLike(filmId, userId);
+        log.info("addLike: {} - Finished", filmId);
     }
 
     @DeleteMapping("/{id}/like/{userId}")
-    public Film deleteLike(@PathVariable("id") Integer filmId,
+    public void deleteLike(@PathVariable("id") Integer filmId,
                            @PathVariable("userId") Integer userId) {
         log.info("deleteLike: {} - filmId, {} - userId", filmId, userId);
-        Film film = filmService.deleteLike(filmId, userId);
-        log.info("deleteLike: {} - Finished", film);
-        return film;
+        likeService.deleteLike(filmId, userId);
+        log.info("deleteLike: {} - Finished", filmId);
     }
 
     @GetMapping("/popular")
@@ -103,7 +104,6 @@ public class FilmController {
     public void deleteFilm(@PathVariable("filmId") Integer filmId) {
         log.info("deleteFilmId: {} - filmId", filmId);
         filmService.deleteFilm(filmId);
-//        log.info("deleteFilmId: {} - Finished", filmId);
     }
 
 

@@ -24,7 +24,6 @@ public class FriendDbStorage implements FriendStorage {
         String sql = "INSERT INTO FRIENDS(USER_ID, FRIEND_ID) " +
                 "VALUES (?, ?)";
         jdbcTemplate.update(sql, user.getId(), friend.getId());
-
         return user;
     }
 
@@ -32,7 +31,6 @@ public class FriendDbStorage implements FriendStorage {
     public User deleteFriend(User user, User friend) {
         String sql = "DELETE FROM FRIENDS WHERE USER_ID = ? AND FRIEND_ID = ?";
         jdbcTemplate.update(sql, user.getId(), friend.getId());
-
         return user;
     }
 
