@@ -18,8 +18,8 @@ import java.util.Map;
 @Slf4j
 public class InMemoryFilmStorage implements FilmStorage {
 
-    private int idGenerator;
     private final Map<Integer, Film> films = new HashMap<>();
+    private int idGenerator;
 
     public List<Film> getAll() {
         return new ArrayList<>(films.values());
@@ -51,6 +51,11 @@ public class InMemoryFilmStorage implements FilmStorage {
         return films.get(id);
     }
 
+    @Override
+    public List<Film> searchFilms(String query, String[] paramsForFinding) {
+        return null;
+    }
+
     public List<Film> getFilmsByDirectorIdAndSort(Integer directorId, FilmSortBy filmSortBy) {
         return null;
     }
@@ -58,6 +63,16 @@ public class InMemoryFilmStorage implements FilmStorage {
     @Override
     public List<Film> getPopularFilms(Integer count, Integer genreId, Integer year) {
         return null;
+    }
+
+    @Override
+    public List<Film> getCommonFilmsForFriendSortedByPopular(Integer userId, Integer friendId) {
+        return null;
+    }
+
+    @Override
+    public void deleteFilm(Integer filmId) {
+
     }
 
     private Integer getIdGenerator() {

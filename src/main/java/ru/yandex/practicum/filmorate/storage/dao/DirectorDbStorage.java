@@ -11,7 +11,10 @@ import ru.yandex.practicum.filmorate.storage.DirectorStorage;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 @Component("dbDirectorStorage")
 @RequiredArgsConstructor
@@ -58,7 +61,7 @@ public class DirectorDbStorage implements DirectorStorage {
 
     @Override
     public void updateDirectorsByFilmToStorage(Film film) {
-        String sqlForDeleteDirectors = "DELETE FROM FILM_DIRECTORS WHERE DIRECTOR_ID = ?";
+        String sqlForDeleteDirectors = "DELETE FROM FILM_DIRECTORS WHERE FILM_ID = ?";
         jdbcTemplate.update(sqlForDeleteDirectors, film.getId());
         if (!film.getDirectors().isEmpty()) {
             for (Director director : film.getDirectors()) {
@@ -70,7 +73,6 @@ public class DirectorDbStorage implements DirectorStorage {
 
     @Override
     public Set<Director> getDirectorsByFilmFromStorage(Integer filmId) {
-
         String sql = "SELECT FD.DIRECTOR_ID, D.DIRECTOR_NAME FROM FILM_DIRECTORS AS FD " +
                 "LEFT JOIN DIRECTORS AS D on D.DIRECTOR_ID = FD.DIRECTOR_ID " +
                 "WHERE FILM_ID = ?";

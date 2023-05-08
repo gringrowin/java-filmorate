@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.storage.dao;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -20,6 +21,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Objects;
 
+@Slf4j
 @Component("dbFilmStorage")
 @RequiredArgsConstructor
 @Primary
@@ -123,6 +125,28 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     @Override
+    public List<Film> searchFilms(String query, String[] paramsForFinding) {
+        String queryByOneParam = paramsForFinding[0].equals("title") ?
+                " LOWER(F.FILM_NAME) LIKE LOWER('%" + query + "%')" :
+                " LOWER(D.DIRECTOR_NAME) LIKE LOWER('%" + query + "%')";
+        String queryByTwoParams = paramsForFinding.length == 2 ?
+                "OR LOWER(DIRECTOR_NAME) LIKE LOWER('%" + query + "%')" : "";
+
+        String sql = "SELECT F.FILM_ID, F.FILM_NAME, F.DESCRIPTION, " +
+                "F.RELEASE_DATE, F.DURATION, F.RATE, F.MPA_ID, " +
+                "COUNT(DISTINCT L.USER_ID) AS COUNT_LIKES, FD.DIRECTOR_ID, D.DIRECTOR_NAME " +
+                "FROM FILMS AS F " +
+                "LEFT JOIN LIKES L on F.FILM_ID = L.FILM_ID " +
+                "LEFT JOIN FILM_DIRECTORS AS FD ON F.FILM_ID = FD.FILM_ID " +
+                "LEFT JOIN DIRECTORS D on D.DIRECTOR_ID = FD.DIRECTOR_ID " +
+                "WHERE " + queryByOneParam + queryByTwoParams + " " +
+                "GROUP BY F.FILM_ID " +
+                "ORDER BY COUNT_LIKES DESC";
+
+        return jdbcTemplate.query(sql, this::mapRowToFilm);
+    }
+
+    @Override
     public List<Film> getFilmsByDirectorIdAndSort(Integer directorId, FilmSortBy sortBy) {
         StringBuilder sql = new StringBuilder(
                 "SELECT *, COUNT(*) AS likes " +
@@ -143,6 +167,25 @@ public class FilmDbStorage implements FilmStorage {
         return jdbcTemplate.query(sql.toString(), this::mapRowToFilm, directorId);
     }
 
+
+    @Override
+    public List<Film> getCommonFilmsForFriendSortedByPopular(Integer userId, Integer friendId) {
+        String sql = "SELECT * FROM FILMS WHERE FILM_ID in " +
+                "(SELECT FILM_ID FROM LIKES WHERE USER_ID IN (?,?) " +
+                "GROUP BY FILM_ID HAVING COUNT(DISTINCT USER_ID) = 2 ORDER BY count(USER_ID) DESC )";
+
+        return jdbcTemplate.query(sql, this::mapRowToFilm, userId, friendId);
+    }
+
+    @Override
+    public void deleteFilm(Integer filmId) {
+        checkIdFilm(filmId);
+
+        String sql = "DELETE FROM FILMS WHERE FILM_ID = ?";
+
+        jdbcTemplate.update(sql, filmId);
+        log.info("deleteFilm: {} - Finished", filmId);
+    }
 
     private Film mapRowToFilm(ResultSet resultSet, int rowNum) throws SQLException {
         Film film = new Film();
