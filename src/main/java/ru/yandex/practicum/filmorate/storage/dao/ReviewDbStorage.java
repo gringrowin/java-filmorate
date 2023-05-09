@@ -7,9 +7,7 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Repository;
-import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.exception.ReviewNotFoundException;
-import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.Review;
 import ru.yandex.practicum.filmorate.storage.ReviewStorage;
 
@@ -48,7 +46,7 @@ public class ReviewDbStorage implements ReviewStorage {
 
         log.info("отзыву к фильму {}, добавленному пользователем {}, присвоен id {}",
                 review.getFilmId(), review.getUserId(), review.getReviewId());
-        return getReviewById(review.getReviewId()).get();
+        return getReview(review.getReviewId()).get();
     }
 
     @Override
@@ -60,7 +58,7 @@ public class ReviewDbStorage implements ReviewStorage {
                 review.getContent(),
                 review.getIsPositive(),
                 review.getReviewId());
-        return getReviewById(review.getReviewId()).orElseThrow();
+        return getReview(review.getReviewId()).orElseThrow();
     }
 
     @Override
@@ -71,7 +69,7 @@ public class ReviewDbStorage implements ReviewStorage {
     }
 
     @Override
-    public Optional<Review> getReviewById(Integer id) {
+    public Optional<Review> getReview(Integer id) {
         SqlRowSet reviewRows = jdbcTemplate.queryForRowSet("SELECT * FROM reviews " +
                 "WHERE review_id = ?", id);
         if (reviewRows.next()) {

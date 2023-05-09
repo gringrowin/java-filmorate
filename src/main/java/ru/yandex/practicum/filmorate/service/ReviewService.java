@@ -41,8 +41,8 @@ public class ReviewService {
         return newReview;
     }
 
-    public Review getReviewById(int id) {
-        Review review = reviewDbStorage.getReviewById(id).get();
+    public Review getReview(int id) {
+        Review review = reviewDbStorage.getReview(id).get();
         review.setUseful(reviewLikeDbStorage.getUsefulness(id));
         return review;
     }
@@ -54,7 +54,7 @@ public class ReviewService {
     }
 
     public void deleteReview(int id) {
-        Review review = getReviewById(id);
+        Review review = getReview(id);
         reviewDbStorage.delete(id);
         feedService.addFeedEvent(EventType.REVIEW, OperationType.REMOVE, review.getUserId(), review.getReviewId());
     }
