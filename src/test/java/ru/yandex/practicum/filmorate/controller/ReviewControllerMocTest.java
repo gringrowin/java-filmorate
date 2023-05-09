@@ -28,4 +28,10 @@ class ReviewControllerMocTest {
         mockMvc.perform(MockMvcRequestBuilders.put("/reviews/1/like/1"))
                 .andExpect(MockMvcResultMatchers.status().isOk());
     }
+
+    @Test
+    public void whenGetRequestResponseIncorrect() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/reviews/y"))
+                .andExpect(MockMvcResultMatchers.status().is5xxServerError());
+    }
 }
