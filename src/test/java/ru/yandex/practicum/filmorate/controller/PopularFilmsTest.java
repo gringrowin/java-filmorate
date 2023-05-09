@@ -11,6 +11,7 @@ import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.FilmService;
+import ru.yandex.practicum.filmorate.service.LikeService;
 import ru.yandex.practicum.filmorate.service.UserService;
 
 import java.time.LocalDate;
@@ -24,6 +25,7 @@ import java.util.Set;
 class PopularFilmsTest {
     private final FilmService filmService;
     private final UserService userService;
+    private final LikeService likeService;
     Film film1;
     Film film2;
     Film film3;
@@ -102,7 +104,7 @@ class PopularFilmsTest {
         filmService.create(film3);
         filmService.create(film4);
         filmService.create(film5);
-        filmService.addLike(1, 1);
+        likeService.addLike(1, 1);
     }
     void userInit() {
         user1 = new User();
