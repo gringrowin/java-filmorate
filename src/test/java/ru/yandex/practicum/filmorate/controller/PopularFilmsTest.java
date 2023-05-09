@@ -11,6 +11,7 @@ import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.FilmService;
+import ru.yandex.practicum.filmorate.service.LikeService;
 import ru.yandex.practicum.filmorate.service.UserService;
 
 import java.time.LocalDate;
@@ -24,6 +25,7 @@ import java.util.Set;
 class PopularFilmsTest {
     private final FilmService filmService;
     private final UserService userService;
+    private final LikeService likeService;
     Film film1;
     Film film2;
     Film film3;
@@ -102,13 +104,14 @@ class PopularFilmsTest {
         filmService.create(film3);
         filmService.create(film4);
         filmService.create(film5);
-        filmService.addLike(1, 1);
+        likeService.addLike(1, 1);
     }
+
     void userInit() {
         user1 = new User();
         user1.setId(1);
         user1.setName("name");
-        user1.setBirthday(LocalDate.of(1987,4,25));
+        user1.setBirthday(LocalDate.of(1987, 4, 25));
         user1.setLogin("login");
         user1.setEmail("email@email.com");
         user1.setFriends(new HashSet<>());
@@ -119,13 +122,13 @@ class PopularFilmsTest {
     void getPopularFilmsYearAndGenreFiltered() {
         userInit();
         filmInit();
-        List<Film> testFilmsList =  filmService.getPopularFilms(10, 1, 2000);
+        List<Film> testFilmsList = filmService.getPopularFilms(10, 1, 2000);
         Assertions.assertEquals(testFilmsList, List.of(film1, film4));
 
-        testFilmsList =  filmService.getPopularFilms(10, null, 2000);
+        testFilmsList = filmService.getPopularFilms(10, null, 2000);
         Assertions.assertEquals(testFilmsList, List.of(film1, film4, film5));
 
-        testFilmsList =  filmService.getPopularFilms(10, null, null);
+        testFilmsList = filmService.getPopularFilms(10, null, null);
         Assertions.assertEquals(testFilmsList.size(), 5);
     }
 }
