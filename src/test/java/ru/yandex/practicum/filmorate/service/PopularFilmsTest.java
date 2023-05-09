@@ -128,4 +128,15 @@ class PopularFilmsTest {
         testFilmsList = filmService.getPopularFilms(10, null, null);
         Assertions.assertEquals(testFilmsList.size(), 5);
     }
+
+    @Test
+    void shouldReturnEmptyListWhenFakeGenreId() {
+        List<Film> testFilmsList = filmService.getPopularFilms(10, 10, 2000);
+        Assertions.assertTrue(testFilmsList.isEmpty());
+    }
+    @Test
+    void shouldReturnEmptyListWhenFakeYear() {
+        List<Film> testFilmsList = filmService.getPopularFilms(10, 1, 1800);
+        Assertions.assertTrue(testFilmsList.isEmpty());
+    }
 }
