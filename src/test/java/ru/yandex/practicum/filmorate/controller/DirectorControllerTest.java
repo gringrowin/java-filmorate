@@ -94,7 +94,7 @@ public class DirectorControllerTest {
 
         when(directorService.get(director.getId())).thenThrow(new DirectorNotFoundException(
                 String.format("Director with id %s is not found!", director.getId())));
-
+        
         mockMvc.perform(get("/directors/" + director.getId()))
                 .andExpect(status().isNotFound())
                 .andExpect(content().json(objectMapper.writeValueAsString(new ErrorResponse(error))));
