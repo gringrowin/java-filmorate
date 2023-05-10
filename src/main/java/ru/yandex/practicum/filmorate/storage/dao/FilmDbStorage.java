@@ -172,7 +172,9 @@ public class FilmDbStorage implements FilmStorage {
                 "(SELECT FILM_ID FROM LIKES WHERE USER_ID IN (?,?) " +
                 "GROUP BY FILM_ID HAVING COUNT(DISTINCT USER_ID) = 2 ORDER BY count(USER_ID) DESC )";
 
-        return jdbcTemplate.query(sql, this::mapRowToFilm, userId, friendId);
+        List<Film> common = jdbcTemplate.query(sql, this::mapRowToFilm, userId, friendId);
+        log.info("getCommonFilmsForFriendSortedByPopular: {} {} {}", userId, friendId, common.size());
+        return common;
     }
 
     @Override
@@ -205,7 +207,7 @@ public class FilmDbStorage implements FilmStorage {
         String sql = "SELECT * FROM FILMS " +
                 "WHERE FILM_ID = ?";
         SqlRowSet rows = jdbcTemplate.queryForRowSet(sql, id);
-
+        log.info("checkIdFilm: {} - OK", id);
         if (!rows.next()) {
             throw new FilmNotFoundException("Фильм с ID: " + id + " не найден!");
         }
