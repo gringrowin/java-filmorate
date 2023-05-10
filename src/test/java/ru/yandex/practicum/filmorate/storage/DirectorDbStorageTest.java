@@ -37,11 +37,11 @@ public class DirectorDbStorageTest {
     void shouldCreateDirector() {
         Director director1 = createTestDirector(1);
         directorDbStorage.create(director1);
-        Assertions.assertEquals(director1, directorDbStorage.getById(1));
+        Assertions.assertEquals(director1, directorDbStorage.get(1));
 
         Director director2 = createTestDirector(2);
         directorDbStorage.create(director2);
-        Assertions.assertEquals(director2, directorDbStorage.getById(2));
+        Assertions.assertEquals(director2, directorDbStorage.get(2));
 
         assertThat(directorDbStorage.getAll().size()).isEqualTo(2);
     }
@@ -55,7 +55,7 @@ public class DirectorDbStorageTest {
         directorDbStorage.create(director);
         directorDbStorage.update(directorAsUpdate);
 
-        assertThat(directorDbStorage.getById(1)).isEqualTo(directorAsUpdate);
+        assertThat(directorDbStorage.get(1)).isEqualTo(directorAsUpdate);
     }
 
     @DisplayName("Проверка метода обновления режиссёра при передаче несуществующего id")
@@ -66,8 +66,8 @@ public class DirectorDbStorageTest {
         directorDbStorage.create(director);
 
         assertThat(directorDbStorage.update(directorAsUpdate)).isNull();
-        assertThat(directorDbStorage.getById(1)).isEqualTo(director);
-        assertThat(directorDbStorage.getById(1)).isNotEqualTo(directorAsUpdate);
+        assertThat(directorDbStorage.get(1)).isEqualTo(director);
+        assertThat(directorDbStorage.get(1)).isNotEqualTo(directorAsUpdate);
     }
 
     @DisplayName("Проверка метода получения режиссёра по id")
@@ -81,9 +81,9 @@ public class DirectorDbStorageTest {
         directorDbStorage.create(director2);
         directorDbStorage.create(director3);
 
-        assertThat(directorDbStorage.getById(1)).isEqualTo(director1);
-        assertThat(directorDbStorage.getById(2)).isEqualTo(director2);
-        assertThat(directorDbStorage.getById(3)).isEqualTo(director3);
+        assertThat(directorDbStorage.get(1)).isEqualTo(director1);
+        assertThat(directorDbStorage.get(2)).isEqualTo(director2);
+        assertThat(directorDbStorage.get(3)).isEqualTo(director3);
     }
 
     @DisplayName("Проверка метода получения режиссёра по несуществующему id")
@@ -96,7 +96,7 @@ public class DirectorDbStorageTest {
         directorDbStorage.create(director2);
 
         assertThat(directorDbStorage.getAll().size()).isEqualTo(2);
-        assertThat(directorDbStorage.getById(3000)).isNull();
+        assertThat(directorDbStorage.get(3000)).isNull();
     }
 
     @DisplayName("Проверка метода получения всех режиссёров")

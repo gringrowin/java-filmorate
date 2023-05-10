@@ -20,35 +20,44 @@ public class DirectorController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Director createDirector(@RequestBody @Valid Director director) {
-        log.info("Controller command to create director {}", director);
-        return directorService.create(director);
+        log.info("Creating director {} was started", director);
+        Director checkDirector = directorService.create(director);
+        log.info("Creating director {} was successfully finished", checkDirector);
+        return checkDirector;
     }
 
     @PutMapping
     @ResponseStatus(HttpStatus.OK)
     public Director updateDirector(@RequestBody @Valid Director director) {
-        log.info("Controller command to update director {}", director);
-        return directorService.update(director);
+        log.info("Updating director {} was started", director);
+        Director checkDirector = directorService.update(director);
+        log.info("Updating director {} was successfully finished", checkDirector);
+        return checkDirector;
     }
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public Director getDirectorById(@PathVariable Integer id) {
-        log.info("Controller command to get director by id {}", id);
-        return directorService.getById(id);
+    public Director getDirector(@PathVariable Integer id) {
+        log.info("Getting director by id {} was started", id);
+        Director checkDirector = directorService.get(id);
+        log.info("Getting director by id {} was successfully finished", checkDirector);
+        return checkDirector;
     }
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public Set<Director> getAllDirectors() {
-        log.info("Controller command to get all director list");
-        return directorService.getAll();
+        log.info("Getting all director set was started");
+        Set<Director> checkDirectorSet = directorService.getAll();
+        log.info("Getting of director set of size {} was successfully finished", checkDirectorSet.size());
+        return checkDirectorSet;
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public void deleteDirectorById(@PathVariable Integer id) {
-        log.info("Controller command to delete director by id {}", id);
+    public void deleteDirector(@PathVariable Integer id) {
+        log.info("Deletion of director by id {} was started", id);
         directorService.delete(id);
+        log.info("Deletion of director by id {} was successfully finished", id);
     }
 }
