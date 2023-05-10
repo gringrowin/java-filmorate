@@ -101,7 +101,6 @@ public class UserService {
     }
 
     public void deleteUser(Integer userId) {
-        log.info("deleteUser: {} - ", userId);
         userStorage.deleteUser(userId);
     }
 }
