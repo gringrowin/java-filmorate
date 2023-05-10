@@ -99,7 +99,6 @@ public class DirectorServiceTest {
     @Test
     void shouldDeleteDirector() {
         int id = 1;
-        Director director = createTestDirector(id);
         when(directorStorage.delete(id)).thenReturn(true);
         assertThat(directorStorage.delete(id)).isEqualTo(true);
     }
