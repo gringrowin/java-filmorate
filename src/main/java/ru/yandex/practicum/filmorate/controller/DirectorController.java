@@ -21,34 +21,43 @@ public class DirectorController {
     @ResponseStatus(HttpStatus.CREATED)
     public Director createDirector(@RequestBody @Valid Director director) {
         log.info("Controller command to create director {}", director);
-        return directorService.create(director);
+        Director checkDirector = directorService.create(director);
+        log.info("Response received {}", checkDirector);
+        return checkDirector;
     }
 
     @PutMapping
     @ResponseStatus(HttpStatus.OK)
     public Director updateDirector(@RequestBody @Valid Director director) {
         log.info("Controller command to update director {}", director);
-        return directorService.update(director);
+        Director checkDirector = directorService.update(director);
+        log.info("Response received {}", checkDirector);
+        return checkDirector;
     }
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public Director getDirectorById(@PathVariable Integer id) {
+    public Director getDirector(@PathVariable Integer id) {
         log.info("Controller command to get director by id {}", id);
-        return directorService.getById(id);
+        Director checkDirector = directorService.get(id);
+        log.info("Response received {}", checkDirector);
+        return checkDirector;
     }
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public Set<Director> getAllDirectors() {
         log.info("Controller command to get all director list");
-        return directorService.getAll();
+        Set<Director> checkDirectorSet = directorService.getAll();
+        log.info("Response of director set received");
+        return checkDirectorSet;
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public void deleteDirectorById(@PathVariable Integer id) {
+    public void deleteDirector(@PathVariable Integer id) {
         log.info("Controller command to delete director by id {}", id);
         directorService.delete(id);
+        log.info("Controller command to delete director by id {} was successful", id);
     }
 }

@@ -99,7 +99,7 @@ public class FilmService {
 
     private void checkDirectorId(Integer directorId) {
         log.info("checkDirectorId - {}", directorId);
-        Director director = directorService.getById(directorId);
+        Director director = directorService.get(directorId);
         if (director == null) {
             log.error("Director with id {} is not found!", directorId);
             throw new DirectorNotFoundException(String.format("Director with id %s is not found!", directorId));
