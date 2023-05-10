@@ -20,44 +20,44 @@ public class DirectorController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Director createDirector(@RequestBody @Valid Director director) {
-        log.info("Controller command to create director {}", director);
+        log.info("Creating director {} was started", director);
         Director checkDirector = directorService.create(director);
-        log.info("Response received {}", checkDirector);
+        log.info("Creating director {} was successfully finished", checkDirector);
         return checkDirector;
     }
 
     @PutMapping
     @ResponseStatus(HttpStatus.OK)
     public Director updateDirector(@RequestBody @Valid Director director) {
-        log.info("Controller command to update director {}", director);
+        log.info("Updating director {} was started", director);
         Director checkDirector = directorService.update(director);
-        log.info("Response received {}", checkDirector);
+        log.info("Updating director {} was successfully finished", checkDirector);
         return checkDirector;
     }
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public Director getDirector(@PathVariable Integer id) {
-        log.info("Controller command to get director by id {}", id);
+        log.info("Getting director by id {} was started", id);
         Director checkDirector = directorService.get(id);
-        log.info("Response received {}", checkDirector);
+        log.info("Getting director by id {} was successfully finished", checkDirector);
         return checkDirector;
     }
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public Set<Director> getAllDirectors() {
-        log.info("Controller command to get all director list");
+        log.info("Getting all director set was started");
         Set<Director> checkDirectorSet = directorService.getAll();
-        log.info("Response of director set received");
+        log.info("Getting of director set was successfully finished");
         return checkDirectorSet;
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public void deleteDirector(@PathVariable Integer id) {
-        log.info("Controller command to delete director by id {}", id);
+        log.info("Deletion of director by id {} was started", id);
         directorService.delete(id);
-        log.info("Controller command to delete director by id {} was successful", id);
+        log.info("Deletion of director by id {} was successfully finished", id);
     }
 }
