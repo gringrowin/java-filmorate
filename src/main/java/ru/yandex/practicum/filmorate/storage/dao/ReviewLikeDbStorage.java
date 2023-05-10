@@ -26,6 +26,8 @@ public class ReviewLikeDbStorage implements ReviewLikeStorage {
                 reviewId,
                 userId,
                 isLike);
+        String reaction = (isLike) ? "like" : "dislike";
+        log.info("{} от пользователя id {} к обзору id: {} добавлен ", reaction, userId, reviewId);
     }
 
     @Override
@@ -35,6 +37,7 @@ public class ReviewLikeDbStorage implements ReviewLikeStorage {
         jdbcTemplate.update(sqlQueryDeleteLike,
                 reviewId,
                 userId);
+        log.info("Реакция пользователя id {} на обзор id: {} удалена ", userId, reviewId);
     }
 
     @Override

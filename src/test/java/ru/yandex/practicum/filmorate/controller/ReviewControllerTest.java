@@ -103,7 +103,7 @@ class ReviewControllerTest {
                 testUser.getId(), testFilm.getId());
         controller.addNewReview(testReview);
         controller.deleteReview(testReview.getReviewId());
-        assertThrows(ReviewNotFoundException.class, () -> controller.getReviewById(testReview.getReviewId()));
+        assertThrows(ReviewNotFoundException.class, () -> controller.getReview(testReview.getReviewId()));
 
     }
 
@@ -116,7 +116,7 @@ class ReviewControllerTest {
         controller.addNewReview(testReview);
         Review review2FromBd = controller.addNewReview(testReview2);
         testReview2.setReviewId(review2FromBd.getReviewId());
-        assertEquals(testReview2, controller.getReviewById(testReview2.getReviewId()),
+        assertEquals(testReview2, controller.getReview(testReview2.getReviewId()),
                 "Отзыв не вернулся");
     }
 
@@ -143,7 +143,7 @@ class ReviewControllerTest {
                 testUser.getId(), testFilm.getId());
         controller.addNewReview(testReview);
         controller.addLikeToReview(testFilm.getId(), testUser.getId());
-        assertEquals(1, controller.getReviewById(testReview.getReviewId()).getUseful(),
+        assertEquals(1, controller.getReview(testReview.getReviewId()).getUseful(),
                 "Лайк не добавлен, либо некорректно сформирована оценка полезности ");
     }
 
@@ -153,7 +153,7 @@ class ReviewControllerTest {
                 testUser.getId(), testFilm.getId());
         controller.addNewReview(testReview);
         controller.addDisLikeToReview(testFilm.getId(), testUser.getId());
-        assertEquals(-1, controller.getReviewById(testReview.getReviewId()).getUseful(),
+        assertEquals(-1, controller.getReview(testReview.getReviewId()).getUseful(),
                 "ДизЛайк не добавлен, либо некорректно сформирована оценка полезности ");
     }
 
