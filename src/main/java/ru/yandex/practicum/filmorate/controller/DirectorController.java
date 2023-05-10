@@ -49,7 +49,7 @@ public class DirectorController {
     public Set<Director> getAllDirectors() {
         log.info("Getting all director set was started");
         Set<Director> checkDirectorSet = directorService.getAll();
-        log.info("Getting of director set was successfully finished");
+        log.info("Getting of director set of size {} was successfully finished", checkDirectorSet.size());
         return checkDirectorSet;
     }
 
