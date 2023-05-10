@@ -156,12 +156,4 @@ class ReviewControllerTest {
         assertEquals(-1, controller.getReview(testReview.getReviewId()).getUseful(),
                 "ДизЛайк не добавлен, либо некорректно сформирована оценка полезности ");
     }
-
-    @Test
-    void deleteLikeFromReview() {
-    }
-
-    @Test
-    void deleteDisLikeFromReview() {
-    }
 }

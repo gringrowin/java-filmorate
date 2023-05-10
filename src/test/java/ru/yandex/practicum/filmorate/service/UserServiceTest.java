@@ -25,6 +25,10 @@ class UserServiceTest {
     private UserService userService;
     @Mock
     private UserStorage userStorage;
+    @Mock
+    private FilmService filmService;
+    @Mock
+    private LikeService likeService;
 
     @BeforeEach
     void initializationTestUser() {

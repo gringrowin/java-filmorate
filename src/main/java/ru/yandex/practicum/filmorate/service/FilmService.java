@@ -17,12 +17,15 @@ import java.util.List;
 @Slf4j
 public class FilmService {
 
-    private final FilmStorage filmStorage;
+    private FilmStorage filmStorage;
 
-    private final GenreService genreService;
-    private final MpaService mpaService;
-    private final LikeService likeService;
-    private final DirectorService directorService;
+    private GenreService genreService;
+    private MpaService mpaService;
+    private LikeService likeService;
+    private DirectorService directorService;
+
+    public FilmService() {
+    }
 
     @Autowired
     public FilmService(@Qualifier("dbFilmStorage") FilmStorage filmStorage,
