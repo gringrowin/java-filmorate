@@ -104,8 +104,8 @@ public class FilmController {
     public void deleteFilm(@PathVariable("filmId") Integer filmId) {
         log.info("deleteFilmId: {} - filmId", filmId);
         filmService.deleteFilm(filmId);
+        log.info("deleteFilm: {} - Finished", filmId);
     }
-
 
     @GetMapping("/search")
     public List<Film> searchFilms(@RequestParam @NotBlank String query,

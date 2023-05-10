@@ -5,6 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.enums.EventType;
 import ru.yandex.practicum.filmorate.enums.OperationType;
+import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
+import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.Review;
 import ru.yandex.practicum.filmorate.storage.dao.ReviewDbStorage;
 import ru.yandex.practicum.filmorate.storage.dao.ReviewLikeDbStorage;
@@ -32,14 +34,15 @@ public class ReviewService {
     }
 
     public Review addNewReview(Review review) {
+        idValidation(review);
         Review newReview = reviewDbStorage.addNewReview(review);
         feedService.addFeedEvent(EventType.REVIEW, OperationType.ADD, review.getUserId(), review.getReviewId());
         log.info("Добавлен новый отзыв " + newReview);
         return newReview;
     }
 
-    public Review getReviewById(int id) {
-        Review review = reviewDbStorage.getReviewById(id).get();
+    public Review getReview(int id) {
+        Review review = reviewDbStorage.getReview(id).get();
         review.setUseful(reviewLikeDbStorage.getUsefulness(id));
         return review;
     }
@@ -51,7 +54,7 @@ public class ReviewService {
     }
 
     public void deleteReview(int id) {
-        Review review = getReviewById(id);
+        Review review = getReview(id);
         reviewDbStorage.delete(id);
         feedService.addFeedEvent(EventType.REVIEW, OperationType.REMOVE, review.getUserId(), review.getReviewId());
     }
@@ -69,8 +72,16 @@ public class ReviewService {
     }
 
     public void deleteLikeFromReview(int reviewId, int userId) {
-        getReviewById(reviewId);
-        userService.getUser(userId);
         reviewLikeDbStorage.deleteReaction(reviewId, userId);
     }
+
+    private void idValidation(Review review) {
+        if (review.getUserId() < 1) {
+            throw new UserNotFoundException("id пользователя не может быть меньше 1");
+        }
+        if (review.getFilmId() < 1) {
+            throw new FilmNotFoundException("id фильма не может быть меньше 1");
+        }
+    }
+
 }

@@ -102,7 +102,7 @@ public class FilmService {
 
     private void checkDirectorId(Integer directorId) {
         log.info("checkDirectorId - {}", directorId);
-        Director director = directorService.getById(directorId);
+        Director director = directorService.get(directorId);
         if (director == null) {
             log.error("Director with id {} is not found!", directorId);
             throw new DirectorNotFoundException(String.format("Director with id %s is not found!", directorId));
@@ -120,13 +120,10 @@ public class FilmService {
     }
 
     public List<Film> getCommonFilmsForFriendSortedByPopular(Integer userId, Integer friendId) {
-        List<Film> commonFilms = filmStorage.getCommonFilmsForFriendSortedByPopular(userId, friendId);
-        log.info("Service getCommonFilmsForFriendSortedByPopular: {} {} {} ", userId, friendId, commonFilms.size());
-        return addingInfoFilms(commonFilms);
+        return filmStorage.getCommonFilmsForFriendSortedByPopular(userId, friendId);
     }
 
     public void deleteFilm(Integer filmId) {
-        log.info("deleteFilm: {} - ", filmId);
         filmStorage.deleteFilm(filmId);
     }
 

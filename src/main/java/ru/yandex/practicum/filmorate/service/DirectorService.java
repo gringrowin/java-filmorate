@@ -23,21 +23,19 @@ public class DirectorService {
     }
 
     public Director create(Director director) {
-        log.info("Service command to create director: {}", director);
         return directorStorage.create(director);
     }
 
     public Director update(Director director) {
-        log.info("Service command to update director: {}", director);
-        if (directorStorage.getById(director.getId()) == null) {
+        if (directorStorage.get(director.getId()) == null) {
             log.error("Director with id {} is not found!", director.getId());
             throw new DirectorNotFoundException(String.format("Director with id %s is not found!", director.getId()));
         }
         return directorStorage.update(director);
     }
 
-    public Director getById(Integer directorId) {
-        Director director = directorStorage.getById(directorId);
+    public Director get(Integer directorId) {
+        Director director = directorStorage.get(directorId);
         if (director == null) {
             log.error("Director with id {} is not found!", directorId);
             throw new DirectorNotFoundException(String.format("Director with id %s is not found!", directorId));
@@ -46,7 +44,6 @@ public class DirectorService {
     }
 
     public Set<Director> getAll() {
-        log.info("Service command by getting all directors");
         return directorStorage.getAll();
     }
 
@@ -56,16 +53,13 @@ public class DirectorService {
             log.error("Director with id {} is not found!", directorId);
             throw new DirectorNotFoundException(String.format("Director with id %s is not found!", directorId));
         }
-        log.info("Service command to delete director by id {}", directorId);
     }
 
     public void updateDirectorsByFilmToStorage(Film film) {
-        log.info("Service command to update director list by id of film {}", film.getId());
         directorStorage.updateDirectorsByFilmToStorage(film);
     }
 
     public Set<Director> getDirectorsByFilmFromStorage(Integer filmId) {
-        log.info("Service command to update director list by id of film {}", filmId);
         return directorStorage.getDirectorsByFilmFromStorage(filmId);
     }
 }

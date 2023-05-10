@@ -33,7 +33,7 @@ public class DirectorDbStorage implements DirectorStorage {
 
         int directorId = simpleJdbcInsert.executeAndReturnKey(directorTable).intValue();
 
-        return getById(directorId);
+        return get(directorId);
     }
 
     @Override
@@ -44,11 +44,11 @@ public class DirectorDbStorage implements DirectorStorage {
 
         jdbcTemplate.update(sql, director.getName(), director.getId());
 
-        return getById(director.getId());
+        return get(director.getId());
     }
 
     @Override
-    public Director getById(Integer directorId) {
+    public Director get(Integer directorId) {
         String sql = "SELECT * " +
                 "FROM Directors " +
                 "WHERE director_id = ?";
@@ -92,7 +92,7 @@ public class DirectorDbStorage implements DirectorStorage {
     public boolean delete(Integer directorId) {
         String sql = "DELETE FROM Directors " +
                 "WHERE director_id = ?";
-        Director director = getById(directorId);
+        Director director = get(directorId);
         if (director == null) return false;
         jdbcTemplate.update(sql, directorId);
         return true;
