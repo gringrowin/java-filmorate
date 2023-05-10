@@ -106,6 +106,7 @@ public class UserDbStorage implements UserStorage {
             String sql = "SELECT * FROM USERS " +
                     "WHERE USER_ID = ?";
             jdbcTemplate.queryForObject(sql, this::mapRowToUser, id);
+            log.info("checkIdUser: {} - OK", id);
         } catch (EmptyResultDataAccessException e) {
             throw new UserNotFoundException("Пользователь с ID: " + id + " не найден!");
         }
