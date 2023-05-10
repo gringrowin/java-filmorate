@@ -10,7 +10,7 @@ public interface DirectorStorage {
 
     Director update(Director director);
 
-    Director getById(Integer directorId);
+    Director get(Integer directorId);
 
     void updateDirectorsByFilmToStorage(Film film);
 
