@@ -90,7 +90,6 @@ public class DirectorServiceTest {
     @Test
     void shouldThrowDirectorNotFoundExceptionBecauseOfNonexistentId() {
         int id = 1000;
-
         DirectorNotFoundException exception = assertThrows(DirectorNotFoundException.class,
                 () -> directorService.delete(id));
         assertThat(exception.getMessage()).isEqualTo("Director with id %s is not found!", id);
