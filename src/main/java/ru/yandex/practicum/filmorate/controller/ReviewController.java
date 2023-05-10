@@ -54,7 +54,7 @@ public class ReviewController {
             @RequestParam(defaultValue = "10", required = false) Integer count) {
         log.info("Получен запрос на поиск отзывов на фильм с id={} в количестве {}", filmId, count);
         Collection<Review> collectionReviews = reviewService.getReviews(filmId, count);
-        log.info("getReviewsToFilm: {} - Finished", collectionReviews);
+        log.info("getReviewsToFilm- Finished, в бд хранится {} фильмов", collectionReviews.size());
         return collectionReviews;
     }
 
