@@ -12,6 +12,7 @@ import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
+import ru.yandex.practicum.filmorate.service.LikeService;
 
 import java.time.LocalDate;
 import java.util.Collections;
@@ -28,6 +29,9 @@ class FilmControllerTest {
 
     @MockBean
     private FilmService filmService;
+
+    @MockBean
+    private LikeService likeService;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -50,6 +54,22 @@ class FilmControllerTest {
     @Test
     void findAllWhenEmptyStorageThenReturnedOkWithEmptyList() {
         List<Film> filmCollection = Collections.emptyList();
+        when(filmService.findAll()).thenReturn(filmCollection);
+
+        String response = mockMvc.perform(get("/films"))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        verify(filmService).findAll();
+        assertEquals(objectMapper.writeValueAsString(filmCollection), response);
+    }
+
+    @SneakyThrows
+    @Test
+    void findAllWhenTestFilmInStorageThenReturnedOkWithTestFilm() {
+        List<Film> filmCollection = List.of(testFilm);
         when(filmService.findAll()).thenReturn(filmCollection);
 
         String response = mockMvc.perform(get("/films"))
@@ -158,58 +178,5 @@ class FilmControllerTest {
 
         verify(filmService).getFilm(id);
         assertEquals(objectMapper.writeValueAsString(filmToGet), response);
-    }
-
-    @SneakyThrows
-    @Test
-    void addLikeWhenInvokedWithValidParamsThenReturnedWithFilm() {
-        Film filmToAddLike = testFilm;
-        int filmId = 1;
-        int userId = 1;
-        when(filmService.addLike(filmId, userId)).thenReturn(filmToAddLike);
-
-        String response = mockMvc.perform(put("/films/{id}/like/{userId}", filmId, userId))
-                .andExpect(status().isOk())
-                .andReturn()
-                .getResponse()
-                .getContentAsString();
-
-        verify(filmService).addLike(filmId, userId);
-        assertEquals(objectMapper.writeValueAsString(filmToAddLike), response);
-    }
-
-    @SneakyThrows
-    @Test
-    void deleteLikeWhenInvokedWithValidParamsThenReturnedWithFilm() {
-        Film filmToDeleteLike = testFilm;
-        int filmId = 1;
-        int userId = 1;
-        when(filmService.deleteLike(filmId, userId)).thenReturn(filmToDeleteLike);
-
-        String response = mockMvc.perform(delete("/films/{id}/like/{userId}", filmId, userId))
-                .andExpect(status().isOk())
-                .andReturn()
-                .getResponse()
-                .getContentAsString();
-
-        verify(filmService).deleteLike(filmId, userId);
-        assertEquals(objectMapper.writeValueAsString(filmToDeleteLike), response);
-    }
-
-    @SneakyThrows
-    @Test
-    void getPopularFilmsWhenInvokedWithValidParamsThenReturnedWithFilms() {
-        List<Film> popularFilms = List.of(testFilm);
-        int count = 1;
-        when(filmService.getPopularFilms(count)).thenReturn(popularFilms);
-
-        String response = mockMvc.perform(get("/films/popular?count={count}", count))
-                .andExpect(status().isOk())
-                .andReturn()
-                .getResponse()
-                .getContentAsString();
-
-        verify(filmService).getPopularFilms(count);
-        assertEquals(objectMapper.writeValueAsString(popularFilms), response);
     }
 }

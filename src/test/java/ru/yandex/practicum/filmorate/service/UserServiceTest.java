@@ -13,19 +13,22 @@ import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
 
+    private final User testUser = new User();
     @InjectMocks
     private UserService userService;
-
     @Mock
     private UserStorage userStorage;
-
-    private final User testUser = new User();
+    @Mock
+    private FilmService filmService;
+    @Mock
+    private LikeService likeService;
 
     @BeforeEach
     void initializationTestUser() {

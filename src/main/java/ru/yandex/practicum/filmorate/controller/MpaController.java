@@ -6,11 +6,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import ru.yandex.practicum.filmorate.model.Mpa;
-import ru.yandex.practicum.filmorate.storage.MpaStorage;
-import ru.yandex.practicum.filmorate.storage.dao.MpaDbStorage;
-
+import ru.yandex.practicum.filmorate.service.MpaService;
 
 import java.util.Collection;
 
@@ -18,18 +15,17 @@ import java.util.Collection;
 @RestController
 @RequestMapping("/mpa")
 public class MpaController {
-
-    private final MpaStorage mpaStorage;
+    private final MpaService mpaService;
 
     @Autowired
-    public MpaController(MpaDbStorage mpaStorage) {
-        this.mpaStorage = mpaStorage;
+    public MpaController(MpaService mpaService) {
+        this.mpaService = mpaService;
     }
 
     @GetMapping
     public Collection<Mpa> getAll() {
         log.info("findAll - Started");
-        Collection<Mpa> allMpa = mpaStorage.getAll();
+        Collection<Mpa> allMpa = mpaService.getAll();
         log.info("findAll: {} - Finished", allMpa);
         return allMpa;
     }
@@ -37,7 +33,7 @@ public class MpaController {
     @GetMapping("/{mpaId}")
     public Mpa getMpa(@PathVariable("mpaId") Integer mpaId) {
         log.info("getMpa - Started");
-        Mpa mpa = mpaStorage.getMpa(mpaId);
+        Mpa mpa = mpaService.getMpa(mpaId);
         log.info("getMpa: {} - Finished", mpa);
         return mpa;
     }

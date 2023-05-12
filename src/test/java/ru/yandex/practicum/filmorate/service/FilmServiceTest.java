@@ -6,61 +6,73 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
-import ru.yandex.practicum.filmorate.storage.GenreStorage;
-import ru.yandex.practicum.filmorate.storage.LikeStorage;
-import ru.yandex.practicum.filmorate.storage.MpaStorage;
 
-import java.time.LocalDate;
-import java.util.Collections;
+
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class FilmServiceTest {
+
+    private final Film testFilm = new Film();
 
     @InjectMocks
     private FilmService filmService;
 
     @Mock
+    private GenreService genreService;
+    @Mock
+    private MpaService mpaService;
+    @Mock
+    private LikeService likeService;
+    @Mock
+    private DirectorService directorService;
+    @Mock
     private FilmStorage filmStorage;
-    @Mock
-    private GenreStorage genreStorage;
-    @Mock
-    private MpaStorage mpaStorage;
-    @Mock
-    private LikeStorage likeStorage;
 
-    private final Film testFilm = new Film();
 
     @BeforeEach
     void initializationTestFilm() {
         testFilm.setId(1);
-        testFilm.setDuration(120);
-        testFilm.setReleaseDate(LocalDate.of(2015, 1, 1));
-        testFilm.setName("Friends");
-        testFilm.setDescription("film");
-        Mpa mpa = new Mpa();
-        mpa.setId(1);
-        testFilm.setMpa(mpa);
+        testFilm.setName("RoboCop");
+        testFilm.setGenres(Set.of(new Genre("Genre", 1)));
+        testFilm.setLikes(1);
+        testFilm.setMpa(new Mpa().withId(1));
+        testFilm.setDirectors(Set.of(new Director()));
     }
 
     @Test
-    void findAllWhenStorageNotEmptyThenReturnedList() {
-        List<Film> filmsExcept = List.of(testFilm);
-        when(filmStorage.getAll()).thenReturn(filmsExcept);
-        when(genreStorage.getGenresByFilmFromStorage(testFilm.getId()))
-                .thenReturn(Collections.emptySet());
-        when(likeStorage.getLikes(testFilm.getId())).thenReturn(0);
-        when(mpaStorage.getMpa(testFilm.getMpa().getId())).thenReturn(testFilm.getMpa());
+    void findAllWhenTestFilmInStorageThenReturnedList() {
+        List<Film> testfilms = List.of(testFilm);
+        when(filmStorage.getAll()).thenReturn(testfilms);
 
         List<Film> films = filmService.findAll();
 
         verify(filmStorage).getAll();
-        assertEquals(filmsExcept, films);
+
+        assertEquals(testfilms, films);
+    }
+
+    @Test
+    void updateFilmWhenStorageNotEmptyThenReturnedUpdatedFilm() {
+        Film updatedFilm = testFilm;
+        Film newFilm = testFilm.withId(1);
+
+        when(filmStorage.getFilm(newFilm.getId())).thenReturn(newFilm);
+        when(filmStorage.update(updatedFilm)).thenReturn(newFilm);
+
+        Film film = filmService.update(updatedFilm);
+
+        verify(filmStorage).update(updatedFilm);
+        assertEquals(newFilm, film);
     }
 }

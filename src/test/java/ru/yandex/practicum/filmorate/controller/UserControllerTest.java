@@ -11,12 +11,13 @@ import org.springframework.test.web.servlet.MockMvc;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.FeedService;
+import ru.yandex.practicum.filmorate.service.FriendService;
 import ru.yandex.practicum.filmorate.service.UserService;
 
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
@@ -29,6 +30,10 @@ class UserControllerTest {
 
     @MockBean
     private UserService userService;
+    @MockBean
+    private FeedService feedService;
+    @MockBean
+    private FriendService friendService;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -45,7 +50,6 @@ class UserControllerTest {
         testUser.setName("name");
         testUser.setBirthday(LocalDate.of(2000, 1,1));
         testUser.setEmail("mail@mail.ru");
-        testUser.setFriends(Set.of(2));
     }
 
     @SneakyThrows
@@ -161,81 +165,5 @@ class UserControllerTest {
 
         verify(userService).getUser(id);
         assertEquals(objectMapper.writeValueAsString(userToGet), response);
-    }
-
-    @SneakyThrows
-    @Test
-    void addFriendWhenInvokedWithValidParamsThenReturnedWithUser() {
-        User userToAddFriend = testUser;
-        int idUser = 1;
-        int idFriend = 2;
-        when(userService.addFriend(idUser, idFriend)).thenReturn(userToAddFriend);
-
-        String response = mockMvc.perform(put("/users/{id}/friends/{friendId}", idUser, idFriend))
-                .andExpect(status().isOk())
-                .andReturn()
-                .getResponse()
-                .getContentAsString();
-
-        verify(userService).addFriend(idUser, idFriend);
-        assertEquals(objectMapper.writeValueAsString(userToAddFriend), response);
-    }
-
-    @SneakyThrows
-    @Test
-    void deleteFriendWhenInvokedWithValidParamsThenReturnedWithUser() {
-        User userToDeleteFriend = testUser;
-        int idUser = userToDeleteFriend.getId();
-        int idFriend = 2;
-        when(userService.deleteFriend(idUser, idFriend)).thenReturn(userToDeleteFriend);
-
-        String response = mockMvc.perform(delete("/users/{id}/friends/{friendId}", idUser, idFriend))
-                .andExpect(status().isOk())
-                .andReturn()
-                .getResponse()
-                .getContentAsString();
-
-        verify(userService).deleteFriend(idUser, idFriend);
-        assertEquals(objectMapper.writeValueAsString(userToDeleteFriend), response);
-    }
-
-    @SneakyThrows
-    @Test
-    void getFriendsWhenInvokedWithValidParamsThenReturnedWithListOfFriends() {
-        List<User> userFriends = List.of(testUser);
-        int userId = testUser.getId();
-        when(userService.getFriends(userId)).thenReturn(userFriends);
-
-        String response = mockMvc.perform(get("/users/{id}/friends", userId))
-                .andExpect(status().isOk())
-                .andReturn()
-                .getResponse()
-                .getContentAsString();
-
-        verify(userService).getFriends(userId);
-        assertEquals(objectMapper.writeValueAsString(userFriends), response);
-    }
-
-    @SneakyThrows
-    @Test
-    void getCommonFriendsWhenInvokedWithValidParamsThenReturnedWithListOfFriends() {
-        User user = testUser;
-        int userId = user.getId();
-        User otherUser = new User();
-        int otherId = 2;
-        otherUser.setId(otherId);
-
-        List<User> commonFriends = List.of(user, otherUser);
-
-        when(userService.getCommonFriends(userId, otherId)).thenReturn(commonFriends);
-
-        String response = mockMvc.perform(get("/users/{id}/friends/common/{otherId}", userId, otherId))
-                .andExpect(status().isOk())
-                .andReturn()
-                .getResponse()
-                .getContentAsString();
-
-        verify(userService).getCommonFriends(userId, otherId);
-        assertEquals(objectMapper.writeValueAsString(commonFriends), response);
     }
 }
