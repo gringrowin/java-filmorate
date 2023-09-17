@@ -1,5 +1,13 @@
 # java-filmorate
-Template repository for Filmorate project.
+
+Filmorate
+Стек:
+JavaCore
+Git
+Spring Boot
+Hibernate
+
+
 
 В проект добавлена следующая функциональность:
 
